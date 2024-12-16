@@ -2,6 +2,8 @@
     <GuestLayout>
         <Head title="Log in" />
 
+        <ApplicationLogo class="mx-auto w-32"/>
+
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
         </div>
@@ -103,6 +105,7 @@
 </template>
 
 <script setup>
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';

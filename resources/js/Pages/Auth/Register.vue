@@ -1,4 +1,5 @@
 <script setup>
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import DatePicker from '@/Components/DatePicker.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
@@ -88,6 +89,8 @@ const submit = () => {
 
 <template>
     <GuestLayout>
+        <ApplicationLogo class="mx-auto w-32"/>
+
         <Head title="Register" />
 
         <form @submit.prevent="submit">
