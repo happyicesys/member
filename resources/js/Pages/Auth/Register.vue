@@ -196,7 +196,7 @@ const submit = () => {
 
             <!-- Password (6-digit PIN) -->
             <div class="mt-4">
-                <InputLabel for="password" value="Password (6-digit PIN)" />
+                <InputLabel for="password" value="Create Your Own 6-digits PIN" />
                 <div class="mt-2 grid grid-cols-6 gap-2">
                     <TextInput
                         v-for="(part, index) in form.passwordParts"
@@ -248,7 +248,7 @@ const submit = () => {
                     }"
                     :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || form.passwordParts.some(part => part === '') || isCountdownActive"
                 >
-                    Send OTP to Phone Number
+                    Verify Your Phone Number
                 </PrimaryButton>
             </div>
             <div v-if="isCountdownActive" class="flex justify-end mt-1 text-sm text-blue-500">

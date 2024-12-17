@@ -51,25 +51,4 @@ class OneWaySmsService
         // Parse the response and return
         return $response;
     }
-
-    /**
-     * Parse the response from Isms API and map error codes
-     *
-     * @param array $response
-     * @return array
-     */
-    private function parseResponse(array $response)
-    {
-        $status = $response['status'] ?? null;
-        $message = $response['message'] ?? self::ERROR_UNKNOWN;
-
-        // Map error codes to more readable error messages
-        $statusMessage = self::ERROR_MAPPINGS[$status] ?? $message;
-
-        return [
-            'status' => $status,
-            'message' => $statusMessage,
-            'raw_response' => $response,
-        ];
-    }
 }

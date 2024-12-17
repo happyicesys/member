@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
-use App\Services\OneWaySmsService;  // Import the OneWaySmsService
+use App\Services\IsmsService;
+use App\Services\OneWaySmsService;
 
 class OTPService
 {
@@ -15,8 +16,8 @@ class OTPService
 
     protected $smsService;
 
-    // Inject OneWaySmsService into the OTPService
-    public function __construct(OneWaySmsService $smsService)
+    // Inject either IsmsService or OneWaySmsService into the OTPService
+    public function __construct($smsService)
     {
         $this->smsService = $smsService;
     }
@@ -28,7 +29,7 @@ class OTPService
      */
     public function generateOtp(): string
     {
-        return random_int(10000, 99999);  // Generate a 6-digit OTP
+        return random_int(10000, 99999);  // Generate a 5-digit OTP
     }
 
     /**
@@ -45,7 +46,7 @@ class OTPService
     }
 
     /**
-     * Send OTP to the user via SMS.
+     * Send OTP to the user via the selected SMS service.
      *
      * @param string $phoneNumber
      * @param string $otp
@@ -53,7 +54,7 @@ class OTPService
      */
     public function sendOtp(string $phoneNumber, string $otp): void
     {
-        // Send the OTP via SMS using OneWaySmsService
+        // Send the OTP via the selected SMS service
         $message = "Your DCVend OTP is: $otp";  // Customize the message as needed
         $this->smsService->sendSms([$phoneNumber], $message);  // Send OTP to user's phone number
     }

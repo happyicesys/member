@@ -7,22 +7,42 @@ use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\User;
 use App\Services\OTPService;
+use App\Services\IsmsService;
+use App\Services\OneWaySmsService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
+    protected $otpService;
 
-    public function __construct(OTPService $otpService)
+    public function __construct()
     {
-        $this->otpService = $otpService;
+        // Dynamically select the SMS service based on the environment variable
+        $smsService = $this->getSmsService();
+        $this->otpService = new OTPService($smsService);
+    }
+
+    /**
+     * Dynamically select the SMS service based on the .env configuration
+     */
+    private function getSmsService()
+    {
+        $smsService = config('sms.sms_service');  // Read from .env
+
+        switch ($smsService) {
+            case 'oneway':
+                return new OneWaySmsService();
+            case 'isms':
+            default:
+                return new IsmsService();
+        }
     }
 
     /**
@@ -46,22 +66,14 @@ class RegisteredUserController extends Controller
     {
         $this->validateRequest($request);
 
-        $request->validate([
-            'otp' => 'required|digits:5',
-        ]);
-
-        $otp = $this->otpService->verifyOtp($request->full_phone_number, $request->otp);
-
-        if (!$otp) {
-            throw ValidationException::withMessages([
-                'otp' => 'Invalid OTP.',
-            ]);
-        }
+        // Verify OTP
+        $this->validateOtp($request);
 
         $request->merge([
             'password' => implode('', $request->passwordParts),
         ]);
 
+        // Create the user
         $user = User::create([
             'dob' => $request->dob,
             'name' => $request->name,
@@ -71,22 +83,29 @@ class RegisteredUserController extends Controller
             'phone_number' => $request->phone_number,
         ]);
 
+        // Fire the Registered event and log the user in
         event(new Registered($user));
-
         Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
     }
 
+    /**
+     * Verify the user's phone number by sending an OTP.
+     */
     public function verifyPhoneNumber(Request $request)
     {
         $this->validateRequest($request);
 
+        // Send OTP
         $this->sendOTP($request);
 
         return redirect()->back();
     }
 
+    /**
+     * Generate, store, and send OTP to the user.
+     */
     private function sendOTP(Request $request)
     {
         $otp = $this->otpService->generateOtp();
@@ -94,6 +113,27 @@ class RegisteredUserController extends Controller
         $this->otpService->sendOtp($request->full_phone_number, $otp);
     }
 
+    /**
+     * Validate the OTP provided by the user during registration.
+     */
+    private function validateOtp(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|digits:5',
+        ]);
+
+        $otpValid = $this->otpService->verifyOtp($request->full_phone_number, $request->otp);
+
+        if (!$otpValid) {
+            throw ValidationException::withMessages([
+                'otp' => 'Invalid OTP.',
+            ]);
+        }
+    }
+
+    /**
+     * Validate registration request.
+     */
     private function validateRequest(Request $request)
     {
         $country = Country::find($request->country_id);
@@ -117,5 +157,4 @@ class RegisteredUserController extends Controller
             'phone_number' => 'required|string|phone:' . $country->abbreviation,
         ]);
     }
-
 }
