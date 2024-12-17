@@ -42,18 +42,17 @@ class IsmsService
 
   public function sendSms($phoneNumbers = [], $message = '')
   {
-    $response = Http::get(self::API_URL, [
-        'un' => config('isms.username'),
-        'pwd' => config('isms.password'),
-        'dstno' => implode(';', $phoneNumbers),
-        'msg' => urlencode($message),
-        'type' => strlen($message) != strlen(utf8_decode($message)) ? 2 : 1,
-        'sendid' => config('isms.sender_id'),
-        'agreedterm' => 'YES'
-    ]);
+      $response = Http::get(self::API_URL, [
+          'un' => config('isms.username'),
+          'pwd' => config('isms.password'),
+          'dstno' => implode(';', $phoneNumbers),
+          'msg' => rawurlencode($message),
+          'type' => strlen($message) != strlen(utf8_decode($message)) ? 2 : 1,
+          'sendid' => config('isms.sender_id'),
+          'agreedterm' => 'YES'
+      ]);
 
-    // dd(config('isms.username'), config('isms.password'), $phoneNumbers, $message, strlen($message) != strlen(utf8_decode($message)) ? 2 : 1, config('isms.sender_id'), $response->body());
-
-    return $response->json();
+      return $response->json();
   }
+
 }
