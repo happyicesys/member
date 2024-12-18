@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api\V1;
 
 use App\Models\Country;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
-class ApiLoginRequest extends FormRequest
+class UserLoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -49,8 +49,9 @@ class ApiLoginRequest extends FormRequest
                     }
                 },
             ],
-            'passwordParts.*' => 'required|digits:1',
-            'remember' => 'boolean',
+            // 'passwordParts.*' => 'required|digits:1',
+            // 'remember' => 'boolean',
+            'password' => 'required|digits:6',
         ];
     }
 }

@@ -14,10 +14,11 @@ trait ApiResponse
      * @param  int  $status
      * @return \Illuminate\Http\JsonResponse
      */
-    public function success(string $message, int $status = 200): JsonResponse
+    public function success(string $message, $data = [], int $status = 200): JsonResponse
     {
         return response()->json([
             'message' => $message,
+            'data' => $data,
             'status' => $status,
         ], $status);
     }
@@ -30,10 +31,11 @@ trait ApiResponse
      * @param  int  $status
      * @return \Illuminate\Http\JsonResponse
      */
-    public function error(string $message, int $status = 400): JsonResponse
+    public function error(string $message, $errors = [], int $status = 400): JsonResponse
     {
         return response()->json([
             'message' => $message,
+            'errors' => $errors,
             'status' => $status,
         ], $status);
     }
