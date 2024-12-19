@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\UserLoginRequest;
+use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -20,15 +21,24 @@ class AuthController extends Controller
             return $this->error('Invalid credentials', null, 401);
         }
 
-        $user = User::where('phone_number', $request->phone_number)->first();
+        $user = User::with('phoneCountry')->where('phone_number', $request->phone_number)->first();
+
+        $user->tokens()->delete();
 
         // dd($user->toArray());
         return $this->success(
             'Authenticated',
             [
-                'token' => $user->createToken($request->phone_number)->accessToken,
-                'user' => $user
+                'token' => $user->createToken($request->phone_number, ['*'], now()->addMinutes())->accessToken,
+                'user' => UserResource::make($user)
             ],
             200);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return $this->success('Logged out', null, 200);
     }
 }

@@ -2,7 +2,7 @@
     <GuestLayout>
         <Head title="Log in" />
 
-        <ApplicationLogo class="mx-auto w-32"/>
+        <ApplicationLogo class="mx-auto mt-14 mb-14 w-32 h-auto" />
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}

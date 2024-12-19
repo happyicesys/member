@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\OTPService;
 use App\Services\IsmsService;
 use App\Services\OneWaySmsService;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -78,9 +79,12 @@ class RegisteredUserController extends Controller
             'dob' => $request->dob,
             'name' => $request->name,
             'email' => $request->email,
+            'is_details_filled' => true,
+            'is_phone_number_velidated' => true,
             'password' => Hash::make($request->password),
             'phone_country_id' => $request->country_id,
             'phone_number' => $request->phone_number,
+            'phone_number_verified_at' => Carbon::now(),
         ]);
 
         // Fire the Registered event and log the user in

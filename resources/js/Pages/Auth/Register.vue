@@ -89,7 +89,7 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <ApplicationLogo class="mx-auto w-32"/>
+        <ApplicationLogo class="mx-auto mt-14 mb-14 w-32 h-auto" />
 
         <Head title="Register" />
 
