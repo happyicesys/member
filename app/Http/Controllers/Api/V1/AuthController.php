@@ -29,7 +29,7 @@ class AuthController extends Controller
         return $this->success(
             'Authenticated',
             [
-                'token' => $user->createToken($request->phone_number, ['*'], now()->addMinutes())->accessToken,
+                'token' => $user->createToken($request->phone_number, ['*'], now()->addMinutes(30))->accessToken,
                 'user' => UserResource::make($user)
             ],
             200);

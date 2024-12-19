@@ -24,8 +24,8 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
         // Passport::routes();
         // Passport::loadKeysFrom(__DIR__.'/../secrets/oauth');
-        // Passport::tokensExpireIn(now()->addDays(15));
-        // Passport::refreshTokensExpireIn(now()->addDays(30));
+        Passport::tokensExpireIn(now()->addMinutes(30));
+        Passport::refreshTokensExpireIn(now()->addDays(1));
         // Passport::personalAccessTokensExpireIn(now()->addMonths(6));
     }
 }
