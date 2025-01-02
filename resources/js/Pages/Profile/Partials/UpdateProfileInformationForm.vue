@@ -4,8 +4,10 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
 
-defineProps({
+const props = defineProps({
+    countryOptions: Object,
     mustVerifyEmail: {
         type: Boolean,
     },
@@ -14,12 +16,26 @@ defineProps({
     },
 });
 
+const countryOptions = ref([])
+
 const user = usePage().props.auth.user;
 
 const form = useForm({
+    country_id: user.country_id,
     name: user.name,
     email: user.email,
+    phone_number: user.phone_number,
 });
+
+onMounted(() => {
+    countryOptions.value = props.countryOptions.data;
+
+    // Set the default country code
+    form.country_id = countryOptions.value.find(
+        (country) => country.id == user.phone_country_id
+    )?.id;
+});
+
 </script>
 
 <template>
@@ -30,7 +46,7 @@ const form = useForm({
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Update your account's profile information and email address.
+                Update your account's profile information, email address and phone number.
             </p>
         </header>
 
@@ -67,6 +83,43 @@ const form = useForm({
                 />
 
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+                        <!-- Country Code -->
+                        <div>
+                <InputLabel for="country_id" value="Country Code" />
+
+                <select
+                    id="country_id"
+                    class="mt-1 block w-full select2"
+                    v-model="form.country_id"
+                    required
+                >
+                    <option value="" disabled>Select Country</option>
+                    <option
+                        v-for="country in countryOptions"
+                        :key="country.id"
+                        :value="country.id"
+                    >
+                        {{ country.phone_code }} ({{ country.name }})
+                    </option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.country_id" />
+            </div>
+
+            <!-- Phone Number -->
+            <div>
+                <InputLabel for="phone_number" value="Phone Number" />
+
+                <TextInput
+                    id="phone_number"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.phone_number"
+                    required
+                    placeholder="Enter your phone number"
+                />
+                <InputError class="mt-2" :message="form.errors.phone_number" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">

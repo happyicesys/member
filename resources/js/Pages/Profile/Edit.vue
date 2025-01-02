@@ -5,7 +5,8 @@ import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import { Head } from '@inertiajs/vue3';
 
-defineProps({
+const props = defineProps({
+    countryOptions: Object,
     mustVerifyEmail: {
         type: Boolean,
     },
@@ -33,6 +34,7 @@ defineProps({
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
                 >
                     <UpdateProfileInformationForm
+                        :country-options="countryOptions"
                         :must-verify-email="mustVerifyEmail"
                         :status="status"
                         class="max-w-xl"

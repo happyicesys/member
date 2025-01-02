@@ -41,6 +41,19 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
                     Leverage automated vending technology to disrupt the traditional ice cream market, increasing customer loyalty through significant membership benefits.
                 </p>
             </div>
+
+            <div class="bg-red-50 rounded-lg mt-10">
+            <div class="flex flex-row space-x-1">
+                <a
+                    class="w-full py-2 px-4 bg-yellow-300 text-gray-700 rounded-lg shadow hover:bg-yellow-500"
+                    :href="route('home')"
+                >
+                    <div class="items-center py-4 text-center">
+                        Home
+                    </div>
+                </a>
+            </div>
+            </div>
         </div>
     </GuestLayout>
 </template>

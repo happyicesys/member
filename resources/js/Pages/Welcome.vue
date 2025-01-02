@@ -1,6 +1,7 @@
 <script setup>
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { ClockIcon, TicketIcon, PresentationChartLineIcon, SparklesIcon, UserCircleIcon } from '@heroicons/vue/20/solid'
 import { Head, Link } from '@inertiajs/vue3';
 </script>
 
@@ -86,6 +87,35 @@ import { Head, Link } from '@inertiajs/vue3';
                 <p class="mt-4 text-gray-600">
                     Already a member? <Link :href="route('login')" class="text-red-400 underline hover:text-red-500">Log in</Link>
                 </p>
+            </div>
+
+            <div class="bg-red-50 rounded-lg mt-10">
+            <div class="flex flex-row space-x-1">
+                <a
+                    class="w-full py-2 px-4 bg-yellow-300 text-gray-700 rounded-lg shadow hover:bg-yellow-500"
+                    :href="route('about')"
+                >
+                    <div class="items-center py-4 text-center">
+                        About
+                    </div>
+                </a>
+                <a
+                    class="w-full py-2 px-4 bg-yellow-300 text-gray-700 rounded-lg shadow hover:bg-yellow-500"
+                    :href="route('terms-and-conditions')"
+                >
+                    <div class="items-center py-4 text-center">
+                        T&C
+                    </div>
+                </a>
+                <a
+                    class="w-full py-2 px-4 bg-yellow-300 text-gray-700 rounded-lg shadow hover:bg-yellow-500"
+                    :href="route('privacy-policy')"
+                >
+                    <div class="items-center py-4 text-center">
+                        Privacy Policy
+                    </div>
+                </a>
+            </div>
             </div>
         </div>
     </GuestLayout>

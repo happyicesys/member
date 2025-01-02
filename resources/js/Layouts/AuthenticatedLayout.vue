@@ -23,9 +23,7 @@ const showingNavigationDropdown = ref(false);
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
-                                    />
+                                    <ApplicationLogo class="max-w-16 max-h-10" />
                                 </Link>
                             </div>
 
@@ -192,6 +190,11 @@ const showingNavigationDropdown = ref(false);
             <!-- Page Content -->
             <main>
                 <slot />
+
+                <!-- Copyright Notice -->
+                <div class="text-center pt-14 pb-4">
+                    <p class="text-sm text-gray-500">&copy; 2024 DCVIC PTE. LTD. All rights reserved.</p>
+                </div>
             </main>
         </div>
     </div>

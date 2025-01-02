@@ -12,4 +12,14 @@ class GuestController extends Controller
     {
         return Inertia::render('Guest/About');
     }
+
+    public function privacyPolicy()
+    {
+        return Inertia::render('Guest/PrivacyPolicy');
+    }
+
+    public function termsAndConditions()
+    {
+        return Inertia::render('Guest/TermsAndConditions');
+    }
 }
