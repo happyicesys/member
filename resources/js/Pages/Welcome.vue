@@ -1,8 +1,18 @@
 <script setup>
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import { ClockIcon, TicketIcon, PresentationChartLineIcon, SparklesIcon, UserCircleIcon } from '@heroicons/vue/20/solid'
 import { Head, Link } from '@inertiajs/vue3';
+import { ref, onMounted } from 'vue';
+
+const props = defineProps({
+    plans: Object, // Dynamic plans data from the controller
+});
+
+const plans = ref([]);
+
+onMounted(() => {
+    plans.value = props.plans.data;
+});
 </script>
 
 <template>
@@ -10,34 +20,22 @@ import { Head, Link } from '@inertiajs/vue3';
         <Head title="Welcome to DCVend" />
 
         <div class="container py-12 px-6 bg-gray-50 rounded-xl shadow-2xl mx-auto max-w-3xl">
+            <!-- Welcome Section -->
             <div class="text-center mb-5 relative">
                 <div class="flex items-center justify-center mx-auto">
-                    <span>
-                        <img src="/images/dcvend_mascot_01.png" alt="Mascot" class="w-24 h-24 opacity-80" />
-                    </span>
-                    <span>
-                        <img src="/images/dcvend_mascot_02.png" alt="Mascot" class="w-24 h-24 opacity-80" />
-                    </span>
-                    <span>
-                        <img src="/images/dcvend_mascot_03.png" alt="Mascot" class="w-24 h-24 opacity-80" />
-                    </span>
-                    <span>
-                        <img src="/images/dcvend_mascot_04.png" alt="Mascot" class="w-24 h-24 opacity-80" />
-                    </span>
+                    <span><img src="/images/dcvend_mascot_01.png" alt="Mascot" class="w-24 h-24 opacity-80" /></span>
+                    <span><img src="/images/dcvend_mascot_02.png" alt="Mascot" class="w-24 h-24 opacity-80" /></span>
+                    <span><img src="/images/dcvend_mascot_03.png" alt="Mascot" class="w-24 h-24 opacity-80" /></span>
+                    <span><img src="/images/dcvend_mascot_04.png" alt="Mascot" class="w-24 h-24 opacity-80" /></span>
                 </div>
-                <!-- Logo Component -->
                 <ApplicationLogo class="mx-auto mt-10 mb-10 w-32 h-auto" />
-
-                <!-- Welcome Title -->
-                <h1 class="text-5xl font-extrabold text-red-400 mb-6 font-heading tracking-wide">
-                    Premium Ice Cream Anytime, Anywhere
-                </h1>
-
+                <h1 class="text-5xl font-extrabold text-red-400 mb-6 font-heading tracking-wide">Premium Ice Cream Anytime, Anywhere</h1>
                 <p class="text-lg text-gray-700 mb-6 leading-relaxed">
                     Sign up now to enjoy up to 50% off on your favorite ice creams and exclusive vouchers. Conveniently order through our app or grab one instantly from a vending machine near you.
                 </p>
             </div>
 
+            <!-- Why Join Section -->
             <div class="mb-8 relative">
                 <h2 class="text-3xl font-semibold text-yellow-500 mb-4 font-heading tracking-wide">Why Join DCVend?</h2>
                 <ul class="list-disc list-inside text-gray-700 leading-relaxed">
@@ -47,6 +45,7 @@ import { Head, Link } from '@inertiajs/vue3';
                 </ul>
             </div>
 
+            <!-- How It Works Section -->
             <div class="mb-8 relative">
                 <h2 class="text-3xl font-semibold text-yellow-500 mb-4 font-heading tracking-wide">How It Works</h2>
                 <ol class="list-decimal list-inside text-gray-700 leading-relaxed">
@@ -56,67 +55,65 @@ import { Head, Link } from '@inertiajs/vue3';
                 </ol>
             </div>
 
+            <!-- Membership Plans Section -->
             <div class="mb-8">
                 <h2 class="text-3xl font-semibold text-yellow-500 mb-4 font-heading tracking-wide">Membership Plans</h2>
-                <div class="grid gap-6 md:grid-cols-2">
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Basic Membership</h3>
-                        <p class="text-gray-600">
-                            Enjoy 5% off on all ice creams and access to exclusive member-only flavors.
-                        </p>
-                        <p class="mt-4 text-red-400 font-semibold">Free to Join</p>
-                    </div>
-
-                    <div class="p-6 bg-white rounded-lg shadow-md">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">VIP Membership</h3>
-                        <p class="text-gray-600">
-                            Get 50% off on all ice creams and receive free vouchers monthly for special promotions.
-                        </p>
-                        <p class="mt-4 text-red-400 font-semibold">$3.30/Month</p>
+                <div class="overflow-x-auto">
+                    <div class="flex gap-2 md:flex-nowrap">
+                        <!-- Dynamic Membership Plans -->
+                        <div
+                            v-for="plan in plans"
+                            :key="plan.id"
+                            class="flex-shrink-0 w-52 p-4 bg-white rounded-lg shadow-md"
+                        >
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">{{ plan.name }}</h3>
+                            <p class="text-gray-600 whitespace-pre-line">{{ plan.description }}</p>
+                            <p class="mt-4 text-red-400 font-semibold">
+                                {{ plan.price > 0 ? `$${(plan.price).toFixed(2)}/month` : 'Free to Join' }}
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
 
+
+            <!-- Call to Action Section -->
             <div class="text-center">
                 <Link
                     :href="route('register')"
-                    class="bg-red-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-red-500">
+                    class="bg-red-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-red-500"
+                >
                     Sign Up Now
                 </Link>
-
                 <p class="mt-4 text-gray-600">
                     Already a member? <Link :href="route('login')" class="text-red-400 underline hover:text-red-500">Log in</Link>
                 </p>
             </div>
 
-            <div class="bg-red-50 rounded-lg mt-10">
-            <div class="flex flex-row space-x-1">
-                <a
-                    class="w-full py-2 px-4 bg-yellow-300 text-gray-700 rounded-lg shadow hover:bg-yellow-500"
-                    :href="route('about')"
-                >
-                    <div class="items-center py-4 text-center">
+            <!-- Footer Links -->
+            <div class="rounded-lg mt-10 p-4">
+                <div class="flex flex-col md:flex-row gap-4 justify-center items-stretch">
+                    <a
+                        class="flex items-center justify-center px-4 py-3 bg-yellow-300 text-gray-800 rounded-lg shadow-md transition duration-200 ease-in-out hover:bg-yellow-400 hover:shadow-lg"
+                        :href="route('about')"
+                    >
                         About
-                    </div>
-                </a>
-                <a
-                    class="w-full py-2 px-4 bg-yellow-300 text-gray-700 rounded-lg shadow hover:bg-yellow-500"
-                    :href="route('terms-and-conditions')"
-                >
-                    <div class="items-center py-4 text-center">
+                    </a>
+                    <a
+                        class="flex items-center justify-center px-4 py-3 bg-yellow-300 text-gray-800 rounded-lg shadow-md transition duration-200 ease-in-out hover:bg-yellow-400 hover:shadow-lg"
+                        :href="route('terms-and-conditions')"
+                    >
                         T&C
-                    </div>
-                </a>
-                <a
-                    class="w-full py-2 px-4 bg-yellow-300 text-gray-700 rounded-lg shadow hover:bg-yellow-500"
-                    :href="route('privacy-policy')"
-                >
-                    <div class="items-center py-4 text-center">
+                    </a>
+                    <a
+                        class="flex items-center justify-center px-4 py-3 bg-yellow-300 text-gray-800 rounded-lg shadow-md transition duration-200 ease-in-out hover:bg-yellow-400 hover:shadow-lg"
+                        :href="route('privacy-policy')"
+                    >
                         Privacy Policy
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
-            </div>
+
         </div>
     </GuestLayout>
 </template>

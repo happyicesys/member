@@ -18,6 +18,7 @@ class PaymentController extends Controller
         return Inertia::render('Payment/Plan/Index', [
             'plans' => PlanResource::collection($plans),
             'user' => UserResource::make($user),
+            'selectedPlan' => $user->plan,
         ]);
     }
 }

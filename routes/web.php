@@ -3,18 +3,9 @@
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-})->name('home');
+Route::get('/', [GuestController::class, 'home'])->name('home');
 
 Route::get('/about', [GuestController::class, 'about'])->name('about');
 Route::get('/privacy-policy', [GuestController::class, 'privacyPolicy'])->name('privacy-policy');

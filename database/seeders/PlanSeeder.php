@@ -34,7 +34,7 @@ class PlanSeeder extends Seeder
         Plan::create([
             'name' => 'VIP Member',
             'level' => 2,
-            'price' => 300, // $3.00 per month
+            'price' => 3, // $3.00 per month
             'desc' => '25% discount every purchase. Monthly: Free x2 vouchers for 40% discount. Monthly: Free 1x Cornetto voucher (worth $3.00).',
             'is_active' => true,
             'base_discount_percent' => 25,
@@ -52,7 +52,7 @@ class PlanSeeder extends Seeder
         Plan::create([
             'name' => 'Super VIP Member',
             'level' => 3,
-            'price' => 470, // $4.70 per month
+            'price' => 4.7, // $4.70 per month
             'desc' => '25% discount every purchase. Monthly: Free x10 vouchers for 40% discount. Monthly: Free 1x Magnum voucher (worth $4.70).',
             'is_active' => true,
             'base_discount_percent' => 25,
