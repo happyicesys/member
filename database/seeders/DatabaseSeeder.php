@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             // CountrySeeder::class,
-            PaymentGatewayStripeSeeder::class,
+            // PaymentGatewayStripeSeeder::class,
             PlanSeeder::class,
         ]);
     }
