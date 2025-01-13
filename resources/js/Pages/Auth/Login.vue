@@ -2,20 +2,22 @@
     <GuestLayout>
         <Head title="Log in" />
 
-        <ApplicationLogo class="mx-auto mt-14 mb-14 w-32 h-auto" />
+        <section class="text-white rounded my-2 md:w-4/6 mx-auto py-5">
+            <img src="/images/icon.png" alt="Vion Icon" class="w-1/3 lg:w-1/6 rounded mx-auto" />
+        </section>
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+        <div v-if="status" class="mb-2 text-sm font-medium text-green-600">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit" class="space-y-4">
+        <form @submit.prevent="submit" class="space-y-4 lg:w-3/12 mx-auto mb-10 px-2">
             <!-- Country Code -->
             <div>
-                <InputLabel for="country_id" value="Country Code" />
+                <InputLabel for="country_id" value="Country Code"/>
 
                 <select
                     id="country_id"
-                    class="mt-1 block w-full select2"
+                    class="mt-1 block w-full select2 rounded text-gray-600"
                     v-model="form.country_id"
                     required
                 >
@@ -79,26 +81,33 @@
             <div class="mt-4 flex items-center justify-between">
                 <Link
                     :href="route('register')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-md text-lg text-red-600 underline hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Sign Up?
                 </Link>
 
                 <Link
                     v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    :href="route('forgot')"
+                    class="rounded-md text-lg text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Forgot your password?
                 </Link>
 
-                <PrimaryButton
+                <!-- <PrimaryButton
                     class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
                     Log in
-                </PrimaryButton>
+                </PrimaryButton> -->
+            </div>
+            <div class="mt-2 flex items-center justify-center">
+                <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-2 gap-8 md:w-2/5 text-center">
+                    <button type="submit" class="bg-yellow-300 py-2 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400">
+                        LOGIN
+                    </button>
+                </div>
             </div>
         </form>
     </GuestLayout>

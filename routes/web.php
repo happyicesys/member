@@ -8,6 +8,7 @@ use Inertia\Inertia;
 Route::get('/', [GuestController::class, 'home'])->name('home');
 
 Route::get('/about', [GuestController::class, 'about'])->name('about');
+Route::get('/contact-us', [GuestController::class, 'contactUs'])->name('contact-us');
 Route::get('/privacy-policy', [GuestController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms-and-conditions', [GuestController::class, 'termsAndConditions'])->name('terms-and-conditions');
 

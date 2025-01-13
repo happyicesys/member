@@ -1,131 +1,220 @@
-<script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue';
-
-const props = defineProps({
-    plans: Object, // Dynamic plans data from the controller
-});
-
-const plans = ref([]);
-
-onMounted(() => {
-    plans.value = props.plans.data;
-});
-</script>
-
 <template>
     <GuestLayout>
-        <Head title="Welcome to DCVend" />
+        <Head title="DCVend Membership" />
 
-        <div class="container py-12 px-6 bg-gray-50 rounded-xl shadow-2xl mx-auto max-w-3xl">
-            <!-- Welcome Section -->
-            <div class="text-center mb-5 relative">
-                <div class="flex items-center justify-center mx-auto">
-                    <span><img src="/images/dcvend_mascot_01.png" alt="Mascot" class="w-24 h-24 opacity-80" /></span>
-                    <span><img src="/images/dcvend_mascot_02.png" alt="Mascot" class="w-24 h-24 opacity-80" /></span>
-                    <span><img src="/images/dcvend_mascot_03.png" alt="Mascot" class="w-24 h-24 opacity-80" /></span>
-                    <span><img src="/images/dcvend_mascot_04.png" alt="Mascot" class="w-24 h-24 opacity-80" /></span>
+        <!-- Hero Section -->
+        <section class="text-white rounded my-2">
+            <img src="/images/banner_2.jpg" alt="DCVend Banner" class="w-full rounded hidden md:block" />
+            <img src="/images/banner_mobile_1.jpg" alt="DCVend Banner Mobile" class="w-full rounded md:hidden">
+        </section>
+
+        <!-- Stats Section -->
+        <section class="bg-white py-8">
+            <div class="text-center text-red-600 text-3xl font-semibold tracking-wide">
+                <div class="md:w-1/2 mx-auto">
+                    Enjoy premium ice cream at 30% discount with a DCVend membership
                 </div>
-                <ApplicationLogo class="mx-auto mt-10 mb-10 w-32 h-auto" />
-                <h1 class="text-5xl font-extrabold text-red-400 mb-6 font-heading tracking-wide">Premium Ice Cream Anytime, Anywhere</h1>
-                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
-                    Sign up now to enjoy up to 50% off on your favorite ice creams and exclusive vouchers. Conveniently order through our app or grab one instantly from a vending machine near you.
-                </p>
             </div>
+            <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-4 md:gap-8 md:w-2/5 text-center">
+                <div class="bg-yellow-300 py-6 px-10 rounded-lg shadow-md">
+                    <p class="text-2xl font-bold text-red-600">{{stats['users'].toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}} Members</p>
+                </div>
+                <div class="bg-yellow-300 py-6 px-10 rounded-lg shadow-md">
+                    <p class="text-2xl font-bold text-red-600">S$ {{ stats['discount'].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }} Discount Given</p>
+                </div>
+            </div>
+        </section>
 
-            <!-- Why Join Section -->
-            <div class="mb-8 relative">
-                <h2 class="text-3xl font-semibold text-yellow-500 mb-4 font-heading tracking-wide">Why Join DCVend?</h2>
-                <ul class="list-disc list-inside text-gray-700 leading-relaxed">
-                    <li><strong>Save More:</strong> Enjoy 33% off with a basic membership or upgrade to VIP for 50% off.</li>
-                    <li><strong>Exclusive Perks:</strong> Access to premium and unique ice cream flavors.</li>
-                    <li><strong>Convenience:</strong> Vending machines near you, available 24/7.</li>
+        <!-- Why Join Section -->
+        <section class="pb-6 pt-5 md:pt-8 bg-white">
+            <div class="container mx-auto max-w-4xl text-center">
+                <h2 class="text-3xl font-bold text-red-600 mb-6">Why Join DCVend?</h2>
+                <ul class="text-gray-600 space-y-1 text-left md:text-center">
+                    <li>
+                        <strong>Discount & Convenient:</strong> Enjoy 30% off premium ice cream, 24/7
+                    </li>
+                    <li>
+                        <strong>Free membership:</strong> Start saving today! Upgrade to VIP for exclusive perks.
+                    </li>
+                    <li>
+                        <strong>Exclusive Perks:</strong> Unlock special products and offers from our partners.
+                    </li>
+                    <li>
+                        <strong>Instant Delivery:</strong> Order via Grab and get 8% cashback.
+                    </li>
+                    <li>
+                        <strong>Daily Deals:</strong> Incredible savings on a rotating selection of flavours.
+                    </li>
                 </ul>
             </div>
+        </section>
 
-            <!-- How It Works Section -->
-            <div class="mb-8 relative">
-                <h2 class="text-3xl font-semibold text-yellow-500 mb-4 font-heading tracking-wide">How It Works</h2>
-                <ol class="list-decimal list-inside text-gray-700 leading-relaxed">
-                    <li>Sign up for free and explore our offerings.</li>
-                    <li>Subscribe to a membership plan to unlock discounts and rewards.</li>
-                    <li>Enjoy your ice cream from vending machines or through delivery.</li>
-                </ol>
-            </div>
+        <!-- Membership Plans -->
+        <section class="py-6 md:py-12 bg-gray-50 rounded">
+            <div class="container mx-auto max-w-6xl text-center">
+                <h2 class="text-3xl font-bold text-red-600 mb-8">Membership Plans</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Free Member -->
+                    <div class="bg-slate-200 rounded-md shadow-md p-6 text-center">
+                        <h3 class="text-4xl font-bold text-red-600 font-extrabold mb-4">FREE Member</h3>
+                        <ul class="text-gray-600 mb-4 space-y-2">
+                            <li><strong>1 time: </strong> 30% discount on all products</li>
+                        </ul>
+                        <p class="text-xl font-bold text-gray-600">FREE/ month</p>
+                    </div>
 
-            <!-- Membership Plans Section -->
-            <div class="mb-8">
-                <h2 class="text-3xl font-semibold text-yellow-500 mb-4 font-heading tracking-wide">Membership Plans</h2>
-                <div class="overflow-x-auto">
-                    <div class="flex gap-2 md:flex-nowrap">
-                        <!-- Dynamic Membership Plans -->
-                        <div
-                            v-for="plan in plans"
-                            :key="plan.id"
-                            class="flex-shrink-0 w-52 p-4 bg-white rounded-lg shadow-md"
-                        >
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">{{ plan.name }}</h3>
-                            <p class="text-gray-600 whitespace-pre-line">{{ plan.description }}</p>
-                            <p class="mt-4 text-red-400 font-semibold">
-                                {{ plan.price > 0 ? `$${(plan.price).toFixed(2)}/month` : 'Free to Join' }}
-                            </p>
-                        </div>
+                    <!-- VIP Member -->
+                    <div class="bg-slate-200 rounded-md shadow-md p-6 text-center">
+                        <h3 class="text-4xl font-bold text-red-600 font-extrabold mb-4">Gold Member</h3>
+                        <ul class="text-gray-600 mb-4 space-y-2">
+                            <li><strong>4 times:</strong> 30% discount on all products</li>
+                        </ul>
+                        <p class="text-xl font-bold text-gray-600">S$ 2.90/ month</p>
+                    </div>
+
+                    <!-- SuperVIP Member -->
+                    <div class="bg-slate-300 rounded-md shadow-md p-6 text-center">
+                        <h3 class="text-4xl font-bold text-gray-500 font-extrabold mb-4">
+                            Platinum Member
+                            <small class="text-sm">(Coming soon)</small>
+                        </h3>
+                        <ul class="text-gray-500 mb-4 space-y-2">
+                            <li><strong>Unlimited:</strong> 30% discount on all products</li>
+                            <li><strong>FREE:</strong> 1x Magnum ice cream (worth: S$4.70)</li>
+                            <li><strong>Unlimited:</strong> Daily Deals, daily basis</li>
+                            <li><strong>Unlimited:</strong> 8% cashback on orders via Grab</li>
+                            <li><strong>Unlimited:</strong> 8% discount from affiliated vending machines</li>
+
+                        </ul>
+                        <p class="text-xl font-bold text-gray-600">S$ 5.00/ month</p>
                     </div>
                 </div>
             </div>
+        </section>
 
-
-            <!-- Call to Action Section -->
-            <div class="text-center">
-                <Link
-                    :href="route('register')"
-                    class="bg-red-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-red-500"
-                >
-                    Sign Up Now
+        <!-- Call to Action Section -->
+        <section class="bg-white py-8">
+            <div class="text-center text-gray-600 text-2xl font-semibold tracking-wide md:w-3/5 mx-auto">
+                Free 2 months VIP member package for new sign-up, with FREE upgrade to unlimited times of 30% discount on all products
+            </div>
+            <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center">
+                <Link :href="route('register')" class="bg-yellow-300 py-4 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400">
+                    SIGN UP NOW
                 </Link>
-                <p class="mt-4 text-gray-600">
-                    Already a member? <Link :href="route('login')" class="text-red-400 underline hover:text-red-500">Log in</Link>
-                </p>
             </div>
+        </section>
 
-            <!-- Footer Links -->
-            <div class="rounded-lg mt-10 p-4">
-                <div class="flex flex-col md:flex-row gap-4 justify-center items-stretch">
-                    <a
-                        class="flex items-center justify-center px-4 py-3 bg-yellow-300 text-gray-800 rounded-lg shadow-md transition duration-200 ease-in-out hover:bg-yellow-400 hover:shadow-lg"
-                        :href="route('about')"
-                    >
-                        About
-                    </a>
-                    <a
-                        class="flex items-center justify-center px-4 py-3 bg-yellow-300 text-gray-800 rounded-lg shadow-md transition duration-200 ease-in-out hover:bg-yellow-400 hover:shadow-lg"
-                        :href="route('terms-and-conditions')"
-                    >
-                        T&C
-                    </a>
-                    <a
-                        class="flex items-center justify-center px-4 py-3 bg-yellow-300 text-gray-800 rounded-lg shadow-md transition duration-200 ease-in-out hover:bg-yellow-400 hover:shadow-lg"
-                        :href="route('privacy-policy')"
-                    >
-                        Privacy Policy
-                    </a>
-                </div>
+        <!-- Map Section -->
+        <section class="pb-6 pt-4 md:pt-8 bg-white">
+            <div class="container mx-auto max-w-4xl text-center">
+                <h2 class="text-3xl font-bold text-red-600 mb-6">DCVend Location</h2>
             </div>
+            <div id="map" class="sm:col-span-6 mb-3 items-center mx-auto w-11/12 md:w-9/12 h-96"></div>
+        </section>
 
-        </div>
+
     </GuestLayout>
 </template>
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap');
+<script setup>
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { defineProps, onMounted } from 'vue';
 
-.font-heading {
-    font-family: 'Poppins', sans-serif;
+const props = defineProps({
+    dcVends: [Array, Object],
+    mapApiKey: String,
+    stats: [Array, Object],
+});
+
+let map;
+let directionsService;
+
+onMounted(() => {
+    console.log('DCVend:', props.dcVends);
+    loadGoogleMapsApi();
+});
+
+function loadGoogleMapsApi() {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${props.mapApiKey}&callback=initMap&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
 }
-.container {
-    max-width: 800px;
-    margin: auto;
+
+window.initMap = function () {
+    directionsService = new google.maps.DirectionsService();
+
+    // Get user's current location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+
+                // Initialize the map with user's location
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: userLocation,
+                    zoom: 12,
+                });
+
+                // Add markers to the map
+                addMarkers();
+
+                // Optionally, add a marker for the user's location
+                new google.maps.Marker({
+                    position: userLocation,
+                    map: map,
+                    label: 'You',
+                });
+            },
+            (error) => {
+                console.error('Error getting user location:', error);
+
+                // Fallback to default location if user denies access
+                initializeMapWithDefaultLocation();
+            }
+        );
+    } else {
+        console.error('Geolocation is not supported by this browser.');
+
+        // Fallback to default location
+        initializeMapWithDefaultLocation();
+    }
+};
+
+function initializeMapWithDefaultLocation() {
+    const defaultPos = { lat: 3.139, lng: 101.6869 }; // Example: Kuala Lumpur
+
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: defaultPos,
+        zoom: 12,
+    });
+
+    addMarkers();
+}
+
+function addMarkers() {
+    const markersData = [
+        { lat: 3.139, lng: 101.6869, label: 'A' },
+        { lat: 3.141, lng: 101.689, label: 'B' },
+    ];
+
+    markersData.forEach((data) => {
+        new google.maps.Marker({
+            position: { lat: data.lat, lng: data.lng },
+            map: map,
+            label: data.label,
+        });
+    });
+}
+</script>
+
+<style scoped>
+header {
+    font-family: 'Poppins', sans-serif;
 }
 </style>

@@ -91,8 +91,9 @@ onMounted(() => {
 
                 <select
                     id="country_id"
-                    class="mt-1 block w-full select2"
+                    class="mt-1 block w-full select2 bg-gray-100 cursor-not-allowed"
                     v-model="form.country_id"
+                    disabled
                     required
                 >
                     <option value="" disabled>Select Country</option>
@@ -114,8 +115,9 @@ onMounted(() => {
                 <TextInput
                     id="phone_number"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full bg-gray-100 cursor-not-allowed"
                     v-model="form.phone_number"
+                    disabled
                     required
                     placeholder="Enter your phone number"
                 />
@@ -144,7 +146,11 @@ onMounted(() => {
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-2 gap-8 md:w-2/5 text-center">
+                    <button type="submit" :disabled="form.processing" class="bg-yellow-300 py-1 px-6 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-bold text-xl hover:bg-yellow-400">
+                        Save
+                    </button>
+                </div>
 
                 <Transition
                     enter-active-class="transition ease-in-out"

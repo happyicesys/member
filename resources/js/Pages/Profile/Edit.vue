@@ -46,12 +46,6 @@ const props = defineProps({
                 >
                     <UpdatePasswordForm class="max-w-xl" />
                 </div>
-
-                <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
-                >
-                    <DeleteUserForm class="max-w-xl" />
-                </div>
             </div>
         </div>
     </AuthenticatedLayout>

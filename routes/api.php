@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CountryController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\GuestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::get('/countries', [CountryController::class, 'index']);
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:3,1');
+    Route::get('/stats', [GuestController::class, 'stats']);
 
     Route::middleware('auth:api')->group(function () {
         Route::post('/user', [UserController::class, 'user']);

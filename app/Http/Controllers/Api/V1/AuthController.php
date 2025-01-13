@@ -8,6 +8,8 @@ use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AuthController extends Controller
 {

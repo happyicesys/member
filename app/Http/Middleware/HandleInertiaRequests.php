@@ -34,7 +34,8 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $user ? $user->only(['id', 'name', 'email', 'plan_id']) : null,
+                'operatorCountry' => $user ? $user->phoneCountry : null,
+                'user' => $user ? $user->only(['id', 'name', 'email', 'phone_country_id', 'phone_number', 'plan_id']) : null,
                 'plan' => $user && $user->plan ? $user->plan->only(['id', 'name', 'price', 'description']) : null,
             ],
         ];
