@@ -44,7 +44,7 @@ import { Head } from '@inertiajs/vue3';
                     3. How the Contract is Formed Between You and Us
                 </h2>
                 <p class="text-md text-gray-700 leading-relaxed">
-                    3.1 After placing an online order, you will receive an email from us acknowledging receipt of your order. Please note that this does not mean that your order has been accepted. Your order constitutes an offer to us to buy a product. The contract between us will only be formed when we deliver the items to you.
+                    3.1 After placing an online order, you will receive an email from us acknowledging receipt of your order. Please note that this does not mean that your order has been accepted. Your order constitutes an offer to us to buy a product or service. The contract between us will only be formed when we deliver the items or service to you.
                 </p>
                 <p class="text-md text-gray-700 leading-relaxed">
                     3.2 Subject to actual stock availability, item orders will be replaced with alternatives subject to verbal or written confirmation with you.
