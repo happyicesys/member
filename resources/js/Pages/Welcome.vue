@@ -17,8 +17,8 @@
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-4 md:gap-8 md:w-2/5 text-center mx-auto">
                 <div class="bg-yellow-300 py-6 px-10 rounded-lg shadow-md">
-                    <p class="text-2xl font-bold text-red-600 flex items-center space-x-2">
-                        <span class="text-3xl font-extrabold drop-shadow-sm">
+                    <p class="text-2xl font-bold text-gray-600 flex flex-col items-center space-y-2">
+                        <span class="text-5xl font-extrabold drop-shadow-sm">
                             {{stats['users'].toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}}
                         </span>
                         <span>
@@ -27,8 +27,8 @@
                     </p>
                 </div>
                 <div class="bg-yellow-300 py-6 px-10 rounded-lg shadow-md">
-                    <p class="text-2xl font-bold text-red-600 flex items-center space-x-2">
-                        <span class="text-3xl font-extrabold drop-shadow-sm">
+                    <p class="text-2xl font-bold text-gray-600 flex flex-col  items-center space-y-2">
+                        <span class="text-5xl font-extrabold drop-shadow-sm">
                             S$ {{ stats['discount'].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}
                         </span>
                         <span>
@@ -37,10 +37,15 @@
                     </p>
                 </div>
             </div>
+            <div class="text-right text-gray-600 text-md mt-2">
+                <div class="md:w-1/3 mx-auto">
+                    updated daily
+                </div>
+            </div>
         </section>
 
         <!-- Why Join Section -->
-        <section class="pb-6 pt-5 md:pt-8 bg-white px-6">
+        <section class="pb-6 pt-4 md:pt-6 bg-white px-6">
             <div class="container mx-auto max-w-4xl text-center">
                 <h2 class="text-3xl font-bold text-red-600 mb-6">Why Join DCVend?</h2>
                 <ul class="text-gray-600 space-y-1 text-left md:text-center">
@@ -70,7 +75,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Free Member -->
                     <div class="bg-slate-200 rounded-md shadow-md p-6 text-center">
-                        <h3 class="text-4xl font-bold text-red-600 font-extrabold mb-4">FREE Member</h3>
+                        <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4">FREE Member</h3>
                         <ul class="text-gray-600 mb-4 space-y-2">
                             <li><strong>1 time: </strong> 30% discount on all products</li>
                         </ul>
@@ -79,7 +84,7 @@
 
                     <!-- VIP Member -->
                     <div class="bg-slate-200 rounded-md shadow-md p-6 text-center">
-                        <h3 class="text-4xl font-bold text-red-600 font-extrabold mb-4">Gold Member</h3>
+                        <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4">Gold Member</h3>
                         <ul class="text-gray-600 mb-4 space-y-2">
                             <li><strong>4 times:</strong> 30% discount on all products</li>
                         </ul>
@@ -88,7 +93,7 @@
 
                     <!-- SuperVIP Member -->
                     <div class="bg-slate-300 rounded-md shadow-md p-6 text-center">
-                        <h3 class="text-4xl font-bold text-gray-500 font-extrabold mb-4">
+                        <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4">
                             Platinum Member
                             <small class="text-sm">(Coming soon)</small>
                         </h3>

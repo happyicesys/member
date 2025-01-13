@@ -17,6 +17,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'phoneCountry' => CountryResource::make($this->whenLoaded('phoneCountry')),
             'phone_number' => $this->phone_number,

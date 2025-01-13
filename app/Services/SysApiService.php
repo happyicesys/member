@@ -40,35 +40,22 @@ class SysApiService
             return $this->accessToken;
         }
 
-        try {
-            // dd($this->baseUrl);
-            // dd(Http::post("{$this->baseUrl}/oauth/token", [
-            //     'grant_type' => 'client_credentials',
-            //     'client_id' => $this->clientId,
-            //     'client_secret' => $this->clientSecret,
-            // ]));
+        $response = Http::post("{$this->baseUrl}/oauth/token", [
+            'grant_type' => 'authorization_code',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+        ]);
+        // dd($response->body());
 
-            $response = Http::post("{$this->baseUrl}/oauth/token", [
-                'grant_type' => 'client_credentials',
-                'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret,
-            ]);
-
-
-            if ($response->successful()) {
-                $this->accessToken = $response->json()['access_token'];
-                return $this->accessToken;
-            }
-
-            Log::error('Failed to retrieve access token.', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Exception while retrieving access token.', [
-                'error' => $e->getMessage(),
-            ]);
+        if ($response->successful()) {
+            $this->accessToken = $response->json()['access_token'];
+            return $this->accessToken;
         }
+
+        Log::error('Failed to retrieve access token.', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
 
         return null;
     }
@@ -81,10 +68,8 @@ class SysApiService
      */
     public function getAllDCVends(string $operatorCode): ?array
     {
-        try {
+        // try {
             $accessToken = $this->getAccessToken();
-
-            // dd($accessToken);
 
             if (!$accessToken) {
                 throw new \Exception('Access token is not available.');
@@ -106,15 +91,14 @@ class SysApiService
                 'body' => $response->body(),
             ]);
 
-            return null;
-        } catch (\Exception $e) {
-            Log::error('SysApiService getAllDCVends encountered an exception.', [
-                'operatorCode' => $operatorCode,
-                'error' => $e->getMessage(),
-            ]);
+        // } catch (\Exception $e) {
+        //     Log::error('SysApiService getAllDCVends encountered an exception.', [
+        //         'operatorCode' => $operatorCode,
+        //         'error' => $e->getMessage(),
+        //     ]);
 
-            return null;
-        }
+        //     return null;
+        // }
     }
 
     /**

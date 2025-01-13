@@ -44,7 +44,7 @@ function toggleMenu() {
                         >
                             Home
                         </Link>
-                        <!-- <Link
+                        <Link
                             :href="route('about')"
                             :class="[
                                 'text-lg text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-[4pt] hover:decoration-red-600 hover:decoration-2',
@@ -52,7 +52,7 @@ function toggleMenu() {
                             ]"
                         >
                             About
-                        </Link> -->
+                        </Link>
                         <Link
                             :href="route('contact-us')"
                             :class="[
@@ -88,12 +88,12 @@ function toggleMenu() {
                     >
                         Home
                     </ResponsiveNavLink>
-                    <!-- <ResponsiveNavLink
+                    <ResponsiveNavLink
                         :href="route('about')"
                         :active="route().current('about')"
                     >
                         About
-                    </ResponsiveNavLink> -->
+                    </ResponsiveNavLink>
                     <ResponsiveNavLink
                         :href="route('contact-us')"
                         :active="route().current('contact-us')"

@@ -47,7 +47,7 @@ class PlanSeeder extends Seeder
             'name' => 'Gold Member',
             'level' => 2,
             'price' => 3, // $3.00 per month
-            'desc' => '25% discount every purchase. Monthly: Free x2 vouchers for 40% discount. Monthly: Free 1x Cornetto voucher (worth $3.00).',
+            'desc' => '4 times: 30% discount on all products',
             'is_active' => true,
             'is_stackable' => false,
         ]);

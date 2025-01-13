@@ -39,7 +39,8 @@ class GuestController extends Controller
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
-            'dcVends' => $this->sysApiService->getAllDCVends('HIPL'),
+            // 'dcVends' => $this->sysApiService->getAllDCVends('HIPL'),
+            'dcVends' => [],
             'laravelVersion' => Application::VERSION,
             'mapApiKey' => $this->mapService->getMapApiKey(),
             'phpVersion' => PHP_VERSION,
