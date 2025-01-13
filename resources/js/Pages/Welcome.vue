@@ -3,30 +3,44 @@
         <Head title="DCVend Membership" />
 
         <!-- Hero Section -->
-        <section class="text-white rounded my-2">
+        <section class="text-white rounded my-2 px-2">
             <img src="/images/banner_2.jpg" alt="DCVend Banner" class="w-full rounded hidden md:block" />
             <img src="/images/banner_mobile_1.jpg" alt="DCVend Banner Mobile" class="w-full rounded md:hidden">
         </section>
 
         <!-- Stats Section -->
-        <section class="bg-white py-8">
+        <section class="bg-white py-8 px-4">
             <div class="text-center text-red-600 text-3xl font-semibold tracking-wide">
                 <div class="md:w-1/2 mx-auto">
                     Enjoy premium ice cream at 30% discount with a DCVend membership
                 </div>
             </div>
-            <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-4 md:gap-8 md:w-2/5 text-center">
+            <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-4 md:gap-8 md:w-2/5 text-center mx-auto">
                 <div class="bg-yellow-300 py-6 px-10 rounded-lg shadow-md">
-                    <p class="text-2xl font-bold text-red-600">{{stats['users'].toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}} Members</p>
+                    <p class="text-2xl font-bold text-red-600 flex items-center space-x-2">
+                        <span class="text-3xl font-extrabold drop-shadow-sm">
+                            {{stats['users'].toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}}
+                        </span>
+                        <span>
+                            Members
+                        </span>
+                    </p>
                 </div>
                 <div class="bg-yellow-300 py-6 px-10 rounded-lg shadow-md">
-                    <p class="text-2xl font-bold text-red-600">S$ {{ stats['discount'].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }} Discount Given</p>
+                    <p class="text-2xl font-bold text-red-600 flex items-center space-x-2">
+                        <span class="text-3xl font-extrabold drop-shadow-sm">
+                            S$ {{ stats['discount'].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}
+                        </span>
+                        <span>
+                            Discount Given
+                        </span>
+                    </p>
                 </div>
             </div>
         </section>
 
         <!-- Why Join Section -->
-        <section class="pb-6 pt-5 md:pt-8 bg-white">
+        <section class="pb-6 pt-5 md:pt-8 bg-white px-6">
             <div class="container mx-auto max-w-4xl text-center">
                 <h2 class="text-3xl font-bold text-red-600 mb-6">Why Join DCVend?</h2>
                 <ul class="text-gray-600 space-y-1 text-left md:text-center">
@@ -50,7 +64,7 @@
         </section>
 
         <!-- Membership Plans -->
-        <section class="py-6 md:py-12 bg-gray-50 rounded">
+        <section class="py-6 md:py-12 bg-gray-50 rounded px-6">
             <div class="container mx-auto max-w-6xl text-center">
                 <h2 class="text-3xl font-bold text-red-600 mb-8">Membership Plans</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -93,11 +107,11 @@
         </section>
 
         <!-- Call to Action Section -->
-        <section class="bg-white py-8">
+        <section class="bg-white py-8 px-6">
             <div class="text-center text-gray-600 text-2xl font-semibold tracking-wide md:w-3/5 mx-auto">
                 Free 2 months VIP member package for new sign-up, with FREE upgrade to unlimited times of 30% discount on all products
             </div>
-            <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center">
+            <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
                 <Link :href="route('register')" class="bg-yellow-300 py-4 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400">
                     SIGN UP NOW
                 </Link>
