@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'phoneCountry' => CountryResource::make($this->whenLoaded('phoneCountry')),
             'phone_number' => $this->phone_number,
+            'plan' => PlanResource::make($this->whenLoaded('plan')),
         ];
     }
 }

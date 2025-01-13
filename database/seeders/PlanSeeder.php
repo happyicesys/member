@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Plan;
+use App\Models\PlanItem;
+use App\Models\User;
+use DB;
 
 class PlanSeeder extends Seeder
 {
@@ -12,58 +15,72 @@ class PlanSeeder extends Seeder
      */
     public function run(): void
     {
-        // Basic Member
-        Plan::create([
-            'name' => 'Basic Member',
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            Plan::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+
+        // Free Member
+        $freePlan = Plan::create([
+            'name' => 'Free Member',
             'level' => 1,
             'price' => 0, // Free
-            'desc' => 'Enjoy 5% discount for every purchase.',
+            'desc' => '1 time: 30% discount on all products',
             'is_active' => true,
-            'base_discount_percent' => 5,
             'is_stackable' => false,
-            'is_monthly_discount_voucher' => false,
-            'monthly_discount_voucher_count' => 0,
-            'monthly_discount_voucher_percent' => 0,
-            'is_monthly_free_item' => false,
-            'monthly_free_item_count' => 0,
-            'monthly_free_item_label' => null,
-            'monthly_free_item_ref_id' => null,
         ]);
 
-        // VIP Member
-        Plan::create([
-            'name' => 'VIP Member',
+        PlanItem::create([
+            'plan_id' => $freePlan->id,
+            'name' => '1 time: 30% discount on all products',
+            'cycle' => 1,
+            'frequency' => 'monthly',
+            'is_base' => true,
+            'max_count' => 1,
+            'promo_type' => 'percent',
+            'promo_value' => 30,
+        ]);
+
+
+        // Gold Member
+        $goldPlan = Plan::create([
+            'name' => 'Gold Member',
             'level' => 2,
             'price' => 3, // $3.00 per month
             'desc' => '25% discount every purchase. Monthly: Free x2 vouchers for 40% discount. Monthly: Free 1x Cornetto voucher (worth $3.00).',
             'is_active' => true,
-            'base_discount_percent' => 25,
             'is_stackable' => false,
-            'is_monthly_discount_voucher' => true,
-            'monthly_discount_voucher_count' => 2,
-            'monthly_discount_voucher_percent' => 40,
-            'is_monthly_free_item' => true,
-            'monthly_free_item_count' => 1,
-            'monthly_free_item_label' => 'Monthly: Free 1x Cornetto voucher (worth $3.00)',
-            'monthly_free_item_ref_id' => 'classic_cornetto',
         ]);
 
-        // Super VIP Member
-        Plan::create([
-            'name' => 'Super VIP Member',
-            'level' => 3,
-            'price' => 4.7, // $4.70 per month
-            'desc' => '25% discount every purchase. Monthly: Free x10 vouchers for 40% discount. Monthly: Free 1x Magnum voucher (worth $4.70).',
-            'is_active' => true,
-            'base_discount_percent' => 25,
-            'is_stackable' => false,
-            'is_monthly_discount_voucher' => true,
-            'monthly_discount_voucher_count' => 10,
-            'monthly_discount_voucher_percent' => 40,
-            'is_monthly_free_item' => true,
-            'monthly_free_item_count' => 1,
-            'monthly_free_item_label' => 'Monthly: Free 1x Magnum voucher (worth $4.70)',
-            'monthly_free_item_ref_id' => 'magnum_series',
+        PlanItem::create([
+            'plan_id' => $goldPlan->id,
+            'name' => '4 times: 30% discount on all products',
+            'cycle' => 2,
+            'frequency' => 'monthly',
+            'is_base' => true,
+            'max_count' => 4,
+            'promo_type' => 'percent',
+            'promo_value' => 30,
         ]);
+
+        // Platinum Member
+        Plan::create([
+            'name' => 'Platinum Member',
+            'level' => 3,
+            'price' => 5, // $5.00 per month
+            'desc' => 'Unlimited: 30% discount on all products
+            FREE: 1x Magnum ice cream (worth: S$4.70)
+            Unlimited: Daily Deals, daily basis
+            Unlimited: 8% cashback on orders via Grab
+            Unlimited: 8% discount from affiliated vending machines',
+            'is_active' => false,
+            'is_stackable' => false,
+        ]);
+
+        $users = User::all();
+
+        foreach ($users as $user) {
+            $user->update(['plan_id' => $goldPlan->id]);
+        }
     }
 }

@@ -23,7 +23,7 @@ class AuthController extends Controller
             return $this->error('Invalid credentials', null, 401);
         }
 
-        $user = User::with('phoneCountry')->where('phone_number', $request->phone_number)->first();
+        $user = User::with(['phoneCountry', 'plan'])->where('phone_number', $request->phone_number)->first();
 
         $user->tokens()->delete();
 

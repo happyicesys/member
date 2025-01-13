@@ -6,13 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlanItem extends Model
 {
-
-
     protected $fillable = [
-        'plan_id',
+        'cycle',
+        'datetime_from',
+        'datetime_to',
+        'frequency',
+        'is_base',
+        'max_count',
         'name',
+        'plan_id',
         'product_codes_json',
-        'type',
+        'promo_type',
+        'promo_value',
+        'used_count',
     ];
 
     protected $casts = [

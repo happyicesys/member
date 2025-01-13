@@ -11,25 +11,14 @@ class Plan extends Model
         'level',
         'name',
         'price',
-        'external_ref_id',
         'desc',
         'is_active',
         'is_stackable',
-        'base_discount_percent',
-        'is_monthly_discount_voucher',
-        'monthly_discount_voucher_count',
-        'monthly_discount_voucher_percent',
-        'is_monthly_free_item',
-        'monthly_free_item_count',
-        'monthly_free_item_label',
-        'monthly_free_item_ref_id',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_stackable' => 'boolean',
-        'is_monthly_discount_voucher' => 'boolean',
-        'is_monthly_free_item' => 'boolean',
     ];
 
     // relationships
