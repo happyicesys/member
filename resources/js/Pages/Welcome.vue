@@ -99,8 +99,8 @@
                         </h3>
                         <ul class="text-gray-500 mb-4 space-y-2">
                             <li><strong>Unlimited:</strong> 30% discount on all products</li>
-                            <li><strong>FREE:</strong> 1x Magnum ice cream (worth: S$4.70)</li>
-                            <li><strong>Unlimited:</strong> Daily Deals, daily basis</li>
+                            <li><strong>FREE:</strong> S$2 voucher</li>
+                            <li><strong>Unlimited:</strong> Crazy after-meal deals</li>
                             <li><strong>Unlimited:</strong> 8% cashback on orders via Grab</li>
                             <li><strong>Unlimited:</strong> 8% discount from affiliated vending machines</li>
 

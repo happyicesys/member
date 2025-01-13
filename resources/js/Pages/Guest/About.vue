@@ -4,8 +4,8 @@
 
         <!-- Hero Section -->
         <section class="text-white rounded my-2 px-2">
-            <img src="/images/banner_about_1.jpg" alt="DCVend About Banner" class="w-full rounded hidden md:block" />
-            <img src="/images/banner_about_mobile_1.jpg" alt="DCVend About Banner Mobile" class="w-full rounded md:hidden">
+            <img src="/images/banner_about_2.jpg" alt="DCVend About Banner" class="w-full rounded hidden md:block" />
+            <img src="/images/banner_about_mobile_2.jpg" alt="DCVend About Banner Mobile" class="w-full rounded md:hidden">
         </section>
 
 
