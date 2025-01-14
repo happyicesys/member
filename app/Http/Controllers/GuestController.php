@@ -54,6 +54,11 @@ class GuestController extends Controller
         return Inertia::render('Guest/PrivacyPolicy');
     }
 
+    public function privacyPolicyOpn()
+    {
+        return Inertia::render('Guest/PrivacyPolicyOpn');
+    }
+
     public function stats()
     {
         return [

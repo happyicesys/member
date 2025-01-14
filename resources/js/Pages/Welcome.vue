@@ -4,8 +4,8 @@
 
         <!-- Hero Section -->
         <section class="text-white rounded my-2 px-2">
-            <img src="/images/banner_2.jpg" alt="DCVend Banner" class="w-full rounded hidden md:block" />
-            <img src="/images/banner_mobile_1.jpg" alt="DCVend Banner Mobile" class="w-full rounded md:hidden">
+            <img src="/images/banner_3.jpg" alt="DCVend Banner" class="w-full rounded hidden md:block" />
+            <img src="/images/banner_mobile_3.jpg" alt="DCVend Banner Mobile" class="w-full rounded md:hidden">
         </section>
 
         <!-- Stats Section -->
@@ -16,9 +16,9 @@
                 </div>
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-4 md:gap-8 md:w-2/5 text-center mx-auto">
-                <div class="bg-yellow-300 py-6 px-10 rounded-lg shadow-md">
-                    <p class="text-2xl font-bold text-gray-600 flex flex-col items-center space-y-2">
-                        <span class="text-5xl font-extrabold drop-shadow-sm">
+                <div class="bg-yellow-300 py-3 md:py-6 px-14 rounded-lg shadow-md">
+                    <p class="text-xl md:text-2xl font-bold text-gray-600 flex flex-col items-center space-y-2">
+                        <span class="text-3xl md:text-5xl font-extrabold drop-shadow-sm">
                             {{stats['users'].toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}}
                         </span>
                         <span>
@@ -26,9 +26,9 @@
                         </span>
                     </p>
                 </div>
-                <div class="bg-yellow-300 py-6 px-10 rounded-lg shadow-md">
-                    <p class="text-2xl font-bold text-gray-600 flex flex-col  items-center space-y-2">
-                        <span class="text-5xl font-extrabold drop-shadow-sm">
+                <div class="bg-yellow-300 py-3 md:py-6 px-10 rounded-lg shadow-md hidden">
+                    <p class="text-xl md:text-2xl font-bold text-gray-600 flex flex-col  items-center space-y-2">
+                        <span class="text-3xl md:text-5xl font-extrabold drop-shadow-sm">
                             S$ {{ stats['discount'].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}
                         </span>
                         <span>
@@ -38,14 +38,14 @@
                 </div>
             </div>
             <div class="text-right text-gray-600 text-md mt-2">
-                <div class="md:w-1/3 mx-auto">
+                <div class="md:w-1/5 mx-auto">
                     updated daily
                 </div>
             </div>
         </section>
 
         <!-- Why Join Section -->
-        <section class="pb-6 pt-4 md:pt-6 bg-white px-6">
+        <section class="pb-6 pt-2 md:pt-6 bg-white px-6">
             <div class="container mx-auto max-w-4xl text-center">
                 <h2 class="text-3xl font-bold text-red-600 mb-6">Why Join DCVend?</h2>
                 <ul class="text-gray-600 space-y-1 text-left md:text-center">
@@ -62,7 +62,7 @@
                         <strong>Instant Delivery:</strong> Order via Grab and get 8% cashback.
                     </li>
                     <li>
-                        <strong>Daily Deals:</strong> Incredible savings on a rotating selection of flavours.
+                        <strong>Crazy After-Meal Deals:</strong> Incredible savings on a rotating selection of flavours.
                     </li>
                 </ul>
             </div>
@@ -95,7 +95,7 @@
                     <div class="bg-slate-300 rounded-md shadow-md p-6 text-center">
                         <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4">
                             Platinum Member
-                            <small class="text-sm">(Coming soon)</small>
+                            <small class="text-sm text-red-600">(Coming soon)</small>
                         </h3>
                         <ul class="text-gray-500 mb-4 space-y-2">
                             <li><strong>Unlimited:</strong> 30% discount on all products</li>
@@ -114,7 +114,7 @@
         <!-- Call to Action Section -->
         <section class="bg-white py-8 px-6">
             <div class="text-center text-gray-600 text-2xl font-semibold tracking-wide md:w-3/5 mx-auto">
-                Free 2 months VIP member package for new sign-up, with FREE upgrade to unlimited times of 30% discount on all products
+                <strong>New Sign-up:</strong> Free Gold Member package, with FREE upgrade to unlimited times of 30% discount on all products, for 2 months
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
                 <Link :href="route('register')" class="bg-yellow-300 py-4 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400">
