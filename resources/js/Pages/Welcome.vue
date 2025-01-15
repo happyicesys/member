@@ -12,7 +12,7 @@
         <section class="bg-white py-8 px-4">
             <div class="text-center text-red-600 text-3xl font-semibold tracking-wide">
                 <div class="md:w-1/2 mx-auto">
-                    Enjoy premium ice cream at 30% discount with a DCVend membership
+                    Buy 1 ice cream also get 30% discount with a DCVend membership
                 </div>
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-4 md:gap-8 md:w-2/5 text-center mx-auto">
@@ -53,7 +53,7 @@
                         <strong>Discount & Convenient:</strong> Enjoy 30% off premium ice cream, 24/7
                     </li>
                     <li>
-                        <strong>Free membership:</strong> Start saving today! Upgrade to VIP for exclusive perks.
+                        <strong>Free membership:</strong> Start saving today! Upgrade membership for more benefits.
                     </li>
                     <li>
                         <strong>Exclusive Perks:</strong> Unlock special products and offers from our partners.
@@ -93,8 +93,10 @@
 
                     <!-- SuperVIP Member -->
                     <div class="bg-slate-300 rounded-md shadow-md p-6 text-center">
-                        <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4">
-                            Platinum Member
+                        <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4 flex flex-col">
+                            <span>
+                                Platinum Member
+                            </span>
                             <small class="text-sm text-red-600">(Coming soon)</small>
                         </h3>
                         <ul class="text-gray-500 mb-4 space-y-2">
@@ -105,7 +107,7 @@
                             <li><strong>Unlimited:</strong> 8% discount from affiliated vending machines</li>
 
                         </ul>
-                        <p class="text-xl font-bold text-gray-600">S$ 5.00/ month</p>
+                        <p class="text-xl font-bold text-gray-600">S$ 4.80/ month</p>
                     </div>
                 </div>
             </div>
@@ -117,7 +119,7 @@
                 <strong>New Sign-up:</strong> Free Gold Member package, with FREE upgrade to unlimited times of 30% discount on all products, for 2 months
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
-                <Link :href="route('register')" class="bg-yellow-300 py-4 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400">
+                <Link :href="route('register')" class="bg-yellow-300 py-8 px-16 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-3xl hover:bg-yellow-400">
                     SIGN UP NOW
                 </Link>
             </div>

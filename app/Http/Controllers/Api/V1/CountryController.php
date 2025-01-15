@@ -17,7 +17,10 @@ class CountryController extends Controller
     public function index()
     {
         $countries = CountryResource::collection(
-            Country::all()
+            Country::where('is_active', true)
+            ->orderByRaw('ISNULL(sequence), sequence ASC')
+            ->orderBy('phone_code')
+            ->get()
         );
 
         return $this->success('Successful', $countries);

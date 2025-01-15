@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             // CountrySeeder::class,
             // PaymentGatewayStripeSeeder::class,
             PlanSeeder::class,
+            CompleteCountrySeeder::class,
         ]);
     }
 }

@@ -34,7 +34,9 @@ class AuthenticatedSessionController extends Controller
     {
         return Inertia::render('Auth/Login', [
             'countryOptions' => CountryResource::collection(
-                Country::orderBy('sequence')->get()
+                Country::orderByRaw('ISNULL(sequence), sequence ASC')
+                ->orderBy('phone_code')
+                ->get()
             ),
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
@@ -45,7 +47,9 @@ class AuthenticatedSessionController extends Controller
     {
         return Inertia::render('Auth/Forgot', [
             'countryOptions' => CountryResource::collection(
-                Country::orderBy('sequence')->get()
+                Country::orderByRaw('ISNULL(sequence), sequence ASC')
+                ->orderBy('phone_code')
+                ->get()
             ),
         ]);
     }

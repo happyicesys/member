@@ -257,8 +257,8 @@ const submit = () => {
                 Resend SMS in {{ countdown }} seconds...
             </div>
 
-            <div class="mt-2 flex items-center justify-center">
-                <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-2 gap-8 md:w-2/5 text-center">
+            <div class="mt-2 items-center justify-center">
+                <div class="flex flex-col w-fit justify-self-center mt-10 gap-2 md:w-3/5 text-center">
                     <button
                         @click="submit"
                         type="submit"
@@ -272,13 +272,19 @@ const submit = () => {
                     >
                         SIGN UP
                     </button>
+                    <span class="text-sm">
+                        As per register, you agree to our
+                        <Link :href="route('terms-and-conditions')" class="text-blue-500 underline">Terms & Conditions</Link>
+                        and
+                        <Link :href="route('privacy-policy')" class="text-blue-500 underline">Privacy Policy</Link>.
+                    </span>
                 </div>
             </div>
 
-            <div class="my-5 flex items-center justify-end">
+            <div class="my-10 flex items-center justify-end">
                 <Link
                     :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    class="rounded-md text-md text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Already Sign Up?
                 </Link>

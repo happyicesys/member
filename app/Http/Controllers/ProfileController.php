@@ -22,7 +22,9 @@ class ProfileController extends Controller
     {
         return Inertia::render('Profile/Edit', [
             'countryOptions' => CountryResource::collection(
-                Country::orderBy('sequence')->get()
+                Country::orderByRaw('ISNULL(sequence), sequence ASC')
+                ->orderBy('phone_code')
+                ->get()
             ),
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),

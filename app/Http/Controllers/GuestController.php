@@ -30,6 +30,11 @@ class GuestController extends Controller
         return Inertia::render('Guest/ContactUs');
     }
 
+    public function dataProtectionPolicy()
+    {
+        return Inertia::render('Guest/DataProtectionPolicy');
+    }
+
     public function home()
     {
         $plans = Plan::active()->get();

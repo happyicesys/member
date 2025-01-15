@@ -13,11 +13,13 @@ class Plan extends Model
         'price',
         'desc',
         'is_active',
+        'is_available',
         'is_stackable',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_available' => 'boolean',
         'is_stackable' => 'boolean',
     ];
 
