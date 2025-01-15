@@ -157,15 +157,15 @@
                         <tbody>
                             <tr v-for="(vend, index) in dcvends" :key="vend.code" @click="highlightMarker(index)" class="cursor-pointer hover:bg-gray-50 transition duration-200">
                                 <td class="border border-gray-300 px-4 py-2 text-center font-medium">{{ vend.code }}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">{{ vend.customer.name }}</td>
-                                <td class="border border-gray-300 px-4 py-2">{{ vend.customer.address.full_address }}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">{{ vend.customer?.name }}</td>
+                                <td class="border border-gray-300 px-4 py-2">{{ vend.customer?.address?.full_address }}</td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">
                                     <span @click="showChannel(vend)" class="text-blue-500 underline hover:cursor-point">
                                         Menu
                                     </span>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">
-                                    <a :href="vend.customer.address.map_url" target="_blank" class="text-blue-500 underline">
+                                    <a :href="vend.customer?.address?.map_url" target="_blank" class="text-blue-500 underline">
                                         Navigate
                                     </a>
                                 </td>
@@ -275,8 +275,10 @@ function initializeMapWithDefaultLocation() {
 }
 
 function addMarkers() {
+    markers = []; // Reset the markers array
+
     // Add a marker for each customer
-    dcvends.value.forEach((vend, index) => {
+    dcvends.value.forEach((vend, tableIndex) => {
         const { customer } = vend;
         if (customer && customer.address) {
             const { latitude, longitude, full_address } = customer.address;
@@ -314,12 +316,12 @@ function addMarkers() {
                 marker.addListener('mouseover', () => infoWindow.open(map, marker));
                 marker.addListener('mouseout', () => infoWindow.close());
 
-                markers.push({ marker, index });
+                // Store marker and its tableIndex
+                markers.push({ marker, tableIndex });
             }
         }
     });
 
-    // Optionally, add a fallback for debugging
     if (dcvends.value.length === 0) {
         console.warn('No customer data available for markers.');
     }
@@ -346,10 +348,10 @@ function addSelfMarker(userLocation) {
     });
 }
 
-function highlightMarker(index) {
-
-    if (markers[index]) {
-        const { marker } = markers[index];
+function highlightMarker(tableIndex) {
+    const markerObj = markers.find((m) => m.tableIndex === tableIndex);
+    if (markerObj) {
+        const { marker } = markerObj;
 
         // Animate the marker
         marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -365,11 +367,13 @@ function highlightMarker(index) {
     }
 }
 
+
 function onChannelClosed() {
     showChannelModal.value = false
 }
 
 function showChannel(vend) {
+    vendObject.value = []
     vendObject.value = vend
     showChannelModal.value = true
 }

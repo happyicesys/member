@@ -54,8 +54,8 @@
                         <span
                           :class="{
                             'bg-green-200 text-green-800': channel.qty >= 3,
-                            'bg-orange-200 text-orange-800': channel.qty > 1 && channel.qty < 3,
-                            'bg-red-200 text-red-800': channel.qty === 0 || channel.vend_channel_error_logs?.length,
+                            'bg-orange-200 text-orange-800': channel.qty >= 1 && channel.qty < 3,
+                            'bg-red-200 text-red-800': channel.qty == 0 || channel.vend_channel_error_logs?.length,
                           }"
                           class="px-2 py-1 rounded-full text-xs font-bold"
                         >
@@ -103,7 +103,6 @@ const channels = ref([]);
 const highlightedChannel = ref(null);
 
 onMounted(() => {
-  console.log(props.vend);
   channels.value = props.vend.vendChannels.map((channel) => ({
     ...channel,
     product: channel.product || {},
@@ -116,8 +115,8 @@ function highlightChannel(index) {
 
 function getStatusLabel(channel) {
   if (channel.qty >= 3) return 'Available';
-  if (channel.qty > 1 && channel.qty < 3) return 'Selling Out Fast';
-  if (channel.qty === 0 || channel.vend_channel_error_logs?.length) return 'Sold Out';
+  if (channel.qty >= 1 && channel.qty < 3) return 'Selling Out Fast';
+  if (channel.qty == 0 || channel.vend_channel_error_logs?.length) return 'Sold Out';
   return 'Unknown';
 }
 </script>
