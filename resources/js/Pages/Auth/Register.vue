@@ -19,8 +19,8 @@ const form = useForm({
     dob: '',
     name: '',
     email: '',
-    otp: '',
-    passwordParts: ['', '', '', '', '', ''],
+    otpParts: ['', '', '', '', ''],
+    password: '',
     phone_number: '',
 });
 
@@ -34,15 +34,15 @@ const props = defineProps({
 
 // Handle input and jump to the next or previous input field
 const onInput = (index) => {
-    if (form.passwordParts[index].length === 1 && index < form.passwordParts.length - 1) {
+    if (form.otpParts[index].length === 1 && index < form.otpParts.length - 1) {
         // Move focus to the next input
-        const nextInput = document.getElementById(`password_${index + 1}`);
+        const nextInput = document.getElementById(`otp_${index + 1}`);
         if (nextInput) {
             nextInput.focus();
         }
-    } else if (form.passwordParts[index].length === 0 && index > 0) {
+    } else if (form.otpParts[index].length === 0 && index > 0) {
         // Move focus to the previous input when deleting
-        const prevInput = document.getElementById(`password_${index - 1}`);
+        const prevInput = document.getElementById(`otp_${index - 1}`);
         if (prevInput) {
             prevInput.focus();
         }
@@ -196,61 +196,59 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.phone_number" />
             </div>
 
-            <!-- Password (6-digit PIN) -->
-            <div class="mt-4">
-                <InputLabel for="password" value="Create Your Own 6-digits PIN" />
-                <div class="mt-2 grid grid-cols-6 gap-2">
+            <hr class="mt-4" v-if="isShowOtpDiv">
+            <!-- OTP Input -->
+            <div class="mt-4" v-if="isShowOtpDiv">
+                <InputLabel for="otp" value="OTP" />
+                <div class="flex space-x-1">
                     <TextInput
-                        v-for="(part, index) in form.passwordParts"
+                        v-for="(part, index) in form.otpParts"
                         :key="index"
-                        :id="'password_' + index"
-                        class="block w-14 text-center px-2 py-3 border rounded-md focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                        :id="'otp_' + index"
+                        class="block flex w-14 text-center px-2 py-3 border rounded-md focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                         maxlength="1"
-                        :class="{
-                            'bg-gray-100': !isFilledFieldEditable,
-                            'cursor-not-allowed': !isFilledFieldEditable
-                        }"
-                        v-model="form.passwordParts[index]"
-                        :disabled="!isFilledFieldEditable"
+                        v-model="form.otpParts[index]"
                         @input="onInput(index)"
                         inputmode="numeric"
                         type="text"
                         pattern="[0-9]*"
                         required
-                        ref="passwordInputs"
+                        ref="otpInputs"
                     />
                 </div>
-                <InputError class="mt-2" :message="form.errors.passwordParts" />
+                <InputError class="mt-2" :message="form.errors.otpParts" />
             </div>
 
-            <div v-if="isShowOtpDiv">
-                <hr class="mt-4">
-                <!-- OTP Input -->
-                <div class="mt-4">
-                    <InputLabel for="otp" value="OTP" />
-
-                    <TextInput
-                        id="otp"
-                        type="text"
-                        class="mt-1 block w-full"
-                        v-model="form.otp"
-                        placeholder="5 digits from your SMS"
-                    />
-                    <InputError class="mt-2" :message="form.errors.otp" />
-                </div>
+            <!-- Password (6-digit PIN) -->
+            <div class="mt-4" v-if="isShowOtpDiv">
+                <InputLabel for="password" value="Password (6-digits PIN)" />
+                <TextInput
+                    id="password"
+                    type="number"
+                    class="mt-1 w-full"
+                    v-model="form.password"
+                    placeholder="Numbers Only"
+                />
+                <InputError class="mt-2" :message="form.errors.password" />
             </div>
+
 
             <div class="mt-4 flex items-center justify-end">
                 <PrimaryButton
                     @click.prevent="verifyPhoneNumber"
                     class="ms-2"
                     :class="{
-                        'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || form.passwordParts.some(part => part === '') || isCountdownActive,
-                        'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || form.passwordParts.some(part => part === '') || isCountdownActive
+                        'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive,
+                        'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive
                     }"
-                    :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || form.passwordParts.some(part => part === '') || isCountdownActive"
+                    :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive"
                 >
-                    Verify Your Phone Number
+                    <span v-if="isOtpRequested">
+                        Resend OTP
+                    </span>
+                    <span v-else>
+                        Verify Your Phone Number
+                    </span>
                 </PrimaryButton>
             </div>
             <div v-if="isCountdownActive" class="flex justify-end mt-1 text-sm text-blue-500">
@@ -264,10 +262,10 @@ const submit = () => {
                         type="submit"
                         class="bg-yellow-300 py-2 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400"
                         :class="{
-                            'opacity-25': !form.otp,
-                            'cursor-not-allowed': !form.otp
+                            'opacity-25': !form.otpParts || !form.password,
+                            'cursor-not-allowed': !form.otpParts || !form.password
                         }"
-                        :disabled="!form.otp"
+                        :disabled="!form.otpParts || !form.password"
                         v-if="isShowOtpDiv"
                     >
                         SIGN UP

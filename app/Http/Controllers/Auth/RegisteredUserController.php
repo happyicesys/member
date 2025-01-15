@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\OTPService;
 use App\Services\IsmsService;
 use App\Services\OneWaySmsService;
+use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -22,12 +23,14 @@ use Inertia\Response;
 class RegisteredUserController extends Controller
 {
     protected $otpService;
+    protected $userService;
 
     public function __construct()
     {
         // Dynamically select the SMS service based on the environment variable
         $smsService = $this->getSmsService();
         $this->otpService = new OTPService($smsService);
+        $this->userService = new UserService();
     }
 
     /**
@@ -72,8 +75,9 @@ class RegisteredUserController extends Controller
         // Verify OTP
         $this->validateOtp($request);
 
-        $request->merge([
-            'password' => implode('', $request->passwordParts),
+        // validate password
+        $request->validate([
+            'password' => 'required|digits:6',
         ]);
 
         // Create the user
@@ -87,7 +91,10 @@ class RegisteredUserController extends Controller
             'phone_country_id' => $request->country_id,
             'phone_number' => $request->phone_number,
             'phone_number_verified_at' => Carbon::now(),
+            'plan_id' => 3,
         ]);
+
+        $this->userService->validateIsActiveCountry($request->country_id);
 
         // Fire the Registered event and log the user in
         event(new Registered($user));
@@ -124,6 +131,10 @@ class RegisteredUserController extends Controller
      */
     private function validateOtp(Request $request)
     {
+        $request->merge([
+            'otp' => implode('', $request->otpParts),
+        ]);
+
         $request->validate([
             'otp' => 'required|digits:5',
         ]);
@@ -159,8 +170,19 @@ class RegisteredUserController extends Controller
             'dob' => 'required|date|before:-10 years',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'name' => 'required|string|max:255',
-            'passwordParts.*' => 'required|digits:1',
+            // 'password' => 'required|digits:6',
+            // 'passwordParts.*' => 'required|digits:1',
             'phone_number' => 'required|string|phone:' . $country->abbreviation,
         ]);
+
+        // Validate phone number
+        // $replicatedNumber = User::where('phone_country_id', $request->country_id)
+        //     ->where('phone_number', $request->phone_number)
+        //     ->first();
+        // if($replicatedNumber) {
+        //     throw ValidationException::withMessages([
+        //         'phone_number' => 'Phone number already exists.',
+        //     ]);
+        // }
     }
 }

@@ -40,6 +40,7 @@ import GuestLayout from '@/Layouts/GuestLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 
+
 onMounted(() => {
     // Load the JotForm Embed Handler script
     const script = document.createElement('script');

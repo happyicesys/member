@@ -40,20 +40,9 @@ class SysApiService
                 'operatorCode' => $operatorCode,
             ]);
 
-            dd([
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
         if ($response->successful()) {
             return $response->json();
         }
-
-        Log::error('SysApiService getAllDCVends request failed.', [
-            'operatorCode' => $operatorCode,
-            'status' => $response->status(),
-            'body' => $response->body(),
-        ]);
 
         return null;
     }

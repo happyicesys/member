@@ -50,7 +50,7 @@
                 <h2 class="text-3xl font-bold text-red-600 mb-6">Why Join DCVend?</h2>
                 <ul class="text-gray-600 space-y-1 text-left md:text-center">
                     <li>
-                        <strong>Discount & Convenient:</strong> Enjoy 30% off premium ice cream, 24/7
+                        <strong>Discount & Convenient:</strong> 24/7, 30% discount, even just buy 1 piece.
                     </li>
                     <li>
                         <strong>Free membership:</strong> Start saving today! Upgrade membership for more benefits.
@@ -133,33 +133,86 @@
         </section>
 
         <!-- Map Section -->
-        <section class="pb-6 pt-4 md:pt-8 bg-white">
+        <section class="pb-4 pt-4 md:pt-8 bg-white">
             <div class="container mx-auto max-w-4xl text-center">
                 <h2 class="text-3xl font-bold text-red-600 mb-6">DCVend Location</h2>
             </div>
-            <div id="map" class="sm:col-span-6 mb-3 items-center mx-auto w-11/12 md:w-9/12 h-96"></div>
+            <div id="map" class="sm:col-span-6 items-center mx-auto w-11/12 md:w-10/12 h-96"></div>
         </section>
 
-
+        <section class="pb-10 pt-2 bg-white px-4 md:px-16">
+            <!-- Table Section -->
+            <div class="container mx-auto md:max-w-6xl mt-2">
+                <div class="overflow-x-auto shadow-md rounded-lg">
+                    <table class="w-full border-collapse text-left text-sm text-gray-600">
+                        <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-3 text-center">Code</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center">Name</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center">Address</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center">Menu</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center">Map Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(vend, index) in dcvends" :key="vend.code" @click="highlightMarker(index)" class="cursor-pointer hover:bg-gray-50 transition duration-200">
+                                <td class="border border-gray-300 px-4 py-2 text-center font-medium">{{ vend.code }}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">{{ vend.customer.name }}</td>
+                                <td class="border border-gray-300 px-4 py-2">{{ vend.customer.address.full_address }}</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">
+                                    <span @click="showChannel(vend)" class="text-blue-500 underline hover:cursor-point">
+                                        Menu
+                                    </span>
+                                </td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">
+                                    <a :href="vend.customer.address.map_url" target="_blank" class="text-blue-500 underline">
+                                        Navigate
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr v-if="!dcvends">
+                                <td class="border border-gray-300 px-4 py-2 text-center" colspan="4">No data available</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </GuestLayout>
+
+<Channel
+    v-if="showChannelModal"
+    :vend="vendObject"
+    :showModal="showChannelModal"
+    @modalClose="onChannelClosed"
+>
+</Channel>
+
 </template>
 
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import { defineProps, onMounted } from 'vue';
+import Channel from '@/Pages/Guest/Channel.vue';
+import { MapIcon } from '@heroicons/vue/20/solid';
+import { Head, Link } from '@inertiajs/vue3';
+import { defineProps, onMounted, ref } from 'vue';
 
 const props = defineProps({
-    dcVends: [Array, Object],
+    dcvends: [Array, Object],
     mapApiKey: String,
     stats: [Array, Object],
 });
 
+const showChannelModal = ref(false);
+const dcvends = ref([]);
+const vendObject = ref([]);
+
 let map;
 let directionsService;
+let markers = []; // Array to store marker instances
 
 onMounted(() => {
-    console.log('DCVend:', props.dcVends);
+    dcvends.value = Array.isArray(props.dcvends?.data) ? props.dcvends.data : [];
     loadGoogleMapsApi();
 });
 
@@ -189,15 +242,11 @@ window.initMap = function () {
                     zoom: 12,
                 });
 
-                // Add markers to the map
-                addMarkers();
+                // Add self-marker
+                addSelfMarker(userLocation);
 
-                // Optionally, add a marker for the user's location
-                new google.maps.Marker({
-                    position: userLocation,
-                    map: map,
-                    label: 'You',
-                });
+                // Add customer markers
+                addMarkers();
             },
             (error) => {
                 console.error('Error getting user location:', error);
@@ -226,20 +275,106 @@ function initializeMapWithDefaultLocation() {
 }
 
 function addMarkers() {
-    const markersData = [
-        { lat: 3.139, lng: 101.6869, label: 'A' },
-        { lat: 3.141, lng: 101.689, label: 'B' },
-    ];
+    // Add a marker for each customer
+    dcvends.value.forEach((vend, index) => {
+        const { customer } = vend;
+        if (customer && customer.address) {
+            const { latitude, longitude, full_address } = customer.address;
 
-    markersData.forEach((data) => {
-        new google.maps.Marker({
-            position: { lat: data.lat, lng: data.lng },
-            map: map,
-            label: data.label,
-        });
+            if (latitude && longitude) {
+                const position = {
+                    lat: parseFloat(latitude),
+                    lng: parseFloat(longitude),
+                };
+
+                const marker = new google.maps.Marker({
+                    position,
+                    map: map,
+                    label: {
+                        text: vend.code.toString(),
+                        color: '#000000',
+                        fontWeight: 'bold',
+                    },
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 17,
+                        fillColor: '#FF6F61', // Customer marker color
+                        fillOpacity: 1,
+                        strokeColor: '#FFFFFF',
+                        strokeWeight: 2,
+                    },
+                    title: full_address,
+                });
+
+                // Attach info window to marker
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<div class="p-2 text-sm font-medium">${full_address}</div>`,
+                });
+
+                marker.addListener('mouseover', () => infoWindow.open(map, marker));
+                marker.addListener('mouseout', () => infoWindow.close());
+
+                markers.push({ marker, index });
+            }
+        }
+    });
+
+    // Optionally, add a fallback for debugging
+    if (dcvends.value.length === 0) {
+        console.warn('No customer data available for markers.');
+    }
+}
+
+function addSelfMarker(userLocation) {
+    new google.maps.Marker({
+        position: userLocation,
+        map: map,
+        label: {
+            text: 'You',
+            color: '#000000',
+            fontWeight: 'bold',
+        },
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 13,
+            fillColor: '#4CAF50', // Self-marker color
+            fillOpacity: 1,
+            strokeColor: '#FFFFFF',
+            strokeWeight: 2,
+        },
+        title: 'Your Location',
     });
 }
+
+function highlightMarker(index) {
+
+    if (markers[index]) {
+        const { marker } = markers[index];
+
+        // Animate the marker
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+
+        // Stop animation after 2 seconds
+        setTimeout(() => {
+            marker.setAnimation(null);
+        }, 2000);
+
+        // Center the map on the selected marker
+        map.setCenter(marker.getPosition());
+        map.setZoom(14);
+    }
+}
+
+function onChannelClosed() {
+    showChannelModal.value = false
+}
+
+function showChannel(vend) {
+    vendObject.value = vend
+    showChannelModal.value = true
+}
 </script>
+
 
 <style scoped>
 header {
