@@ -35,11 +35,15 @@ class SysApiService
     public function getAllDCVends(string $operatorCode): ?array
     {
         $response = Http::withToken($this->bearerToken)
-            ->post("{$this->baseUrl}/api/vends/dcvends", [
+            ->withHeaders(['Accept' => 'application/json'])
+            ->post("{$this->baseUrl}/api/client/dcvends", [
                 'operatorCode' => $operatorCode,
             ]);
 
-        dd($response);
+            dd([
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
 
         if ($response->successful()) {
             return $response->json();

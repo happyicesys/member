@@ -4,8 +4,8 @@
 
         <!-- Hero Section -->
         <section class="text-white rounded my-2 px-2">
-            <img src="/images/banner_3.jpg" alt="DCVend Banner" class="w-full rounded hidden md:block" />
-            <img src="/images/banner_mobile_3.jpg" alt="DCVend Banner Mobile" class="w-full rounded md:hidden">
+            <img src="/images/banner_4.jpg" alt="DCVend Banner" class="w-full rounded hidden md:block" />
+            <img src="/images/banner_mobile_4.jpg" alt="DCVend Banner Mobile" class="w-full rounded md:hidden">
         </section>
 
         <!-- Stats Section -->
