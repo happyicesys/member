@@ -120,7 +120,14 @@
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
                 <Link :href="route('register')" class="bg-yellow-300 py-8 px-16 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-3xl hover:bg-yellow-400">
-                    SIGN UP NOW
+                    <div class="flex flex-col space-y-2">
+                        <span>
+                            SIGN UP NOW
+                        </span>
+                        <span class="text-sm font-bold">
+                            (no credit card required)
+                        </span>
+                    </div>
                 </Link>
             </div>
         </section>
