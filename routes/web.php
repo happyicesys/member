@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 
-    Route::prefix('payment')->group(function () {
+    Route::prefix('plan')->group(function () {
         Route::get('/', [PaymentController::class, 'planIndex'])->name('plan.index');
     });
 });

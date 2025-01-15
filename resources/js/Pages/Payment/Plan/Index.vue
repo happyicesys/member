@@ -34,12 +34,23 @@ onMounted(() => {
 
             <div>
                 <div class="space-y-4">
+                    <!-- <div
+                        v-for="plan in plans"
+                        :key="plan.id"
+                        :class="[
+                            'p-6 bg-white rounded-lg shadow-md flex items-center justify-between border-2',
+                            form.plan_id === plan.id || plan.is_available ? 'border-red-400' : 'border-gray-200',
+                            plan.is_available ? '' : 'opacity-50',
+                        ]"
+                        @click="form.plan_id = plan.id"
+                    > -->
                     <div
                         v-for="plan in plans"
                         :key="plan.id"
                         :class="[
                             'p-6 bg-white rounded-lg shadow-md flex items-center justify-between border-2',
-                            form.plan_id === plan.id ? 'border-red-400' : 'border-gray-200',
+                            plan.is_available ? 'border-red-400' : 'border-gray-200',
+                            plan.is_available ? '' : 'opacity-50',
                         ]"
                         @click="form.plan_id = plan.id"
                     >
@@ -50,22 +61,29 @@ onMounted(() => {
                                 {{ plan.price > 0 ? `$${(plan.price).toFixed(2)} per month` : 'Free' }}
                             </p>
                         </div>
-                        <div class="w-24 text-right">
+                        <!-- <div class="w-24 text-right">
                             <span
                                 v-if="form.plan_id === plan.id"
                                 class="text-red-400 font-semibold"
                             >
                                 Chosen
                             </span>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
                 <div class="mt-6 text-center">
-                    <button
+                    <!-- <button
                         @click="updatePlan"
                         class="bg-red-400 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-red-500"
                         :disabled="form.processing"
+                    >
+                        Save Plan
+                    </button> -->
+                    <button
+                        @click="updatePlan"
+                        class="bg-gray-400 text-white font-bold py-3 px-6 rounded-lg shadow-md cursor-not-allowed"
+                        disabled
                     >
                         Save Plan
                     </button>

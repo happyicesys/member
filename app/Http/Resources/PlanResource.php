@@ -21,6 +21,7 @@ class PlanResource extends JsonResource
             'price' => $this->price, // Price in dollars
             'description' => $this->desc,
             'is_active' => $this->is_active,
+            'is_available' => $this->is_available,
             'is_stackable' => $this->is_stackable,
             'base' => [
                 'promo_type' => 'percent',
