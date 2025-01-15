@@ -165,7 +165,11 @@
                                     </span>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">
-                                    <a :href="vend.customer?.address?.map_url" target="_blank" class="text-blue-500 underline">
+                                    <a
+                                        :href="`https://www.google.com/maps/search/?api=1&query=${vend.customer?.address?.latitude},${vend.customer?.address?.longitude}`"
+                                        target="_blank"
+                                        class="text-blue-500 underline"
+                                    >
                                         Navigate
                                     </a>
                                 </td>
