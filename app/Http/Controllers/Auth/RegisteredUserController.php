@@ -176,13 +176,13 @@ class RegisteredUserController extends Controller
         ]);
 
         // Validate phone number
-        // $replicatedNumber = User::where('phone_country_id', $request->country_id)
-        //     ->where('phone_number', $request->phone_number)
-        //     ->first();
-        // if($replicatedNumber) {
-        //     throw ValidationException::withMessages([
-        //         'phone_number' => 'Phone number already exists.',
-        //     ]);
-        // }
+        $replicatedNumber = User::where('phone_country_id', $request->country_id)
+            ->where('phone_number', $request->phone_number)
+            ->first();
+        if($replicatedNumber) {
+            throw ValidationException::withMessages([
+                'phone_number' => 'Phone number already exists.',
+            ]);
+        }
     }
 }
