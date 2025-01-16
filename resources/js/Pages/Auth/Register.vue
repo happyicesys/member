@@ -149,10 +149,10 @@
                             @click.prevent="verifyPhoneNumber"
                             class="bg-yellow-300 py-2 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400"
                             :class="{
-                                'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid,
-                                'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid
+                                'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid,
+                                'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid
                             }"
-                            :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid"
+                            :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid"
                         >
                             NEXT
                         </button>
@@ -191,27 +191,34 @@
                 </div>
             </div>
 
-            <div class="mt-4 px-4 flex items-center justify-end">
-                <PrimaryButton
-                    @click.prevent="verifyPhoneNumber"
-                    class="ms-2"
-                    :class="{
-                        'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid,
-                        'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid
-                    }"
-                    :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid"
-                    v-if="isShowOtpDiv && !isCountdownActive"
-                >
-                    <span v-if="isOtpRequested">
-                        Resend OTP
-                    </span>
-                    <span v-else>
-                        OTP to Verify Phone Number
-                    </span>
-                </PrimaryButton>
-            </div>
-            <div v-if="isCountdownActive" class="flex justify-end mt-1 text-sm text-blue-500 px-4">
-                Resend SMS OTP in {{ countdown }} seconds...
+            <div class="flex justify-between items-center mt-2 px-5 space-x-3">
+                <div class="underline text-gray-600 hover:cursor-pointer" @click.prevent="onBackButtonClicked()" v-if="isShowOtpDiv">
+                    Back
+                </div>
+                <div>
+                    <div class="flex items-center justify-end">
+                        <PrimaryButton
+                            @click.prevent="verifyPhoneNumber"
+                            class="ms-2"
+                            :class="{
+                                'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid,
+                                'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid
+                            }"
+                            :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid"
+                            v-if="isShowOtpDiv && !isCountdownActive"
+                        >
+                            <span v-if="isOtpRequested">
+                                Resend OTP
+                            </span>
+                            <span v-else>
+                                OTP to Verify Phone Number
+                            </span>
+                        </PrimaryButton>
+                    </div>
+                    <div v-if="isShowOtpDiv && isCountdownActive" class="flex justify-end mt-1 text-sm text-blue-500">
+                        Resend SMS OTP in {{ countdown }} seconds...
+                    </div>
+                </div>
             </div>
 
             <div class="mt-2 px-4 items-center justify-center">
@@ -322,6 +329,12 @@ watch(
     },
     { immediate: true }
 );
+
+function onBackButtonClicked() {
+    isShowOtpDiv.value = false;
+    isFilledFieldEditable.value = true;
+    isOtpRequested.value = false;
+}
 
 function verifyPhoneNumber() {
     form.post(route('verification.phone-number'), {
