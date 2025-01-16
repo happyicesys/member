@@ -2,20 +2,26 @@
   <Teleport to="body">
     <Modal :open="showModal" @modalClose="$emit('modalClose')">
       <template #header>
-        <div class="flex flex-col md:flex-row space-x-3">
-          <span class="text-gray-600">
-            Machine
-            <span v-if="vend.code">ID# {{ vend.code }}</span>
-          </span>
-          <span v-if="vend.customer">
-            {{ vend.customer?.name }}
+        <div class="flex flex-col space-y-3">
+          <div class="flex flex-col md:flex-row md:space-x-3 space-y-1">
+            <span class="text-gray-600 text-sm">
+              Machine
+              <span v-if="vend.code">ID {{ vend.code }}</span>
+            </span>
+            <span v-if="vend.customer">
+              {{ vend.customer?.name }}
+            </span>
+          </div>
+          <span class="text-sm text-gray-500">
+            Loaded at {{ timingNow }}
           </span>
         </div>
       </template>
 
       <template #default>
         <div class="flex flex-col">
-          <div class="overflow-x-auto">
+          <!-- Desktop View -->
+          <div class="hidden md:block overflow-x-auto">
             <div class="inline-block min-w-full py-2 align-middle">
               <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
                 <table class="min-w-full divide-y divide-gray-300">
@@ -69,18 +75,38 @@
             </div>
           </div>
 
-          <div class="mt-4 flex justify-around text-sm">
-            <div class="flex items-center space-x-2">
-              <span class="w-4 h-4 bg-green-200 rounded-full"></span>
-              <span>Available (>= 3)</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <span class="w-4 h-4 bg-orange-200 rounded-full"></span>
-              <span>Selling Out Fast (< 3)</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <span class="w-4 h-4 bg-red-200 rounded-full"></span>
-              <span>Sold Out</span>
+          <!-- Mobile View -->
+          <div class="md:hidden space-y-2">
+            <div
+              v-for="(channel, index) in channels"
+              :key="channel.id"
+              class="p-4 bg-white shadow rounded-lg space-y-2"
+              @click="highlightChannel(index)"
+            >
+              <div class="flex items-center justify-between">
+                <span class="text-gray-600 font-semibold">Channel {{ channel.code }}</span>
+                <span
+                  :class="{
+                    'bg-green-200 text-green-800': channel.qty >= 3,
+                    'bg-orange-200 text-orange-800': channel.qty >= 1 && channel.qty < 3,
+                    'bg-red-200 text-red-800': channel.qty == 0 || channel.vend_channel_error_logs?.length,
+                  }"
+                  class="px-2 py-1 rounded-full text-xs font-bold"
+                >
+                  {{ getStatusLabel(channel) }}
+                </span>
+              </div>
+              <div class="flex items-center space-x-4">
+                <img
+                  v-if="channel.product?.thumbnail?.full_url"
+                  :src="channel.product.thumbnail.full_url"
+                  alt="Product Image"
+                  class="w-16 h-16 rounded-full"
+                />
+                <div class="flex-1">
+                  <p class="text-gray-700 font-medium">{{ channel.product?.name || 'N/A' }}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -94,8 +120,9 @@ import { onMounted, ref } from 'vue';
 import Modal from '@/Components/Modal.vue';
 
 const props = defineProps({
-  vend: Object,
   showModal: Boolean,
+  timingNow: String,
+  vend: Object,
 });
 
 const emit = defineEmits(['modalClose']);
@@ -114,8 +141,8 @@ function highlightChannel(index) {
 }
 
 function getStatusLabel(channel) {
-  if (channel.qty >= 3) return 'Available';
-  if (channel.qty >= 1 && channel.qty < 3) return 'Selling Out Fast';
+  if (channel.qty >= 3) return 'More than 3 pcs';
+  if (channel.qty >= 1 && channel.qty < 3) return 'Less than 3 pcs';
   if (channel.qty == 0 || channel.vend_channel_error_logs?.length) return 'Sold Out';
   return 'Unknown';
 }

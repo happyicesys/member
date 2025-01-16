@@ -247,7 +247,7 @@ const submit = () => {
                         Resend OTP
                     </span>
                     <span v-else>
-                        Verify Your Phone Number
+                        OTP to Verify Phone Number
                     </span>
                 </PrimaryButton>
             </div>

@@ -147,31 +147,34 @@
                     <table class="w-full border-collapse text-left text-sm text-gray-600">
                         <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
                             <tr>
-                                <th class="border border-gray-300 px-4 py-3 text-center">Code</th>
                                 <th class="border border-gray-300 px-4 py-3 text-center">Name</th>
                                 <th class="border border-gray-300 px-4 py-3 text-center">Address</th>
-                                <th class="border border-gray-300 px-4 py-3 text-center">Menu</th>
-                                <th class="border border-gray-300 px-4 py-3 text-center">Map Link</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center">Availability</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(vend, index) in dcvends" :key="vend.code" @click="highlightMarker(index)" class="cursor-pointer hover:bg-gray-50 transition duration-200">
-                                <td class="border border-gray-300 px-4 py-2 text-center font-medium">{{ vend.code }}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">{{ vend.customer?.name }}</td>
-                                <td class="border border-gray-300 px-4 py-2">{{ vend.customer?.address?.full_address }}</td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">
-                                    <span @click="showChannel(vend)" class="text-blue-500 underline hover:cursor-point">
-                                        Menu
-                                    </span>
+                                <td class="border border-gray-300 px-4 py-2">
+                                    <div class="flex flex-col space-y-2">
+                                        <span class="text-gray-800 font-semibold text-left">
+                                            {{ vend.code }}
+                                        </span>
+                                        <span class="text-left">
+                                            {{ vend.customer?.name }}
+                                        </span>
+                                    </div>
                                 </td>
-                                <td class="border border-gray-300 px-4 py-2 text-center">
+                                <td class="border border-gray-300 px-4 py-2">
                                     <a
                                         :href="`https://www.google.com/maps/search/?api=1&query=${vend.customer?.address?.latitude},${vend.customer?.address?.longitude}`"
                                         target="_blank"
                                         class="text-blue-500 underline"
                                     >
-                                        Navigate
+                                    {{ vend.customer?.address?.full_address }}
                                     </a>
+                                </td>
+                                <td class="border border-gray-300 px-4 py-2 text-center">
+                                    <MagnifyingGlassCircleIcon class="w-10 h-10 text-blue-500 underline hover:cursor-point drop-shadow mx-auto" @click="showChannel(vend)"/>
                                 </td>
                             </tr>
                             <tr v-if="!dcvends || dcvends.length == 0">
@@ -188,6 +191,7 @@
     v-if="showChannelModal"
     :vend="vendObject"
     :showModal="showChannelModal"
+    :timingNow="now"
     @modalClose="onChannelClosed"
 >
 </Channel>
@@ -197,8 +201,9 @@
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import Channel from '@/Pages/Guest/Channel.vue';
-import { MapIcon } from '@heroicons/vue/20/solid';
+import { MagnifyingGlassCircleIcon } from '@heroicons/vue/20/solid';
 import { Head, Link } from '@inertiajs/vue3';
+import moment from 'moment';
 import { defineProps, onMounted, ref } from 'vue';
 
 const props = defineProps({
@@ -207,6 +212,7 @@ const props = defineProps({
     stats: [Array, Object],
 });
 
+const now = ref(moment().format('hh:mm:ss a'))
 const showChannelModal = ref(false);
 const dcvends = ref([]);
 const vendObject = ref([]);
@@ -268,7 +274,7 @@ window.initMap = function () {
 };
 
 function initializeMapWithDefaultLocation() {
-    const defaultPos = { lat: 3.139, lng: 101.6869 }; // Example: Kuala Lumpur
+    const defaultPos = { lat: 1.3521, lng: 103.8198 }; // Center of Singapore
 
     map = new google.maps.Map(document.getElementById('map'), {
         center: defaultPos,
@@ -297,17 +303,13 @@ function addMarkers() {
                     position,
                     map: map,
                     label: {
-                        text: vend.code.toString(),
+                        // text: vend.code.toString(),
                         color: '#000000',
                         fontWeight: 'bold',
                     },
                     icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 17,
-                        fillColor: '#FF6F61', // Customer marker color
-                        fillOpacity: 1,
-                        strokeColor: '#FFFFFF',
-                        strokeWeight: 2,
+                        url: '/images/icon.png', // Path to your custom icon
+                        scaledSize: new google.maps.Size(40, 40), // Resize the icon
                     },
                     title: full_address,
                 });
