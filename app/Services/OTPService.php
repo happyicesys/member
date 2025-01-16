@@ -12,7 +12,7 @@ class OTPService
     const OTP_LENGTH = 5;
 
     // OTP expiry time in seconds (e.g., 5 minutes)
-    const OTP_EXPIRY = 300;
+    const OTP_EXPIRY = 120;
 
     protected $smsService;
 

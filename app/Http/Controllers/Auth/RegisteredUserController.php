@@ -52,7 +52,7 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): Response
+    public function create($refID = null): Response
     {
         return Inertia::render('Auth/Register', [
             'countryOptions' => CountryResource::collection(
@@ -60,6 +60,7 @@ class RegisteredUserController extends Controller
                 ->orderBy('phone_code')
                 ->get()
             ),
+            'refID' => $refID,
         ]);
     }
 
@@ -74,6 +75,8 @@ class RegisteredUserController extends Controller
 
         // Verify OTP
         $this->validateOtp($request);
+
+
 
         // Create the user
         $user = User::create([
@@ -162,7 +165,7 @@ class RegisteredUserController extends Controller
 
         $request->validate([
             'country_id' => 'required|integer|exists:countries,id',
-            'dob' => 'required|date|before:-10 years',
+            'dob' => 'date|before:-10 years',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'name' => 'required|string|max:255',
             'password' => 'required|digits:6',
