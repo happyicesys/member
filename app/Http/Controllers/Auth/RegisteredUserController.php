@@ -75,11 +75,6 @@ class RegisteredUserController extends Controller
         // Verify OTP
         $this->validateOtp($request);
 
-        // validate password
-        $request->validate([
-            'password' => 'required|digits:6',
-        ]);
-
         // Create the user
         $user = User::create([
             'dob' => $request->dob,
@@ -170,7 +165,7 @@ class RegisteredUserController extends Controller
             'dob' => 'required|date|before:-10 years',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'name' => 'required|string|max:255',
-            // 'password' => 'required|digits:6',
+            'password' => 'required|digits:6',
             // 'passwordParts.*' => 'required|digits:1',
             'phone_number' => 'required|string|phone:' . $country->abbreviation,
         ]);

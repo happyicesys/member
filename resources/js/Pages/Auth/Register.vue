@@ -1,92 +1,3 @@
-<script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import DatePicker from '@/Components/DatePicker.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SuccessButton from '@/Components/SuccessButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { defineProps, onMounted, ref, watch } from 'vue';
-
-const countryOptions = ref([]);
-const countdown = ref(60); // Countdown timer for OTP resend
-const isCountdownActive = ref(false); // Track whether the countdown is active
-
-const form = useForm({
-    country_id: '',
-    dob: '',
-    name: '',
-    email: '',
-    otpParts: ['', '', '', '', ''],
-    password: '',
-    phone_number: '',
-});
-
-const isShowOtpDiv = ref(false);
-const isFilledFieldEditable = ref(true);
-const isOtpRequested = ref(false);
-
-const props = defineProps({
-    countryOptions: Object,
-});
-
-// Handle input and jump to the next or previous input field
-const onInput = (index) => {
-    if (form.otpParts[index].length === 1 && index < form.otpParts.length - 1) {
-        // Move focus to the next input
-        const nextInput = document.getElementById(`otp_${index + 1}`);
-        if (nextInput) {
-            nextInput.focus();
-        }
-    } else if (form.otpParts[index].length === 0 && index > 0) {
-        // Move focus to the previous input when deleting
-        const prevInput = document.getElementById(`otp_${index - 1}`);
-        if (prevInput) {
-            prevInput.focus();
-        }
-    }
-};
-
-function verifyPhoneNumber() {
-    form.post(route('verification.phone-number'), {
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
-        onSuccess: (page) => {
-            isShowOtpDiv.value = true;
-            isFilledFieldEditable.value = false;
-            isOtpRequested.value = true;
-
-            isCountdownActive.value = true;
-            countdown.value = 60;
-        },
-    });
-
-    // Start the countdown timer
-    const countdownInterval = setInterval(() => {
-        if (countdown.value > 0) {
-            countdown.value--;
-        } else {
-            clearInterval(countdownInterval);
-            isCountdownActive.value = false;
-        }
-    }, 1000);
-}
-
-onMounted(() => {
-    countryOptions.value = props.countryOptions.data;
-
-    // Set the default country code
-    form.country_id = countryOptions.value.filter((country) => country.is_default)[0].id;
-});
-
-const submit = () => {
-    form.post(route('register'));
-};
-</script>
-
 <template>
     <GuestLayout>
         <Head title="Register" />
@@ -196,6 +107,24 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.phone_number" />
             </div>
 
+            <!-- Password (6-digit PIN) -->
+            <div class="mt-4">
+                <InputLabel for="password" value="Password (6-digits PIN)" />
+                <TextInput
+                    id="password"
+                    type="number"
+                    class="mt-1 w-full"
+                    :class="{
+                        'bg-gray-100': !isFilledFieldEditable,
+                        'cursor-not-allowed': !isFilledFieldEditable
+                    }"
+                    v-model="form.password"
+                    :disabled="!isFilledFieldEditable"
+                    placeholder="Numbers Only"
+                />
+                <InputError class="mt-2" :message="form.errors.password" />
+            </div>
+
             <hr class="mt-4" v-if="isShowOtpDiv">
             <!-- OTP Input -->
             <div class="mt-4" v-if="isShowOtpDiv">
@@ -219,29 +148,15 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.otpParts" />
             </div>
 
-            <!-- Password (6-digit PIN) -->
-            <div class="mt-4" v-if="isShowOtpDiv">
-                <InputLabel for="password" value="Password (6-digits PIN)" />
-                <TextInput
-                    id="password"
-                    type="number"
-                    class="mt-1 w-full"
-                    v-model="form.password"
-                    placeholder="Numbers Only"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-
             <div class="mt-4 flex items-center justify-end">
                 <PrimaryButton
                     @click.prevent="verifyPhoneNumber"
                     class="ms-2"
                     :class="{
-                        'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive,
-                        'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive
+                        'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid,
+                        'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid
                     }"
-                    :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive"
+                    :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid"
                 >
                     <span v-if="isOtpRequested">
                         Resend OTP
@@ -262,10 +177,10 @@ const submit = () => {
                         type="submit"
                         class="bg-yellow-300 py-2 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400"
                         :class="{
-                            'opacity-25': !form.otpParts || !form.password,
-                            'cursor-not-allowed': !form.otpParts || !form.password
+                            'opacity-25': !isOtpPartsFullyFilled,
+                            'cursor-not-allowed': !isOtpPartsFullyFilled
                         }"
-                        :disabled="!form.otpParts || !form.password"
+                        :disabled="!isOtpPartsFullyFilled"
                         v-if="isShowOtpDiv"
                     >
                         SIGN UP
@@ -290,3 +205,112 @@ const submit = () => {
         </form>
     </GuestLayout>
 </template>
+
+<script setup>
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import DatePicker from '@/Components/DatePicker.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SuccessButton from '@/Components/SuccessButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { defineProps, onMounted, ref, watch } from 'vue';
+
+const countryOptions = ref([]);
+const countdown = ref(60); // Countdown timer for OTP resend
+const isCountdownActive = ref(false); // Track whether the countdown is active
+
+const form = useForm({
+    country_id: '',
+    dob: '',
+    name: '',
+    email: '',
+    otpParts: ['', '', '', '', ''],
+    password: '',
+    phone_number: '',
+});
+
+const isShowOtpDiv = ref(false);
+const isFilledFieldEditable = ref(true);
+const isOtpRequested = ref(false);
+
+const props = defineProps({
+    countryOptions: Object,
+});
+
+// Handle input and jump to the next or previous input field
+const onInput = (index) => {
+    if (form.otpParts[index].length === 1 && index < form.otpParts.length - 1) {
+        // Move focus to the next input
+        const nextInput = document.getElementById(`otp_${index + 1}`);
+        if (nextInput) {
+            nextInput.focus();
+        }
+    } else if (form.otpParts[index].length === 0 && index > 0) {
+        // Move focus to the previous input when deleting
+        const prevInput = document.getElementById(`otp_${index - 1}`);
+        if (prevInput) {
+            prevInput.focus();
+        }
+    }
+};
+
+// Computed property to check if all OTP fields are fully filled
+const isOtpPartsFullyFilled = ref(false);
+watch(
+    () => form.otpParts,
+    (otpParts) => {
+        isOtpPartsFullyFilled.value = otpParts.every((part) => part.length === 1);
+    },
+    { immediate: true, deep: true }
+);
+
+// Computed property to check if password is valid (6 digits)
+const isPasswordValid = ref(false);
+watch(
+    () => form.password,
+    (password) => {
+        isPasswordValid.value = /^[0-9]{6}$/.test(password);
+    },
+    { immediate: true }
+);
+
+function verifyPhoneNumber() {
+    form.post(route('verification.phone-number'), {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+        onSuccess: (page) => {
+            isShowOtpDiv.value = true;
+            isFilledFieldEditable.value = false;
+            isOtpRequested.value = true;
+
+            isCountdownActive.value = true;
+            countdown.value = 60;
+        },
+    });
+
+    // Start the countdown timer
+    const countdownInterval = setInterval(() => {
+        if (countdown.value > 0) {
+            countdown.value--;
+        } else {
+            clearInterval(countdownInterval);
+            isCountdownActive.value = false;
+        }
+    }, 1000);
+}
+
+onMounted(() => {
+    countryOptions.value = props.countryOptions.data;
+
+    // Set the default country code
+    form.country_id = countryOptions.value.filter((country) => country.is_default)[0].id;
+});
+
+const submit = () => {
+    form.post(route('register'));
+};
+</script>
