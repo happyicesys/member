@@ -119,7 +119,7 @@
                 <strong>New Sign-up:</strong> Free Gold Member package, with FREE upgrade to unlimited times of 30% discount on all products, for 2 months
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
-                <Link :href="route('register')" class="bg-yellow-300 py-8 px-16 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-3xl hover:bg-yellow-400">
+                <Link :href="route('register')" class="bg-yellow-300 py-8 px-16 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-5xl hover:bg-yellow-400">
                     <div class="flex flex-col space-y-2">
                         <span>
                             SIGN UP NOW
@@ -329,7 +329,7 @@ function addMarkers() {
 
                 if (photos.length > 0) {
                     photoSliderHtml = `
-                        <div style="width: 200px; height:auto; overflow: hidden;">
+                        <div style="width: 230px; height:auto; overflow: hidden;">
                             <div class="swiper">
                                 <div class="swiper-wrapper">
                                     ${photos
@@ -346,17 +346,19 @@ function addMarkers() {
                             </div>
                         </div>`;
                 } else {
-                    photoSliderHtml = `<div>No photos available</div>`;
+                    photoSliderHtml = ``;
                 }
 
                 // Create an info window with photos
                 const infoWindow = new google.maps.InfoWindow({
                     content: `
                         <div style="text-align: center;">
+                            <span style="font-size: 12px; font-weight: bold; margin-bottom: 1px;">${customer.name}</span>
                             <p style="margin-bottom: 3px;"><strong>${full_address}</strong></p>
                             ${photoSliderHtml}
                         </div>
                     `,
+                    maxWidth: 1000,
                 });
 
                 marker.addListener('click', () => {

@@ -118,6 +118,7 @@
                             'bg-gray-100': !isFilledFieldEditable,
                             'cursor-not-allowed': !isFilledFieldEditable
                         }"
+                        @input="clearError('phone_number')"
                         v-model="form.phone_number"
                         :disabled="!isFilledFieldEditable"
                         required
@@ -171,10 +172,10 @@
                             @click.prevent="verifyPhoneNumber"
                             class="bg-yellow-300 py-2 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400"
                             :class="{
-                                'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid || isVerifying,
-                                'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid || isVerifying
+                                'opacity-25': !isFormValid,
+                                'cursor-not-allowed': !isFormValid
                             }"
-                            :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid || isVerifying"
+                            :disabled="!isFormValid"
                         >
                             NEXT
                         </button>
@@ -203,6 +204,7 @@
                             v-model="form.otpParts[index]"
                             @input="onInput(index)"
                             inputmode="numeric"
+                            autocomplete="one-time-code"
                             type="text"
                             pattern="[0-9]*"
                             required
@@ -246,7 +248,7 @@
             <div class="mt-2 px-4 items-center justify-center">
                 <div class="flex flex-col w-fit justify-self-center mt-10 gap-2 md:w-3/5 text-center">
                     <button
-                        @click="submit"
+                        @click.prevent="submit"
                         type="submit"
                         class="bg-yellow-300 py-2 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400"
                         :class="{
@@ -280,16 +282,14 @@
 </template>
 
 <script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import DatePicker from '@/Components/DatePicker.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SuccessButton from '@/Components/SuccessButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { defineProps, onMounted, onUnmounted, ref, watch } from 'vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed, defineProps, onMounted, onUnmounted, ref, watch } from 'vue';
 import moment from 'moment';
 
 const countryOptions = ref([]);
@@ -306,6 +306,18 @@ const form = useForm({
     password: '',
     phone_number: '',
     ref_id: '',
+});
+
+const isFormValid = computed(() => {
+    return (
+        form.name &&
+        form.email &&
+        form.dob &&
+        form.country_id &&
+        form.phone_number &&
+        isPasswordValid.value &&
+        !form.errors.phone_number // Ensures no phone number error exists
+    );
 });
 
 const isFilledFieldEditable = ref(true);
@@ -356,6 +368,14 @@ watch(
     { immediate: true }
 );
 
+function clearError(field) {
+    form.errors[field] = '';
+    countdownInterval = null; // Reset the interval ID
+    isCountdownActive.value = false;
+    nowAddTwoMinutes.value = null
+    isVerifying.value = false
+}
+
 function onBackButtonClicked() {
     isShowOtpDiv.value = false;
     isFilledFieldEditable.value = true;
@@ -369,8 +389,6 @@ function togglePasswordVisibility() {
 let countdownInterval = null;
 
 function verifyPhoneNumber() {
-    console.log('verifyPhoneNumber called');
-
     if (isVerifying.value) return;
 
     isVerifying.value = true;
@@ -424,6 +442,7 @@ onUnmounted(() => {
 });
 
 const submit = () => {
+    console.log(form.value.otpParts)
     form.post(route('register'));
 };
 </script>

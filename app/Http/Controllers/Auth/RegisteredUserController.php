@@ -76,8 +76,6 @@ class RegisteredUserController extends Controller
         // Verify OTP
         $this->validateOtp($request);
 
-
-
         // Create the user
         $user = User::create([
             'dob' => $request->dob,
@@ -91,6 +89,10 @@ class RegisteredUserController extends Controller
             'phone_number_verified_at' => Carbon::now(),
             'plan_id' => 3,
         ]);
+
+        if($request->ref_id) {
+            $this->userService->assignReferral($user, $request->ref_id);
+        }
 
         $this->userService->validateIsActiveCountry($request->country_id);
 

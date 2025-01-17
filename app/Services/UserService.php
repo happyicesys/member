@@ -7,6 +7,12 @@ use Carbon\Carbon;
 
 class UserService
 {
+    public function assignReferral($user, $refID)
+    {
+        $user->ref_id = $refID;
+        $user->save();
+    }
+
     public function validateIsActiveCountry($countryID)
     {
         $country = Country::find($countryID);
