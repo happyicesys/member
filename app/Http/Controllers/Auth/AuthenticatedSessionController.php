@@ -59,10 +59,6 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->merge([
-            'password' => implode('', $request->passwordParts),
-        ]);
-
         $request->authenticate();
 
         $request->session()->regenerate();

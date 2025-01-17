@@ -137,7 +137,7 @@
             <div class="container mx-auto max-w-4xl text-center">
                 <h2 class="text-3xl font-bold text-red-600 mb-6">DCVend Location</h2>
             </div>
-            <div id="map" class="sm:col-span-6 items-center mx-auto w-11/12 md:w-10/12 h-96"></div>
+            <div id="map" class="sm:col-span-6 items-center mx-auto w-11/12 md:w-10/12 h-[30rem]"></div>
         </section>
 
         <section class="pb-10 pt-2 bg-white px-4 md:px-16">
@@ -329,7 +329,7 @@ function addMarkers() {
 
                 if (photos.length > 0) {
                     photoSliderHtml = `
-                        <div style="width: 230px; height:auto; overflow: hidden;">
+                        <div style="max-width: 500px; max-height: 400px; height:auto; overflow: hidden;">
                             <div class="swiper">
                                 <div class="swiper-wrapper">
                                     ${photos

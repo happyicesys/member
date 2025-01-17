@@ -13,7 +13,12 @@
         <form @submit.prevent="submit" class="space-y-4 lg:w-3/12 mx-auto mb-10 px-2">
             <!-- Country Code -->
             <div>
-                <InputLabel for="country_id" value="Country Code"/>
+                <div class="flex space-x-1 items-center">
+                    <label for="password" class="flex items-center space-x-2">
+                        <InputLabel for="country_id" value="Country Code"/>
+                    </label>
+                    <span class="text-red-600">*</span>
+                </div>
 
                 <select
                     id="country_id"
@@ -35,7 +40,12 @@
 
             <!-- Phone Number -->
             <div>
-                <InputLabel for="phone_number" value="Phone Number" />
+                <div class="flex space-x-1 items-center">
+                    <label for="password" class="flex items-center space-x-2">
+                        <InputLabel for="phone_number" value="Phone Number" />
+                    </label>
+                    <span class="text-red-600">*</span>
+                </div>
 
                 <TextInput
                     id="phone_number"
@@ -49,7 +59,7 @@
             </div>
 
             <!-- Password (6-digit PIN) -->
-            <div class="mt-4">
+            <!-- <div class="mt-4">
                 <InputLabel for="password" value="Password (6-digit PIN)" />
                 <div class="mt-2 grid grid-cols-6 gap-2">
                     <TextInput
@@ -68,6 +78,39 @@
                     />
                 </div>
                 <InputError class="mt-2" :message="form.errors.passwordParts" />
+            </div> -->
+
+            <!-- Password (6-digit PIN) -->
+            <div class="mt-4">
+                <div class="flex space-x-1 items-center">
+                    <label for="password" class="flex items-center space-x-2">
+                        <span>Password</span>
+                        <span class="text-yellow-700 text-sm">(6 digits PIN)</span>
+                    </label>
+                    <span class="text-red-600">*</span>
+                </div>
+                <div class="relative">
+                    <TextInput
+                        id="password"
+                        :type="isPasswordVisible ? 'text' : 'password'"
+                        class="mt-1 w-full pr-10"
+                        v-model="form.password"
+                        placeholder="Numbers Only"
+                    />
+                    <button
+                        type="button"
+                        class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500"
+                        @click="togglePasswordVisibility"
+                    >
+                        <span v-if="isPasswordVisible">
+                            <img src="/images/components/eye_close.png" alt="hide password" class="w-8 h-8">
+                        </span>
+                        <span v-else>
+                            <img src="/images/components/eye_open.png" alt="show password" class="w-8 h-8">
+                        </span>
+                    </button>
+                </div>
+                <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
             <!-- Remember Me -->
@@ -114,15 +157,13 @@
 </template>
 
 <script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { defineProps, onMounted, ref } from 'vue';
+import { defineProps, onMounted, ref, watch } from 'vue';
 
 // Props to manage password reset status and error message
 const props = defineProps({
@@ -138,31 +179,33 @@ const props = defineProps({
 const form = useForm({
     country_id: '',
     phone_number: '',
-    passwordParts: ['', '', '', '', '', ''],
+    password: '',
     remember: false,
 });
 
-// To handle password input parts
-const updatePassword = () => {
-    form.password = form.passwordParts.join('');
-};
+const isPasswordVisible = ref(false);
 
-// Handle input and jump to the next or previous input field
-const onInput = (index) => {
-    if (form.passwordParts[index].length === 1 && index < form.passwordParts.length - 1) {
-        // Move focus to the next input
-        const nextInput = document.getElementById(`password_${index + 1}`);
-        if (nextInput) {
-            nextInput.focus();
-        }
-    } else if (form.passwordParts[index].length === 0 && index > 0) {
-        // Move focus to the previous input when deleting
-        const prevInput = document.getElementById(`password_${index - 1}`);
-        if (prevInput) {
-            prevInput.focus();
-        }
-    }
-};
+// To handle password input parts
+// const updatePassword = () => {
+//     form.password = form.passwordParts.join('');
+// };
+
+// // Handle input and jump to the next or previous input field
+// const onInput = (index) => {
+//     if (form.passwordParts[index].length === 1 && index < form.passwordParts.length - 1) {
+//         // Move focus to the next input
+//         const nextInput = document.getElementById(`password_${index + 1}`);
+//         if (nextInput) {
+//             nextInput.focus();
+//         }
+//     } else if (form.passwordParts[index].length === 0 && index > 0) {
+//         // Move focus to the previous input when deleting
+//         const prevInput = document.getElementById(`password_${index - 1}`);
+//         if (prevInput) {
+//             prevInput.focus();
+//         }
+//     }
+// };
 
 // To submit the form to the server
 const submit = () => {
@@ -174,10 +217,25 @@ const submit = () => {
 // Fetch countries on mount
 const countryOptions = ref([]);
 
+// Computed property to check if password is valid (6 digits)
+const isPasswordValid = ref(false);
+watch(
+    () => form.password,
+    (password) => {
+        isPasswordValid.value = /^[0-9]{6}$/.test(password);
+    },
+    { immediate: true }
+);
+
 onMounted(() => {
     countryOptions.value = props.countryOptions.data;
 
     // Set the default country code
     form.country_id = countryOptions.value.filter((country) => country.is_default)[0].id;
 });
+
+function togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+}
+
 </script>
