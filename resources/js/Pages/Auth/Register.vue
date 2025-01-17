@@ -442,7 +442,6 @@ onUnmounted(() => {
 });
 
 const submit = () => {
-    console.log(form.value.otpParts)
     form.post(route('register'));
 };
 </script>
