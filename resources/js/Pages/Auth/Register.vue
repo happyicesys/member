@@ -31,7 +31,7 @@
                         v-model="form.name"
                         required
                         autofocus
-                        autocomplete="name"
+                        autocomplete="off"
                         :disabled="!isFilledFieldEditable"
                     />
 

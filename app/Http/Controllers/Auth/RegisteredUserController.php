@@ -82,7 +82,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'is_details_filled' => true,
-            'is_phone_number_velidated' => true,
+            'is_phone_number_validated' => true,
             'password' => Hash::make($request->password),
             'phone_country_id' => $request->country_id,
             'phone_number' => $request->phone_number,
