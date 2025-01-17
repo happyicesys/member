@@ -26,7 +26,7 @@ class PlanResource extends JsonResource
             'base' => [
                 'promo_type' => 'percent',
                 'promo_value' => 30,
-                'max_count' => 4,
+                'max_count' => null,
                 'used_count' => 0,
                 'datetime_from' => '2025-01-01 00:00:00',
                 'datetime_to' => '2025-02-01 00:00:00',
