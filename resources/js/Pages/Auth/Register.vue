@@ -2,6 +2,13 @@
     <GuestLayout>
         <Head title="Register" />
 
+        <section class="flex my-2 md:w-4/6 mx-auto pt-5 ">
+            <h2 class="text-3xl font-semibold text-red-600 mx-auto">
+                Sign Up
+            </h2>
+        </section>
+
+
         <section class="text-white rounded my-2 md:w-4/6 mx-auto py-5">
             <img src="/images/icon.png" alt="Vion Icon" class="w-1/3 lg:w-1/6 rounded mx-auto" />
         </section>
@@ -158,16 +165,16 @@
                 </div>
 
 
-                <div class="mt-2 items-center justify-center">
+                <div class="mt-2 flex items-center justify-center">
                     <div class="flex flex-col w-fit justify-self-center mt-10 gap-2 md:w-3/5 text-center">
                         <button
                             @click.prevent="verifyPhoneNumber"
                             class="bg-yellow-300 py-2 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400"
                             :class="{
-                                'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid,
-                                'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid
+                                'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid || isVerifying,
+                                'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid || isVerifying
                             }"
-                            :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid"
+                            :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || !isPasswordValid || isVerifying"
                         >
                             NEXT
                         </button>
@@ -183,7 +190,7 @@
                             Enter 5-digits OTP sent to {{ countryOptions.find((country) => country.id == form.country_id).phone_code }}{{ form.phone_number }}
                         </span>
                         <span class="font-light">
-                            (Expiring in 2 minutes)
+                            (Expiring in 2 minutes<span v-if="nowAddTwoMinutes">, </span>{{ nowAddTwoMinutes }})
                         </span>
                     </label>
                     <div class="flex space-x-1">
@@ -216,10 +223,10 @@
                             @click.prevent="verifyPhoneNumber"
                             class="ms-2"
                             :class="{
-                                'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid,
-                                'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid
+                                'opacity-25': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid || isVerifying,
+                                'cursor-not-allowed': !form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid || isVerifying
                             }"
-                            :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid"
+                            :disabled="!form.name || !form.email || !form.dob || !form.country_id || !form.phone_number || isCountdownActive || !isPasswordValid || isVerifying"
                             v-if="isShowOtpDiv && !isCountdownActive"
                         >
                             <span v-if="isOtpRequested">
@@ -282,11 +289,13 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SuccessButton from '@/Components/SuccessButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { defineProps, onMounted, ref, watch } from 'vue';
+import { defineProps, onMounted, onUnmounted, ref, watch } from 'vue';
+import moment from 'moment';
 
 const countryOptions = ref([]);
 const countdown = ref(60); // Countdown timer for OTP resend
 const isCountdownActive = ref(false); // Track whether the countdown is active
+const nowAddTwoMinutes = ref(null);
 
 const form = useForm({
     country_id: '',
@@ -303,6 +312,7 @@ const isFilledFieldEditable = ref(true);
 const isOtpRequested = ref(false);
 const isPasswordVisible = ref(false);
 const isShowOtpDiv = ref(false);
+const isVerifying = ref(false);
 
 const props = defineProps({
     countryOptions: Object,
@@ -356,7 +366,15 @@ function togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
 }
 
+let countdownInterval = null;
+
 function verifyPhoneNumber() {
+    console.log('verifyPhoneNumber called');
+
+    if (isVerifying.value) return;
+
+    isVerifying.value = true;
+
     form.post(route('verification.phone-number'), {
         preserveState: true,
         preserveScroll: true,
@@ -366,18 +384,27 @@ function verifyPhoneNumber() {
             isFilledFieldEditable.value = false;
             isOtpRequested.value = true;
 
-            isCountdownActive.value = true;
             countdown.value = 60;
+            isCountdownActive.value = true;
+            nowAddTwoMinutes.value = moment().add(2, 'minutes').format('hh:mm:ss a');
         },
     });
 
+    // Clear existing interval before starting a new one
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
+
     // Start the countdown timer
-    const countdownInterval = setInterval(() => {
+    countdownInterval = setInterval(() => {
         if (countdown.value > 0) {
             countdown.value--;
         } else {
-            clearInterval(countdownInterval);
+            clearInterval(countdownInterval); // Clear the interval
+            countdownInterval = null; // Reset the interval ID
             isCountdownActive.value = false;
+            nowAddTwoMinutes.value = null
+            isVerifying.value = false
         }
     }, 1000);
 }
@@ -388,6 +415,12 @@ onMounted(() => {
     // Set the default country code
     form.country_id = countryOptions.value.filter((country) => country.is_default)[0].id;
     form.ref_id = props.refID;
+});
+
+onUnmounted(() => {
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
 });
 
 const submit = () => {

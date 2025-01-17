@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
-use App\Services\IsmsService;
-use App\Services\OneWaySmsService;
 
 class OTPService
 {
@@ -12,7 +10,10 @@ class OTPService
     const OTP_LENGTH = 5;
 
     // OTP expiry time in seconds (e.g., 5 minutes)
-    const OTP_EXPIRY = 120;
+    const OTP_EXPIRY = 300;
+
+    // Throttle duration for OTP requests in seconds (e.g., 1 minute)
+    const THROTTLE_DURATION = 60;
 
     protected $smsService;
 
@@ -41,8 +42,8 @@ class OTPService
      */
     public function storeOtp(string $key, string $otp): void
     {
-        // Store OTP in cache for 5 minutes
-        Cache::put($key, $otp, self::OTP_EXPIRY);  // OTP expires after 300 seconds (5 minutes)
+        // Store OTP in cache
+        Cache::put($key, $otp, self::OTP_EXPIRY);
     }
 
     /**
@@ -54,14 +55,12 @@ class OTPService
      */
     public function sendOtp(string $phoneNumber, string $otp): void
     {
-        // Send the OTP via the selected SMS service
-        $message = "Your DCVend OTP is: $otp";  // Customize the message as needed
-        $this->smsService->sendSms([$phoneNumber], $message);  // Send OTP to user's phone number
+        $message = "Your OTP is: $otp";
+        $this->smsService->sendSms([$phoneNumber], $message);
     }
 
     /**
      * Verify the OTP entered by the user.
-     * Checks the OTP stored in the cache and matches it with the user input.
      *
      * @param string $key
      * @param string $otp
@@ -69,16 +68,31 @@ class OTPService
      */
     public function verifyOtp(string $key, string $otp): bool
     {
-        // Retrieve the stored OTP from cache
         $storedOtp = Cache::get($key);
 
-        // If OTP exists in the cache and matches the user's input
         if ($storedOtp && $storedOtp === $otp) {
-            // OTP is valid, clear it from the cache
-            Cache::forget($key);  // Optional: clear OTP after successful verification
+            Cache::forget($key); // Clear OTP after successful verification
             return true;
         }
 
-        return false;  // OTP is invalid or expired
+        return false; // OTP is invalid or expired
+    }
+
+    /**
+     * Throttle OTP requests to prevent abuse.
+     *
+     * @param string $key
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function throttleOtpRequests(string $key): void
+    {
+        if (Cache::has($key)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'otp' => 'Please wait before requesting another OTP.',
+            ]);
+        }
+
+        // Lock the key for the throttle duration
+        Cache::put($key, true, self::THROTTLE_DURATION);
     }
 }

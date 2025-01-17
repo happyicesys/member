@@ -108,11 +108,17 @@ class RegisteredUserController extends Controller
     {
         $this->validateRequest($request);
 
-        // Send OTP
+        $phoneKey = 'otp_request_' . $request->full_phone_number;
+
+        // Apply throttling
+        $this->otpService->throttleOtpRequests($phoneKey);
+
+        // Generate and send OTP
         $this->sendOTP($request);
 
         return redirect()->back();
     }
+
 
     /**
      * Generate, store, and send OTP to the user.

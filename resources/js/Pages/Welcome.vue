@@ -232,7 +232,6 @@ let markers = []; // Array to store marker instances
 
 onMounted(() => {
     dcvends.value = Array.isArray(props.dcvends?.data) ? props.dcvends.data : [];
-    console.log('dcvends:', dcvends.value);
     loadGoogleMapsApi();
 });
 
