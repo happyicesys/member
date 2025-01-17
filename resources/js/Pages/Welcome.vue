@@ -149,7 +149,7 @@
                             <tr>
                                 <th class="border border-gray-300 px-4 py-3 text-center">Name</th>
                                 <th class="border border-gray-300 px-4 py-3 text-center">Address</th>
-                                <th class="border border-gray-300 px-4 py-3 text-center">Availability</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center">Product Availability</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -165,16 +165,24 @@
                                     </div>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2">
-                                    <a
-                                        :href="`https://www.google.com/maps/search/?api=1&query=${vend.customer?.address?.latitude},${vend.customer?.address?.longitude}`"
-                                        target="_blank"
-                                        class="text-blue-500 underline"
-                                    >
-                                    {{ vend.customer?.address?.full_address }}
-                                    </a>
+                                    <div class="flex flex-col space-y-2">
+                                        <span>
+                                            {{ vend.customer?.address?.full_address }}
+                                        </span>
+                                        <a
+                                            :href="`https://www.google.com/maps/search/?api=1&query=${vend.customer?.address?.latitude},${vend.customer?.address?.longitude}`"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            type="button"
+                                            class="bg-green-300 hover:bg-green-400 px-3 py-2 text-xs text-green-800 flex space-x-1 w-fit rounded shadow font-bold"
+                                        >
+                                            GPS
+                                        </a>
+                                    </div>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">
-                                    <MagnifyingGlassCircleIcon class="w-10 h-10 text-blue-500 underline hover:cursor-point drop-shadow mx-auto" @click="showChannel(vend)"/>
+                                    <!-- <MagnifyingGlassCircleIcon class="w-10 h-10 text-blue-500 underline hover:cursor-point drop-shadow mx-auto" @click="showChannel(vend)"/> -->
+                                    <img src="/images/components/ice_cream_stick.png" alt="Ice cream icon" class="hover:cursor-point drop-shadow-lg mx-auto w-10 h-10" @click="showChannel(vend)">
                                 </td>
                             </tr>
                             <tr v-if="!dcvends || dcvends.length == 0">
@@ -204,6 +212,7 @@ import Channel from '@/Pages/Guest/Channel.vue';
 import { MagnifyingGlassCircleIcon } from '@heroicons/vue/20/solid';
 import { Head, Link } from '@inertiajs/vue3';
 import moment from 'moment';
+import Swiper from 'swiper';
 import { defineProps, onMounted, ref } from 'vue';
 
 const props = defineProps({
@@ -223,6 +232,7 @@ let markers = []; // Array to store marker instances
 
 onMounted(() => {
     dcvends.value = Array.isArray(props.dcvends?.data) ? props.dcvends.data : [];
+    console.log('dcvends:', dcvends.value);
     loadGoogleMapsApi();
 });
 
@@ -287,7 +297,6 @@ function initializeMapWithDefaultLocation() {
 function addMarkers() {
     markers = []; // Reset the markers array
 
-    // Add a marker for each customer
     dcvends.value.forEach((vend, tableIndex) => {
         const { customer } = vend;
         if (customer && customer.address) {
@@ -303,35 +312,76 @@ function addMarkers() {
                     position,
                     map: map,
                     label: {
-                        // text: vend.code.toString(),
+                        text: String(vend.code),
                         color: '#000000',
                         fontWeight: 'bold',
                     },
                     icon: {
                         url: '/images/icon.png', // Path to your custom icon
                         scaledSize: new google.maps.Size(40, 40), // Resize the icon
+                        labelOrigin: new google.maps.Point(20, 40),
                     },
                     title: full_address,
                 });
 
-                // Attach info window to marker
+                // Prepare images for the info window
+                const photos = customer.photos || [];
+                let photoSliderHtml = '';
+
+                if (photos.length > 0) {
+                    photoSliderHtml = `
+                        <div style="width: 200px; height:auto; overflow: hidden;">
+                            <div class="swiper">
+                                <div class="swiper-wrapper">
+                                    ${photos
+                                        .map(
+                                            (photo) => `
+                                            <div class="swiper-slide">
+                                                <img src="${photo.full_url}" alt="Customer Photo" style="width: 100%; height: auto; border-radius:5%;" />
+                                            </div>`
+                                        )
+                                        .join('')}
+                                </div>
+                                <div class="swiper-button-next"></div>
+                                <div class="swiper-button-prev"></div>
+                            </div>
+                        </div>`;
+                } else {
+                    photoSliderHtml = `<div>No photos available</div>`;
+                }
+
+                // Create an info window with photos
                 const infoWindow = new google.maps.InfoWindow({
-                    content: `<div class="p-2 text-sm font-medium">${full_address}</div>`,
+                    content: `
+                        <div style="text-align: center;">
+                            <p style="margin-bottom: 3px;"><strong>${full_address}</strong></p>
+                            ${photoSliderHtml}
+                        </div>
+                    `,
                 });
 
-                marker.addListener('mouseover', () => infoWindow.open(map, marker));
-                marker.addListener('mouseout', () => infoWindow.close());
+                marker.addListener('click', () => {
+                    event.stopPropagation();
+                    infoWindow.open(map, marker);
 
-                // Store marker and its tableIndex
+                    // Initialize Swiper after the info window is opened
+                    setTimeout(() => {
+                        new Swiper('.swiper', {
+                            navigation: {
+                                nextEl: '.swiper-button-next',
+                                prevEl: '.swiper-button-prev',
+                            },
+                            loop: true,
+                        });
+                    }, 0);
+                });
+
                 markers.push({ marker, tableIndex });
             }
         }
     });
-
-    if (dcvends.value.length === 0) {
-        console.warn('No customer data available for markers.');
-    }
 }
+
 
 function addSelfMarker(userLocation) {
     new google.maps.Marker({
@@ -390,4 +440,34 @@ function showChannel(vend) {
 header {
     font-family: 'Poppins', sans-serif;
 }
+
+/* Style the navigation buttons */
+.swiper-button-next,
+.swiper-button-prev {
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    color: #fff; /* White arrow color */
+    border-radius: 50%; /* Make it circular */
+    width: 30px; /* Smaller width */
+    height: 30px; /* Smaller height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+/* Adjust arrow size */
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    font-size: 14px; /* Smaller arrow size */
+    font-weight: bold;
+}
+
+/* Hover effect */
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Darker background on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
 </style>

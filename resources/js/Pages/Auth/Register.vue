@@ -121,27 +121,42 @@
 
                 <!-- Password (6-digit PIN) -->
                 <div class="mt-4">
-                    <div class="flex space-x-1">
-                        <label for="password" class="flex space-x-1 items-center">
+                    <div class="flex space-x-1 items-center">
+                        <label for="password" class="flex items-center space-x-2">
                             <span>Password</span>
                             <span class="text-yellow-700 text-sm">(Choose your 6 digits PIN)</span>
                         </label>
                         <span class="text-red-600">*</span>
                     </div>
-                    <TextInput
-                        id="password"
-                        type="password"
-                        class="mt-1 w-full"
-                        :class="{
-                            'bg-gray-100': !isFilledFieldEditable,
-                            'cursor-not-allowed': !isFilledFieldEditable
-                        }"
-                        v-model="form.password"
-                        :disabled="!isFilledFieldEditable"
-                        placeholder="Numbers Only"
-                    />
+                    <div class="relative">
+                        <TextInput
+                            id="password"
+                            :type="isPasswordVisible ? 'text' : 'password'"
+                            class="mt-1 w-full pr-10"
+                            :class="{
+                                'bg-gray-100': !isFilledFieldEditable,
+                                'cursor-not-allowed': !isFilledFieldEditable
+                            }"
+                            v-model="form.password"
+                            :disabled="!isFilledFieldEditable"
+                            placeholder="Numbers Only"
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500"
+                            @click="togglePasswordVisibility"
+                        >
+                            <span v-if="isPasswordVisible">
+                                <img src="/images/components/eye_close.png" alt="hide password" class="w-8 h-8">
+                            </span>
+                            <span v-else>
+                                <img src="/images/components/eye_open.png" alt="show password" class="w-8 h-8">
+                            </span>
+                        </button>
+                    </div>
                     <InputError class="mt-2" :message="form.errors.password" />
                 </div>
+
 
                 <div class="mt-2 items-center justify-center">
                     <div class="flex flex-col w-fit justify-self-center mt-10 gap-2 md:w-3/5 text-center">
@@ -284,9 +299,10 @@ const form = useForm({
     ref_id: '',
 });
 
-const isShowOtpDiv = ref(false);
 const isFilledFieldEditable = ref(true);
 const isOtpRequested = ref(false);
+const isPasswordVisible = ref(false);
+const isShowOtpDiv = ref(false);
 
 const props = defineProps({
     countryOptions: Object,
@@ -334,6 +350,10 @@ function onBackButtonClicked() {
     isShowOtpDiv.value = false;
     isFilledFieldEditable.value = true;
     isOtpRequested.value = false;
+}
+
+function togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
 }
 
 function verifyPhoneNumber() {

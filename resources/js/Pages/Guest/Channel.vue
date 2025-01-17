@@ -27,10 +27,10 @@
                 <table class="min-w-full divide-y divide-gray-300">
                   <thead class="bg-gray-50">
                     <tr>
-                      <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-900 text-center">Channel#</th>
+                      <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-900 text-center">#</th>
                       <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-900 text-center">Image</th>
-                      <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-900 text-center">Product</th>
                       <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-900 text-center">Status</th>
+                      <th scope="col" class="px-4 py-3 text-xs font-semibold text-gray-900 text-center">Product</th>
                     </tr>
                   </thead>
 
@@ -54,19 +54,19 @@
                         />
                       </td>
                       <td class="px-4 py-3 text-center">
-                        {{ channel.product?.name || 'N/A' }}
-                      </td>
-                      <td class="px-4 py-3 text-center">
                         <span
                           :class="{
                             'bg-green-200 text-green-800': channel.qty >= 3,
                             'bg-orange-200 text-orange-800': channel.qty >= 1 && channel.qty < 3,
                             'bg-red-200 text-red-800': channel.qty == 0 || channel.vend_channel_error_logs?.length,
                           }"
-                          class="px-2 py-1 rounded-full text-xs font-bold"
+                          class="px-3 py-1 rounded-full text-sm font-bold"
                         >
                           {{ getStatusLabel(channel) }}
                         </span>
+                      </td>
+                      <td class="px-4 py-3 text-center text-sm text-gray-700">
+                        {{ channel.product?.name || 'N/A' }}
                       </td>
                     </tr>
                   </tbody>
@@ -83,28 +83,29 @@
               class="p-4 bg-white shadow rounded-lg space-y-2"
               @click="highlightChannel(index)"
             >
-              <div class="flex items-center justify-between">
-                <span class="text-gray-600 font-semibold">Channel {{ channel.code }}</span>
-                <span
-                  :class="{
-                    'bg-green-200 text-green-800': channel.qty >= 3,
-                    'bg-orange-200 text-orange-800': channel.qty >= 1 && channel.qty < 3,
-                    'bg-red-200 text-red-800': channel.qty == 0 || channel.vend_channel_error_logs?.length,
-                  }"
-                  class="px-2 py-1 rounded-full text-xs font-bold"
-                >
-                  {{ getStatusLabel(channel) }}
-                </span>
-              </div>
-              <div class="flex items-center space-x-4">
+              <!-- <div class="flex items-center justify-between">
+                <span class="text-gray-600 font-semibold"># {{ channel.code }}</span>
+              </div> -->
+              <div class="flex items-center space-x-2">
+                <span class="text-gray-600 font-normal"># {{ channel.code }}</span>
                 <img
                   v-if="channel.product?.thumbnail?.full_url"
                   :src="channel.product.thumbnail.full_url"
                   alt="Product Image"
-                  class="w-16 h-16 rounded-full"
+                  class="w-24 h-24 rounded-full"
                 />
-                <div class="flex-1">
-                  <p class="text-gray-700 font-medium">{{ channel.product?.name || 'N/A' }}</p>
+                <div class="flex-1 space-y-1 ">
+                  <p class="text-gray-700 text-lg text-center">{{ channel.product?.name || 'N/A' }}</p>
+                  <span
+                    :class="{
+                      'bg-green-200 text-green-800': channel.qty >= 3,
+                      'bg-orange-200 text-orange-800': channel.qty >= 1 && channel.qty < 3,
+                      'bg-red-200 text-red-800': channel.qty == 0 || channel.vend_channel_error_logs?.length,
+                    }"
+                    class="px-3 py-1 rounded-full text-sm font-bold block text-center w-fit mx-auto"
+                  >
+                    {{ getStatusLabel(channel) }}
+                  </span>
                 </div>
               </div>
             </div>
