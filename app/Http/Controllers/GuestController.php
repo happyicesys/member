@@ -39,8 +39,6 @@ class GuestController extends Controller
     {
         $plans = Plan::active()->get();
 
-        // dd($this->sysApiService->getAllDCVends('HIPL'));
-
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),

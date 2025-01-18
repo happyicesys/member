@@ -153,42 +153,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(vend, index) in dcvends" :key="vend.code" @click="highlightMarker(index)" class="cursor-pointer hover:bg-gray-50 transition duration-200">
+                            <tr v-for="(vendData, index) in dcvends" :key="vendData.id" @click="highlightMarker(index)" class="cursor-pointer hover:bg-gray-50 transition duration-200">
                                 <td class="border border-gray-300 px-4 py-2">
                                     <div class="flex flex-col space-y-2">
                                         <span class="text-gray-800 font-semibold text-left">
-                                            {{ vend.code }}
+                                            {{ vendData.vend?.code }}
                                         </span>
                                         <span class="text-left">
-                                            {{ vend.customer?.name }}
+                                            {{ vendData.name }}
                                         </span>
                                     </div>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2">
                                     <div class="flex flex-col space-y-2">
                                         <span>
-                                            {{ vend.customer?.address?.full_address }}
+                                            {{ vendData.address.full_address }}
                                         </span>
                                         <a
-                                            :href="`https://www.google.com/maps/search/?api=1&query=${vend.customer?.address?.latitude},${vend.customer?.address?.longitude}`"
+                                            :href="`https://www.google.com/maps/search/?api=1&query=${vendData.address.latitude},${vendData.address.longitude}`"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            type="button"
                                             class="bg-green-300 hover:bg-green-400 px-3 py-2 text-xs text-green-800 flex space-x-1 w-fit rounded shadow font-bold"
+                                            v-if="vendData.address.latitude && vendData.address.longitude"
                                         >
                                             GPS
                                         </a>
                                     </div>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">
-                                    <!-- <MagnifyingGlassCircleIcon class="w-10 h-10 text-blue-500 underline hover:cursor-point drop-shadow mx-auto" @click="showChannel(vend)"/> -->
-                                    <img src="/images/components/ice_cream_stick.png" alt="Ice cream icon" class="hover:cursor-point drop-shadow-lg mx-auto w-10 h-10" @click="showChannel(vend)">
+                                    <img src="/images/components/ice_cream_stick.png" alt="Ice cream icon" class="hover:cursor-point drop-shadow-lg mx-auto w-10 h-10" @click="showChannel(vendData.vend)" v-if="vendData.vend">
                                 </td>
                             </tr>
-                            <tr v-if="!dcvends || dcvends.length == 0">
-                                <td class="border border-gray-300 px-4 py-2 text-center" colspan="5">No data available</td>
+                            <tr v-if="!dcvends || dcvends.length === 0">
+                                <td class="border border-gray-300 px-4 py-2 text-center" colspan="3">No data available</td>
                             </tr>
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -296,93 +296,86 @@ function initializeMapWithDefaultLocation() {
 function addMarkers() {
     markers = []; // Reset the markers array
 
-    dcvends.value.forEach((vend, tableIndex) => {
-        const { customer } = vend;
-        if (customer && customer.address) {
-            const { latitude, longitude, full_address } = customer.address;
+    dcvends.value.forEach((vendData, tableIndex) => {
+        const { address, photos, name, vend } = vendData;
 
-            if (latitude && longitude) {
-                const position = {
-                    lat: parseFloat(latitude),
-                    lng: parseFloat(longitude),
-                };
+        if (address && address.latitude && address.longitude) {
+            const position = {
+                lat: parseFloat(address.latitude),
+                lng: parseFloat(address.longitude),
+            };
 
-                const marker = new google.maps.Marker({
-                    position,
-                    map: map,
-                    label: {
-                        text: String(vend.code),
-                        color: '#000000',
-                        fontWeight: 'bold',
-                    },
-                    icon: {
-                        url: '/images/icon.png', // Path to your custom icon
-                        scaledSize: new google.maps.Size(40, 40), // Resize the icon
-                        labelOrigin: new google.maps.Point(20, 40),
-                    },
-                    title: full_address,
-                });
+            const marker = new google.maps.Marker({
+                position,
+                map: map,
+                label: {
+                    text: String(vend.code),
+                    color: '#000000',
+                    fontWeight: 'bold',
+                },
+                icon: {
+                    url: '/images/icon.png', // Path to your custom icon
+                    scaledSize: new google.maps.Size(40, 40), // Resize the icon
+                    labelOrigin: new google.maps.Point(20, 40),
+                },
+                title: address.full_address,
+            });
 
-                // Prepare images for the info window
-                const photos = customer.photos || [];
-                let photoSliderHtml = '';
+            // Prepare images for the info window
+            let photoSliderHtml = '';
 
-                if (photos.length > 0) {
-                    photoSliderHtml = `
-                        <div style="max-width: 500px; max-height: 400px; height:auto; overflow: hidden;">
-                            <div class="swiper">
-                                <div class="swiper-wrapper">
-                                    ${photos
-                                        .map(
-                                            (photo) => `
-                                            <div class="swiper-slide">
-                                                <img src="${photo.full_url}" alt="Customer Photo" style="width: 100%; height: auto; border-radius:5%;" />
-                                            </div>`
-                                        )
-                                        .join('')}
-                                </div>
-                                <div class="swiper-button-next"></div>
-                                <div class="swiper-button-prev"></div>
+            if (photos && photos.length > 0) {
+                photoSliderHtml = `
+                    <div style="max-width: 500px; max-height: 400px; height:auto; overflow: hidden;">
+                        <div class="swiper">
+                            <div class="swiper-wrapper">
+                                ${photos
+                                    .map(
+                                        (photo) => `
+                                        <div class="swiper-slide">
+                                            <img src="${photo.full_url}" alt="Customer Photo" style="width: 100%; height: auto; border-radius:5%;" />
+                                        </div>`
+                                    )
+                                    .join('')}
                             </div>
-                        </div>`;
-                } else {
-                    photoSliderHtml = ``;
-                }
-
-                // Create an info window with photos
-                const infoWindow = new google.maps.InfoWindow({
-                    content: `
-                        <div style="text-align: center;">
-                            <span style="font-size: 12px; font-weight: bold; margin-bottom: 1px;">${customer.name}</span>
-                            <p style="margin-bottom: 3px;"><strong>${full_address}</strong></p>
-                            ${photoSliderHtml}
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
                         </div>
-                    `,
-                    maxWidth: 1000,
-                });
-
-                marker.addListener('click', () => {
-                    event.stopPropagation();
-                    infoWindow.open(map, marker);
-
-                    // Initialize Swiper after the info window is opened
-                    setTimeout(() => {
-                        new Swiper('.swiper', {
-                            navigation: {
-                                nextEl: '.swiper-button-next',
-                                prevEl: '.swiper-button-prev',
-                            },
-                            loop: true,
-                        });
-                    }, 0);
-                });
-
-                markers.push({ marker, tableIndex });
+                    </div>`;
             }
+
+            // Create an info window
+            const infoWindow = new google.maps.InfoWindow({
+                content: `
+                    <div style="text-align: center;">
+                        <span style="font-size: 12px; font-weight: bold; margin-bottom: 1px;">${name}</span>
+                        <p style="margin-bottom: 3px;"><strong>${address.full_address}</strong></p>
+                        ${photoSliderHtml}
+                    </div>
+                `,
+                maxWidth: 1000,
+            });
+
+            marker.addListener('click', () => {
+                event.stopPropagation();
+                infoWindow.open(map, marker);
+
+                // Initialize Swiper after the info window is opened
+                setTimeout(() => {
+                    new Swiper('.swiper', {
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        loop: true,
+                    });
+                }, 0);
+            });
+
+            markers.push({ marker, tableIndex });
         }
     });
 }
-
 
 function addSelfMarker(userLocation) {
     new google.maps.Marker({
@@ -432,6 +425,7 @@ function onChannelClosed() {
 function showChannel(vend) {
     vendObject.value = []
     vendObject.value = vend
+    console.log(vendObject.value)
     showChannelModal.value = true
 }
 </script>
