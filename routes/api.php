@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CountryController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\VendTransactionController;
 use App\Http\Controllers\GuestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

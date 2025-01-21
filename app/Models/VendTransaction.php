@@ -17,6 +17,7 @@ class VendTransaction extends Model
         'payment_method_id',
         'payment_method_name',
         'ref_order_id',
+        'ref_transaction_id',
         'total_promo_amount',
         'total_qty',
         'user_id',
@@ -24,6 +25,12 @@ class VendTransaction extends Model
         'vend_id',
         'vend_prefix_id',
         'vend_prefix_name',
+    ];
+
+    protected $casts = [
+        'datetime' => 'datetime',
+        'total_amount' => 'integer',
+        'total_promo_amount' => 'integer',
     ];
 
     // relationships
