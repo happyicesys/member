@@ -23,14 +23,24 @@ class PlanResource extends JsonResource
             'is_active' => $this->is_active,
             'is_available' => $this->is_available,
             'is_stackable' => $this->is_stackable,
-            'base' => [
-                'promo_type' => 'percent',
-                'promo_value' => 30,
-                'max_count' => null,
-                'used_count' => 0,
-                'datetime_from' => '2025-01-01 00:00:00',
-                'datetime_to' => '2025-02-01 00:00:00',
-            ]
+            'base' => $this->getBasePlanItem($request->user()),
+            'planItems' => PlanItemResource::collection(
+                $this->planItems->where('is_base', false)
+            )->each->withUser($request->user()),
         ];
+    }
+
+    /**
+     * Get the base plan item (is_base = true).
+     */
+    private function getBasePlanItem($user): ?array
+    {
+        $basePlanItem = $this->planItems->where('is_base', true)->first();
+
+        if ($basePlanItem) {
+            return (new PlanItemResource($basePlanItem))->withUser($user)->resolve();
+        }
+
+        return null;
     }
 }

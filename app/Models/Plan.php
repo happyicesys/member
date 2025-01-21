@@ -24,6 +24,11 @@ class Plan extends Model
     ];
 
     // relationships
+    public function planItems()
+    {
+        return $this->hasMany(PlanItem::class);
+    }
+
     public function users()
     {
         return $this->hasMany(User::class);

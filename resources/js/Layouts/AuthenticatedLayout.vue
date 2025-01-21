@@ -1,241 +1,152 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+const page = usePage();
+const currentRoute = computed(() => page.value?.props?.route?.name || '');
+const isMenuOpen = ref(false);
+
+function toggleMenu() {
+    isMenuOpen.value = !isMenuOpen.value;
+}
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav
-                class="border-b border-gray-100 bg-white"
-            >
-                <!-- Primary Navigation Menu -->
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="flex h-16 justify-between">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo class="max-w-16 max-h-10" />
-                                </Link>
-                            </div>
+    <div class="min-h-screen flex flex-col bg-gray-100">
+        <!-- Navigation Bar -->
+        <nav class="border-b border-gray-100 bg-white">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <Link :href="route('dashboard')">
+                            <ApplicationLogo class="max-w-16 max-h-10" />
+                        </Link>
+                    </div>
 
-                            <!-- Navigation Links -->
-                            <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
-                            >
-                                <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
-                                >
-                                    Dashboard
-                                </NavLink>
-                            </div>
-                        </div>
+                    <!-- Desktop Navigation Links -->
+                    <div class="hidden sm:flex space-x-8 items-center">
+                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                            Dashboard
+                        </NavLink>
+                        <NavLink :href="route('profile.edit')" :active="route().current('profile.edit')">
+                            Profile
+                        </NavLink>
+                        <NavLink :href="route('about')" :active="route().current('about')">
+                            About Us
+                        </NavLink>
+                        <NavLink :href="route('contact-us')" :active="route().current('contact-us')">
+                            Contact Us
+                        </NavLink>
+                    </div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <!-- Settings Dropdown -->
-                            <div class="relative ms-3">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg
-                                                    class="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink
-                                            :href="route('profile.edit')"
-                                        >
-                                            Profile
-                                        </DropdownLink>
-                                        <DropdownLink
-                                            :href="route('logout')"
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
+                    <!-- Right Side (Settings and Hamburger) -->
+                    <div class="flex items-center">
+                        <!-- Settings Dropdown -->
+                        <div class="hidden sm:flex sm:items-center">
+                            <Dropdown align="right" width="48">
+                                <template #trigger>
+                                    <span class="inline-flex rounded-md">
+                                        <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                            {{ $page.props.auth.user.name }}
+                                            <svg class="ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </span>
+                                </template>
+                                <template #content>
+                                    <DropdownLink :href="route('profile.edit')">Profile</DropdownLink>
+                                    <DropdownLink :href="route('logout')" method="post" as="button">Log Out</DropdownLink>
+                                </template>
+                            </Dropdown>
                         </div>
 
                         <!-- Hamburger -->
-                        <div class="-me-2 flex items-center sm:hidden">
-                            <button
-                                @click="
-                                    showingNavigationDropdown =
-                                        !showingNavigationDropdown
-                                "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
-                            >
-                                <svg
-                                    class="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        :class="{
-                                            hidden: showingNavigationDropdown,
-                                            'inline-flex':
-                                                !showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        :class="{
-                                            hidden: !showingNavigationDropdown,
-                                            'inline-flex':
-                                                showingNavigationDropdown,
-                                        }"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
+                        <div class="-me-2 flex sm:hidden">
+                            <button @click="toggleMenu" class="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500">
+                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path :class="{ hidden: isMenuOpen, 'inline-flex': !isMenuOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                    <path :class="{ hidden: !isMenuOpen, 'inline-flex': isMenuOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="sm:hidden"
-                >
-                    <div class="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            :href="route('dashboard')"
-                            :active="route().current('dashboard')"
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
+            <!-- Responsive Menu -->
+            <div :class="{ block: isMenuOpen, hidden: !isMenuOpen }" class="sm:hidden">
+                <div class="space-y-1 pb-3 pt-2">
+                    <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">Dashboard</ResponsiveNavLink>
+                    <ResponsiveNavLink :href="route('profile.edit')" :active="route().current('profile.edit')">Profile</ResponsiveNavLink>
+                    <ResponsiveNavLink :href="route('about')" :active="route().current('about')">About Us</ResponsiveNavLink>
+                    <ResponsiveNavLink :href="route('contact-us')" :active="route().current('contact-us')">Contact Us</ResponsiveNavLink>
+                </div>
+                <div class="border-t border-gray-200 pb-1 pt-4">
+                    <div class="px-4">
+                        <div class="text-base font-medium text-gray-800">{{ $page.props.auth.user.name }}</div>
+                        <div class="text-sm font-medium text-gray-500">{{ $page.props.auth.user.email }}</div>
                     </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div
-                        class="border-t border-gray-200 pb-1 pt-4"
-                    >
-                        <div class="px-4">
-                            <div
-                                class="text-base font-medium text-gray-800"
-                            >
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
-                            </div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
+                    <div class="mt-3 space-y-1">
+                        <ResponsiveNavLink :href="route('logout')" method="post" as="button">Log Out</ResponsiveNavLink>
                     </div>
                 </div>
-            </nav>
+            </div>
+        </nav>
 
-            <!-- Page Heading -->
-            <header
-                class="bg-white shadow"
-                v-if="$slots.header"
-            >
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
+        <!-- Page Header -->
+        <header class="bg-white shadow" v-if="$slots.header">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <slot name="header" />
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main>
+            <slot />
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center pt-5 pb-10 bg-gray-50">
+            <section class="flex flex-col items-center py-8">
+                <div class="text-center text-gray-600 text-2xl font-semibold tracking-wide">Follow Us</div>
+                <div class="flex justify-between space-x-2 mt-4">
+                    <a href="https://www.facebook.com/dcvendsg" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 50 50">
+                            <path d="M25,3C12.85,3,3,12.85,3,25c0,11.03,8.125,20.137,18.712,21.728V30.831h-5.443v-5.783h5.443v-3.848 c0-6.371,3.104-9.168,8.399-9.168c2.536,0,3.877,0.188,4.512,0.274v5.048h-3.612c-2.248,0-3.033,2.131-3.033,4.533v3.161h6.588 l-0.894,5.783h-5.694v15.944C38.716,45.318,47,36.137,47,25C47,12.85,37.15,3,25,3z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/dcvendsg/" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 50 50">
+                            <path d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z"></path>
+                        </svg>
+                    </a>
+                    <a href="https://www.tiktok.com/@dcvendsg" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 50 50">
+                            <path d="M41,4H9C6.243,4,4,6.243,4,9v32c0,2.757,2.243,5,5,5h32c2.757,0,5-2.243,5-5V9C46,6.243,43.757,4,41,4z M37.006,22.323 c-0.227,0.021-0.457,0.035-0.69,0.035c-2.623,0-4.928-1.349-6.269-3.388c0,5.349,0,11.435,0,11.537c0,4.709-3.818,8.527-8.527,8.527 s-8.527-3.818-8.527-8.527s3.818-8.527,8.527-8.527c0.178,0,0.352,0.016,0.527,0.027v4.202c-0.175-0.021-0.347-0.053-0.527-0.053 c-2.404,0-4.352,1.948-4.352,4.352s1.948,4.352,4.352,4.352s4.527-1.894,4.527-4.298c0-0.095,0.042-19.594,0.042-19.594h4.016 c0.378,3.591,3.277,6.425,6.901,6.685V22.323z"></path>
+                        </svg>
+                    </a>
                 </div>
-            </header>
+            </section>
 
-            <!-- Page Content -->
-            <main>
-                <slot />
-
-                <!-- Footer -->
-                <footer class="text-center pt-5 pb-10 bg-gray-50">
-                    <!-- Mass Media Section -->
-                    <section class="flex flex-col items-center py-8">
-                        <div class="text-center text-gray-600 text-2xl font-semibold tracking-wide">
-                            Follow Us
-                        </div>
-                        <div class="flex justify-between space-x-2 mt-4">
-                            <a href="https://www.facebook.com/dcvendsg" target="_blank">
-                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 50 50">
-                                    <path d="M25,3C12.85,3,3,12.85,3,25c0,11.03,8.125,20.137,18.712,21.728V30.831h-5.443v-5.783h5.443v-3.848 c0-6.371,3.104-9.168,8.399-9.168c2.536,0,3.877,0.188,4.512,0.274v5.048h-3.612c-2.248,0-3.033,2.131-3.033,4.533v3.161h6.588 l-0.894,5.783h-5.694v15.944C38.716,45.318,47,36.137,47,25C47,12.85,37.15,3,25,3z"></path>
-                                </svg>
-                            </a>
-                            <a href="https://www.instagram.com/dcvendsg/" target="_blank">
-                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 50 50">
-                                    <path d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z"></path>
-                                </svg>
-                            </a>
-                            <a href="https://www.tiktok.com/@dcvendsg" target="_blank">
-                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 50 50">
-                                    <path d="M41,4H9C6.243,4,4,6.243,4,9v32c0,2.757,2.243,5,5,5h32c2.757,0,5-2.243,5-5V9C46,6.243,43.757,4,41,4z M37.006,22.323 c-0.227,0.021-0.457,0.035-0.69,0.035c-2.623,0-4.928-1.349-6.269-3.388c0,5.349,0,11.435,0,11.537c0,4.709-3.818,8.527-8.527,8.527 s-8.527-3.818-8.527-8.527s3.818-8.527,8.527-8.527c0.178,0,0.352,0.016,0.527,0.027v4.202c-0.175-0.021-0.347-0.053-0.527-0.053 c-2.404,0-4.352,1.948-4.352,4.352s1.948,4.352,4.352,4.352s4.527-1.894,4.527-4.298c0-0.095,0.042-19.594,0.042-19.594h4.016 c0.378,3.591,3.277,6.425,6.901,6.685V22.323z"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </section>
-
-                    <p class="text-sm text-gray-500">
-                        &copy; 2024 DCVIC PTE. LTD. All rights reserved.
-                    </p>
-                    <div class="flex justify-center space-x-5">
-                        <Link
-                            href="/terms-and-conditions"
-                            class="text-sm text-gray-500 hover:text-blue-600"
-                        >
-                            Terms and Conditions
-                        </Link>
-                        <Link
-                            href="/privacy-policy"
-                            class="text-sm text-gray-500 hover:text-blue-600"
-                        >
-                            Privacy Policy
-                        </Link>
-                    </div>
-                </footer>
-            </main>
-        </div>
+            <p class="text-sm text-gray-500">&copy; 2024 DCVIC PTE. LTD. All rights reserved.</p>
+            <div class="flex justify-center space-x-5">
+                <Link href="/terms-and-conditions" class="text-sm text-gray-500 hover:text-blue-600">Terms and Conditions</Link>
+                <Link href="/privacy-policy" class="text-sm text-gray-500 hover:text-blue-600">Privacy Policy</Link>
+            </div>
+        </footer>
     </div>
 </template>
+
+<style scoped>
+header {
+    font-family: 'Poppins', sans-serif;
+}
+</style>

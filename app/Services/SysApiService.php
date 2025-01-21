@@ -34,17 +34,19 @@ class SysApiService
      */
     public function getAllDCVends(string $operatorCode): ?array
     {
-        $response = Http::withToken($this->bearerToken)
-            ->withHeaders(['Accept' => 'application/json'])
-            ->post("{$this->baseUrl}/api/client/dcvends", [
-                'operatorCode' => $operatorCode,
-            ]);
+        $endpoint = "/api/client/dcvends";
+        return $this->postRequest($endpoint, ['operatorCode' => $operatorCode]);
+    }
 
-        if ($response->successful()) {
-            return $response->json();
-        }
-
-        return null;
+    /**
+     * Update vend countries via the external system.
+     *
+     * @return array|null
+     */
+    public function updateVendCountries(): ?array
+    {
+        $endpoint = "/api/vends/operators/" . env('SYS_OPERATOR_CODE') . "/update-dcvends-countries";
+        return $this->getRequest($endpoint);
     }
 
     /**
@@ -54,22 +56,17 @@ class SysApiService
      * @param array $queryParams
      * @return array|null
      */
-    public function get(string $endpoint, array $queryParams = []): ?array
+    public function getRequest(string $endpoint, array $queryParams = []): ?array
     {
         $response = Http::withToken($this->bearerToken)
-            ->get("{$this->baseUrl}/{$endpoint}", $queryParams);
+            ->withHeaders(['Accept' => 'application/json'])
+            ->get($this->baseUrl . $endpoint, $queryParams);
 
         if ($response->successful()) {
             return $response->json();
         }
 
-        Log::error('SysApiService GET request failed.', [
-            'endpoint' => $endpoint,
-            'queryParams' => $queryParams,
-            'status' => $response->status(),
-            'body' => $response->body(),
-        ]);
-
+        $this->logError('GET', $endpoint, $response);
         return null;
     }
 
@@ -80,22 +77,17 @@ class SysApiService
      * @param array $data
      * @return array|null
      */
-    public function post(string $endpoint, array $data = []): ?array
+    public function postRequest(string $endpoint, array $data = []): ?array
     {
         $response = Http::withToken($this->bearerToken)
-            ->post("{$this->baseUrl}/{$endpoint}", $data);
+            ->withHeaders(['Accept' => 'application/json'])
+            ->post($this->baseUrl . $endpoint, $data);
 
         if ($response->successful()) {
             return $response->json();
         }
 
-        Log::error('SysApiService POST request failed.', [
-            'endpoint' => $endpoint,
-            'data' => $data,
-            'status' => $response->status(),
-            'body' => $response->body(),
-        ]);
-
+        $this->logError('POST', $endpoint, $response, $data);
         return null;
     }
 
@@ -105,21 +97,17 @@ class SysApiService
      * @param string $endpoint
      * @return bool
      */
-    public function delete(string $endpoint): bool
+    public function deleteRequest(string $endpoint): bool
     {
         $response = Http::withToken($this->bearerToken)
-            ->delete("{$this->baseUrl}/{$endpoint}");
+            ->withHeaders(['Accept' => 'application/json'])
+            ->delete($this->baseUrl . $endpoint);
 
         if ($response->successful()) {
             return true;
         }
 
-        Log::error('SysApiService DELETE request failed.', [
-            'endpoint' => $endpoint,
-            'status' => $response->status(),
-            'body' => $response->body(),
-        ]);
-
+        $this->logError('DELETE', $endpoint, $response);
         return false;
     }
 
@@ -130,22 +118,42 @@ class SysApiService
      * @param array $data
      * @return array|null
      */
-    public function put(string $endpoint, array $data = []): ?array
+    public function putRequest(string $endpoint, array $data = []): ?array
     {
         $response = Http::withToken($this->bearerToken)
-            ->put("{$this->baseUrl}/{$endpoint}", $data);
+            ->withHeaders(['Accept' => 'application/json'])
+            ->put($this->baseUrl . $endpoint, $data);
 
         if ($response->successful()) {
             return $response->json();
         }
 
-        Log::error('SysApiService PUT request failed.', [
-            'endpoint' => $endpoint,
-            'data' => $data,
+        $this->logError('PUT', $endpoint, $response, $data);
+        return null;
+    }
+
+    /**
+     * Log an error for failed requests.
+     *
+     * @param string $method
+     * @param string $endpoint
+     * @param \Illuminate\Http\Client\Response $response
+     * @param array|null $data
+     * @return void
+     */
+    protected function logError(string $method, string $endpoint, $response, array $data = null): void
+    {
+        $logData = [
+            'method' => $method,
+            'endpoint' => $this->baseUrl . $endpoint,
             'status' => $response->status(),
             'body' => $response->body(),
-        ]);
+        ];
 
-        return null;
+        if ($data) {
+            $logData['data'] = $data;
+        }
+
+        Log::error('SysApiService request failed.', $logData);
     }
 }

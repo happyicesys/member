@@ -15,6 +15,10 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:3,1');
     Route::get('/stats', [GuestController::class, 'stats']);
 
+    Route::prefix('transactions')->group(function() {
+        Route::post('/create/users/{userID}', [VendTransactionController::class, 'create']);
+    });
+
     Route::middleware('auth:api')->group(function () {
         Route::post('/user', [UserController::class, 'user']);
         Route::post('/logout', [AuthController::class, 'logout']);

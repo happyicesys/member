@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\OTPService;
 use App\Services\IsmsService;
 use App\Services\OneWaySmsService;
+use App\Services\PlanService;
 use App\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
@@ -23,6 +24,7 @@ use Inertia\Response;
 class RegisteredUserController extends Controller
 {
     protected $otpService;
+    protected $planService;
     protected $userService;
 
     public function __construct()
@@ -30,6 +32,7 @@ class RegisteredUserController extends Controller
         // Dynamically select the SMS service based on the environment variable
         $smsService = $this->getSmsService();
         $this->otpService = new OTPService($smsService);
+        $this->planService = new PlanService();
         $this->userService = new UserService();
     }
 
@@ -94,7 +97,11 @@ class RegisteredUserController extends Controller
             $this->userService->assignReferral($user, $request->ref_id);
         }
 
+        // Sync user plan
+        $this->planService->syncUserPlan($user);
+
         $this->userService->validateIsActiveCountry($request->country_id);
+
 
         // Fire the Registered event and log the user in
         event(new Registered($user));

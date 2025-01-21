@@ -18,7 +18,6 @@ class PlanItem extends Model
         'product_codes_json',
         'promo_type',
         'promo_value',
-        'used_count',
     ];
 
     protected $casts = [
@@ -28,5 +27,10 @@ class PlanItem extends Model
     public function plan()
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    public function planItemUsers()
+    {
+        return $this->hasMany(PlanItemUser::class);
     }
 }

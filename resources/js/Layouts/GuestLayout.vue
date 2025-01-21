@@ -51,7 +51,7 @@ function toggleMenu() {
                                 currentRoute === 'about' ? 'underline decoration-red-600 decoration-2' : ''
                             ]"
                         >
-                            About
+                            About Us
                         </Link>
                         <Link
                             :href="route('contact-us')"
@@ -101,7 +101,7 @@ function toggleMenu() {
                         :href="route('about')"
                         :active="route().current('about')"
                     >
-                        About
+                        About Us
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
                         :href="route('contact-us')"
