@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface SmsServiceProviderInterface
+interface SmsInterface
 {
     public function sendSms($to, $message);
 }

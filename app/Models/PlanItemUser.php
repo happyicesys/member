@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class PlanItemUser extends Model
 {
     protected $fillable = [
-        'cycle_count',
         'datetime_from',
         'datetime_to',
         'is_active',

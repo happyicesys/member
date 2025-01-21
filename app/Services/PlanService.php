@@ -15,7 +15,7 @@ class PlanService
      */
     public function setDefaultPlan($user)
     {
-        $plan = Plan::where('level', 2)->first();
+        $plan = Plan::where('level', 3)->first();
         $user->update(['plan_id' => $plan->id]);
     }
 
@@ -40,13 +40,7 @@ class PlanService
         if ($isExisting) {
             // If the current plan item has expired
             if ($isExisting->datetime_to < Carbon::today()) {
-                if ($isExisting->cycle_count < $planItem->cycle) {
-                    // Add a new cycle if under the maximum limit
-                    $this->addNewCycle($isExisting, $planItem);
-                } else {
-                    // Otherwise, deactivate the item
-                    $isExisting->update(['is_active' => false]);
-                }
+                $isExisting->update(['is_active' => false]);
             }
         } else {
             // Create a new PlanItemUser entry for a new item
@@ -55,30 +49,13 @@ class PlanService
     }
 
     /**
-     * Add a new cycle to an existing PlanItemUser.
-     */
-    private function addNewCycle($existing, $planItem)
-    {
-        $datetimeTo = $this->calculateNextCycle($planItem);
-
-        $existing->update([
-            'datetime_from' => Carbon::today(),
-            'datetime_to' => $datetimeTo,
-            'cycle_count' => $existing->cycle_count + 1,
-            'is_active' => true,
-            'used_count' => 0, // Reset used_count for the new cycle
-        ]);
-    }
-
-    /**
      * Create a new PlanItemUser entry.
      */
     private function createNewPlanItemUser($userID, $planItem, $startDate)
     {
-        $datetimeTo = $this->calculateNextCycle($planItem);
+        $datetimeTo = $this->calculateEndDate($startDate, $planItem);
 
         PlanItemUser::create([
-            'cycle_count' => 1, // First cycle
             'datetime_from' => $startDate,
             'datetime_to' => $datetimeTo,
             'is_active' => true,
@@ -91,19 +68,19 @@ class PlanService
     /**
      * Calculate the next cycle end date based on the frequency of the plan item.
      */
-    private function calculateNextCycle($planItem)
+    private function calculateEndDate($startDate, $planItem)
     {
         switch ($planItem->frequency) {
             case 'daily':
-                return Carbon::today()->addDays(1);
+                return Carbon::parse($startDate)->addDays($planItem->cycle);
             case 'weekly':
-                return Carbon::today()->addWeeks(1);
+                return Carbon::parse($startDate)->addWeeks($planItem->cycle);
             case 'monthly':
-                return Carbon::today()->addMonths(1);
+                return Carbon::parse($startDate)->addMonths($planItem->cycle);
             case 'annually':
-                return Carbon::today()->addYears(1);
+                return Carbon::parse($startDate)->addYears($planItem->cycle);
             default:
-                return Carbon::today()->addMonths(1);
+                return Carbon::parse($startDate)->addMonths($planItem->cycle);
         }
     }
 
