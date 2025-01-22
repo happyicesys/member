@@ -29,6 +29,7 @@
                             'cursor-not-allowed': !isFilledFieldEditable
                         }"
                         v-model="form.name"
+                        @input="onInputUpdate()"
                         required
                         autofocus
                         autocomplete="off"
@@ -53,6 +54,7 @@
                             'cursor-not-allowed': !isFilledFieldEditable
                         }"
                         v-model="form.email"
+                        @input="onInputUpdate()"
                         required
                         autocomplete="username"
                         :disabled="!isFilledFieldEditable"
@@ -66,6 +68,7 @@
                         v-model="form.dob"
                         :disabled="!isFilledFieldEditable"
                         isPreviousNextButton="false"
+                        @update:modelValue="onInputUpdate()"
                     >
                         Birth Date
                     </DatePicker>
@@ -89,6 +92,7 @@
                         }"
                         v-model="form.country_id"
                         :disabled="!isFilledFieldEditable"
+                        @selected="onInputUpdate()"
                         required
                     >
                         <option value="" disabled>Select Country</option>
@@ -118,7 +122,7 @@
                             'bg-gray-100': !isFilledFieldEditable,
                             'cursor-not-allowed': !isFilledFieldEditable
                         }"
-                        @input="clearError('phone_number')"
+                        @input="onInputUpdate()"
                         v-model="form.phone_number"
                         :disabled="!isFilledFieldEditable"
                         required
@@ -146,6 +150,7 @@
                                 'cursor-not-allowed': !isFilledFieldEditable
                             }"
                             v-model="form.password"
+                            @input="onInputUpdate()"
                             :disabled="!isFilledFieldEditable"
                             placeholder="Numbers Only"
                         />
@@ -309,6 +314,7 @@ const form = useForm({
 });
 
 const isFormValid = computed(() => {
+    console.log('name', form.name, 'email', form.email, 'dob', form.dob, 'country_id', form.country_id, 'phone_number', form.phone_number, 'isPasswordValid', isPasswordValid.value, 'phone_number_error', form.errors.phone_number)
     return (
         form.name &&
         form.email &&
@@ -368,8 +374,8 @@ watch(
     { immediate: true }
 );
 
-function clearError(field) {
-    form.errors[field] = '';
+function onInputUpdate() {
+    form.errors = {};
     countdownInterval = null; // Reset the interval ID
     isCountdownActive.value = false;
     nowAddTwoMinutes.value = null
