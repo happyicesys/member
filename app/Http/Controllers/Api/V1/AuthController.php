@@ -20,7 +20,7 @@ class AuthController extends Controller
         $request->validated($request->all());
 
         if(!auth()->attempt($request->only('phone_number', 'password'))) {
-            return $this->error('Invalid credentials', 'Invalid credentials', 401);
+            return $this->error('Invalid credentials', '', 401);
         }
 
         $user = User::with(['phoneCountry', 'plan'])->where('phone_number', $request->phone_number)->first();
