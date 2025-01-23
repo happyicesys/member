@@ -63,6 +63,15 @@ function toggleMenu() {
                             Contact Us
                         </Link>
                         <Link
+                            :href="route('join-licensee')"
+                            :class="[
+                                'text-lg text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-[4pt] hover:decoration-red-600 hover:decoration-2',
+                                currentRoute == 'join-licensee' ? 'underline decoration-red-600 decoration-2' : ''
+                            ]"
+                        >
+                            Join Us as Licensee
+                        </Link>
+                        <Link
                             :href="route('register')"
                             :class="[
                                 'text-lg text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-[4pt] hover:decoration-red-600 hover:decoration-2',
@@ -108,6 +117,12 @@ function toggleMenu() {
                         :active="route().current('contact-us')"
                     >
                         Contact Us
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        :href="route('join-licensee')"
+                        :active="route().current('join-licensee')"
+                    >
+                        Join Us as Licensee
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
                         :href="route('register')"

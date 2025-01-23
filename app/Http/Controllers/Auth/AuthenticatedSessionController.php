@@ -88,11 +88,11 @@ class AuthenticatedSessionController extends Controller
         $this->validateOtp($request);
 
         $request->validate([
-            'passwordParts.*' => 'required|digits:1',
+            'otpParts.*' => 'required|digits:1',
         ]);
 
         $request->merge([
-            'password' => implode('', $request->passwordParts),
+            'otp' => implode('', $request->otpParts),
         ]);
 
         $user = User::where('phone_number', $request->phone_number)->where('phone_country_id', $request->country_id)->first();

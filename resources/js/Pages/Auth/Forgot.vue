@@ -62,40 +62,68 @@
             <div v-if="isOtpRequested">
                 <hr class="mt-6">
                 <!-- OTP Input -->
+                                <!-- New 6-digit PIN -->
                 <div class="mt-6">
-                    <InputLabel for="otp" value="OTP" />
-
-                    <TextInput
-                        id="otp"
-                        type="text"
-                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        v-model="form.otp"
-                        required
-                        placeholder="Enter the OTP from SMS"
-                    />
-                    <InputError class="mt-2" :message="form.errors.otp" />
-                </div>
-
-                <!-- New 6-digit PIN -->
-                <div class="mt-6">
-                    <InputLabel for="password" value="New 6-digit PIN" />
+                    <label for="otpParts" class="flex flex-col space-y-1 items-center mb-3">
+                        <span class="font-normal">
+                            Enter 5-digits OTP sent to {{ countryOptions.find((country) => country.id == form.country_id).phone_code }}{{ form.phone_number }}
+                        </span>
+                        <span class="font-light">
+                            (Expiring in 2 minutes<span v-if="nowAddTwoMinutes">, </span>{{ nowAddTwoMinutes }})
+                        </span>
+                    </label>
                     <div class="mt-2 grid grid-cols-6 gap-2">
                         <TextInput
-                            v-for="(part, index) in form.passwordParts"
+                            v-for="(otp, index) in form.otpParts"
                             :key="index"
-                            :id="'password_' + index"
+                            :id="'otp_' + index"
                             class="block w-14 text-center px-2 py-3 border rounded-md focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                             maxlength="1"
-                            v-model="form.passwordParts[index]"
+                            v-model="form.otpParts[index]"
                             @input="onInput(index)"
                             inputmode="numeric"
                             type="text"
                             pattern="[0-9]*"
                             required
-                            ref="passwordInputs"
+                            ref="otpInputs"
                         />
                     </div>
                     <InputError class="mt-2" :message="form.errors.passwordParts" />
+                </div>
+
+                <div class="mt-6">
+                    <label for="password" class="flex items-center space-x-2">
+                            <span>Password</span>
+                            <span class="text-yellow-700 text-sm">(Choose your 6 digits PIN)</span>
+                    </label>
+                    <div class="relative">
+                        <TextInput
+                            id="password"
+                            :type="isPasswordVisible ? 'text' : 'password'"
+                            class="mt-1 w-full pr-10"
+                            :class="{
+                                'bg-gray-100': !isFilledFieldEditable,
+                                'cursor-not-allowed': !isFilledFieldEditable
+                            }"
+                            v-model="form.password"
+                            @input="onInputUpdate()"
+                            :disabled="!isFilledFieldEditable"
+                            placeholder="Numbers Only"
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500"
+                            @click="togglePasswordVisibility"
+                        >
+                            <span v-if="isPasswordVisible">
+                                <img src="/images/components/eye_close.png" alt="hide password" class="w-8 h-8">
+                            </span>
+                            <span v-else>
+                                <img src="/images/components/eye_open.png" alt="show password" class="w-8 h-8">
+                            </span>
+                        </button>
+                    </div>
+                    <InputError class="mt-2" :message="form.errors.password" />
                 </div>
             </div>
 
@@ -166,14 +194,15 @@ const props = defineProps({
 const form = useForm({
   country_id: '',
   phone_number: '',
-  otp: '',
-  passwordParts: ['', '', '', '', '', ''],
+  otpParts: ['', '', '', '', ''],
+  password: '',
 });
 
 const isOtpRequested = ref(false);
 const countdown = ref(60); // Countdown timer for OTP resend
 const isCountdownActive = ref(false);
 const isFilledFieldEditable = ref(true);
+const isPasswordVisible = ref(false);
 
 const countryOptions = ref([]);
 
@@ -208,13 +237,13 @@ const verifyPhoneNumber = () => {
 };
 
 const onInput = (index) => {
-  if (form.passwordParts[index].length === 1 && index < form.passwordParts.length - 1) {
-      const nextInput = document.getElementById(`password_${index + 1}`);
+  if (form.otpParts[index].length === 1 && index < form.otpParts.length - 1) {
+      const nextInput = document.getElementById(`otp_${index + 1}`);
       if (nextInput) {
           nextInput.focus();
       }
-  } else if (form.passwordParts[index].length === 0 && index > 0) {
-      const prevInput = document.getElementById(`password_${index - 1}`);
+  } else if (form.otpParts[index].length === 0 && index > 0) {
+      const prevInput = document.getElementById(`otp_${index - 1}`);
       if (prevInput) {
           prevInput.focus();
       }
@@ -223,7 +252,11 @@ const onInput = (index) => {
 
 const submit = () => {
   form.post(route('reset.pin'), {
-      onFinish: () => form.reset('passwordParts', 'otp'),
+      onFinish: () => form.reset('otpParts', 'password'),
   });
 };
+
+function togglePasswordVisibility() {
+    isPasswordVisible.value = !isPasswordVisible.value;
+}
 </script>

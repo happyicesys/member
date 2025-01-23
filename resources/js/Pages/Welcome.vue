@@ -181,7 +181,8 @@
                                     </div>
                                 </td>
                                 <td class="border border-gray-300 px-4 py-2 text-center">
-                                    <img src="/images/components/ice_cream_stick.png" alt="Ice cream icon" class="hover:cursor-point drop-shadow-lg mx-auto w-10 h-10" @click="showChannel(vendData.vend)" v-if="vendData.vend">
+                                    <!-- <img src="/images/components/ice_cream_stick.png" alt="Ice cream icon" class="hover:cursor-point drop-shadow-lg mx-auto w-10 h-10" @click="showChannel(vendData.vend)" v-if="vendData.vend"> -->
+                                    <span @click="showChannel(vendData.vend)" v-if="vendData.vend" class="text-blue-600 hover:underline">Check</span>
                                 </td>
                             </tr>
                             <tr v-if="!dcvends || dcvends.length === 0">

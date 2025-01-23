@@ -44,6 +44,9 @@ function toggleMenu() {
                         <NavLink :href="route('contact-us')" :active="route().current('contact-us')">
                             Contact Us
                         </NavLink>
+                        <NavLink :href="route('join-licensee')" :active="route().current('join-licensee')">
+                            Join Us as Licensee
+                        </NavLink>
                     </div>
 
                     <!-- Right Side (Settings and Hamburger) -->
@@ -87,7 +90,9 @@ function toggleMenu() {
                     <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">Dashboard</ResponsiveNavLink>
                     <ResponsiveNavLink :href="route('profile.edit')" :active="route().current('profile.edit')">Profile</ResponsiveNavLink>
                     <ResponsiveNavLink :href="route('about')" :active="route().current('about')">About Us</ResponsiveNavLink>
-                    <ResponsiveNavLink :href="route('contact-us')" :active="route().current('contact-us')">Contact Us</ResponsiveNavLink>
+                    <ResponsiveNavLink :href="route('contact-us')" :active="route().current('contact-us')">Contact
+                        Us</ResponsiveNavLink>
+                    <ResponsiveNavLink :href="route('join-licensee')" :active="route().current('join-licensee')">Join Us as Licensee</ResponsiveNavLink>
                 </div>
                 <div class="border-t border-gray-200 pb-1 pt-4">
                     <div class="px-4">

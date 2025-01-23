@@ -52,6 +52,11 @@ class GuestController extends Controller
         ]);
     }
 
+    public function joinLicensee()
+    {
+        return Inertia::render('Guest/JoinLicensee');
+    }
+
     public function privacyPolicy()
     {
         return Inertia::render('Guest/PrivacyPolicy');
