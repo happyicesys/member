@@ -16,7 +16,6 @@ class Setting extends Model
     {
         return Attribute::make(
             get: fn ($value) => $value / 100, // Convert cents to dollars
-            set: fn ($value) => $value * 100, // Convert dollars to cents
         );
     }
 }
