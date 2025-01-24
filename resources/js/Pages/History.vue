@@ -5,12 +5,15 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { ChevronRightIcon } from '@heroicons/vue/20/solid';
 
 const props = defineProps({
+    transactedCountry: Object,
     vendTransactions: Object,
 });
 
+const transactedCountry = ref([])
 const vendTransactions = ref([]);
 
 onMounted(() => {
+    transactedCountry.value = props.transactedCountry.data;
     vendTransactions.value = props.vendTransactions.data;
 });
 
@@ -37,9 +40,9 @@ const totalSaved = computed(() => {
                                 <img src="/images/icon.png" alt="Vion Icon" class="w-36 rounded mx-auto" />
                             </section>
                             <div class="mx-auto flex max-w-md flex-col">
-                                <dt class="text-base/7 text-gray-600">You have saved</dt>
+                                <dt class="text-base/7 text-gray-700">You have saved</dt>
                                 <dd class="text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-                                    {{ operatorCountry.currency_symbol }} {{ totalSaved.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                                    {{ transactedCountry.currency_symbol }} {{ totalSaved.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                                 </dd>
                             </div>
                         <!-- </dl> -->
@@ -65,11 +68,11 @@ const totalSaved = computed(() => {
                                     </h2>
                                     <p class="mt-1 text-sm text-gray-600">
                                         Amount:
-                                        {{ operatorCountry.currency_symbol }} {{ (transaction.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                                        {{ transactedCountry.currency_symbol }} {{ (transaction.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                                     </p>
                                     <p class="text-sm text-gray-800">
                                         Saved:
-                                        {{ operatorCountry.currency_symbol }} {{ (transaction.total_promo_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                                        {{ transactedCountry.currency_symbol }} {{ (transaction.total_promo_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                                     </p>
                                     <div class="mt-4">
                                         <ul class="mt-2 space-y-2">
