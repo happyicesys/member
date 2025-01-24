@@ -8,7 +8,7 @@ const showingNavigationDropdown = ref(false);
 // Get the current route name safely
 const page = usePage();
 const currentRoute = computed(() => page.props.value?.route?.name || '');
-
+const isAuthenticated = usePage().props.auth.user !== null;
 const isMenuOpen = ref(false);
 
 function toggleMenu() {
@@ -82,9 +82,14 @@ function toggleMenu() {
                         </Link>
                     </div>
                 </nav>
-                <div>
+                <div v-if="!isAuthenticated">
                     <Link :href="route('login')">
                         <img src="/images/components/login_button_1.png" class="h-10 lg:h-14 drop-shadow-md hover:drop-shadow-lg" alt="">
+                    </Link>
+                </div>
+                <div v-else>
+                    <Link :href="route('dashboard')">
+                        <img src="/images/components/hi_member_button_1.png" class="h-10 lg:h-14 drop-shadow-md hover:drop-shadow-lg" alt="">
                     </Link>
                 </div>
             </div>

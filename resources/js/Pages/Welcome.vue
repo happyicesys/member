@@ -210,9 +210,12 @@
 >
 </Channel>
 
+<AttachmentList :items="photos" :isEditEnabled="false"></AttachmentList>
+
 </template>
 
 <script setup>
+import AttachmentList from '@/Components/AttachmentList.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import Channel from '@/Pages/Guest/Channel.vue';
 import { MagnifyingGlassCircleIcon } from '@heroicons/vue/20/solid';
@@ -339,7 +342,7 @@ function addMarkers() {
                                     .map(
                                         (photo) => `
                                         <div class="swiper-slide">
-                                            <img src="${photo.full_url}" alt="Customer Photo" style="width: 100%; height: auto; border-radius:5%;" />
+                                            <img src="${photo.full_url}" alt="Customer Photo" style="width: 100%; height: auto; border-radius:5%;" @click="showAttachment(photos)"/>
                                         </div>`
                                     )
                                     .join('')}
@@ -433,6 +436,10 @@ function showChannel(vend) {
     vendObject.value = vend
     console.log(vendObject.value)
     showChannelModal.value = true
+}
+
+function showAttachment() {
+    console.log('show attachment')
 }
 </script>
 

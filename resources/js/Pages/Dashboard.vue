@@ -9,6 +9,8 @@ const showBanner = ref(true);
 const dismissBanner = () => {
     showBanner.value = false;
 };
+
+const isVouchersDisabled = ref(true); // Set the disabled state for the "Vouchers" button
 </script>
 
 <template>
@@ -41,17 +43,21 @@ const dismissBanner = () => {
                         Explore your dashboard to manage your profile, view exclusive deals, and unlock special features just for you!
                     </p>
                     <div class="grid grid-cols-2 gap-5 md:w-2/3 mx-auto">
-                        <button class="py-6 px-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition text-center 1">
-                            <div class="flex flex-col space-y-1 items-center">
+                        <button class="py-6 px-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition text-center">
+                            <Link :href="route('benefit')" class="flex flex-col space-y-1 items-center">
                                 <img src="/images/components/button_benefits.png" alt="Benefits Button" class="w-1/3 lg:w-1/6 rounded mx-auto" />
                                 <span class="lg:text-lg text-gray-700 font-semibold">Benefits</span>
-                            </div>
+                            </Link>
                         </button>
-                        <button class="py-6 px-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition text-center">
-                            <div class="flex flex-col space-y-1 items-center">
-                                <img src="/images/components/button_vouchers.png" alt="Vouchers Button" class="w-1/3 lg:w-1/6 rounded mx-auto" />
-                                <span class="lg:text-lg text-gray-700 font-semibold">Vouchers</span>
-                            </div>
+                        <button
+                            :class="[
+                                'py-6 px-4 bg-gray-100 rounded-lg shadow-md text-center transition flex flex-col space-y-1 items-center',
+                                isVouchersDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'
+                            ]"
+                            :disabled="isVouchersDisabled"
+                        >
+                            <img src="/images/components/button_vouchers.png" alt="Vouchers Button" class="w-1/3 lg:w-1/6 rounded mx-auto" />
+                            <span class="lg:text-lg text-gray-700 font-semibold">Vouchers</span>
                         </button>
                         <button class="py-6 px-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition text-center">
                             <div class="flex flex-col space-y-1 items-center">
@@ -83,5 +89,10 @@ const dismissBanner = () => {
 
 .font-heading {
     font-family: 'Poppins', sans-serif;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 </style>

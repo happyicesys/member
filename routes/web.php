@@ -21,6 +21,10 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/benefit', function() {
+        return Inertia::render('Benefit');
+    })->name('benefit');
+
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
