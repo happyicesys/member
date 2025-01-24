@@ -18,6 +18,7 @@ class VendTransactionResource extends JsonResource
             'id' => $this->id,
             'apk_ver' => $this->apk_ver,
             'datetime' => $this->datetime,
+            'datetime_for_humans' => $this->datetime->diffForHumans(),
             'firmware_ver' => $this->firmware_ver,
             'total_amount' => $this->total_amount,
             'customer_id' => $this->customer_id,

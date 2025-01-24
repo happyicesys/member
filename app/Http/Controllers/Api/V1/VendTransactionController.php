@@ -35,7 +35,7 @@ class VendTransactionController extends Controller
 
         $vendTransaction = VendTransaction::create([
             'apk_ver' => $request->apk_ver,
-            'datetime' => Carbon::parse($request->datetime),
+            'datetime' => Carbon::parse($request->datetime)->setTimezone(env('APP_TIMEZONE')),
             'firmware_ver' => $request->firmware_ver,
             'total_amount' => $request->total_amount,
             'customer_id' => $request->customer_id,

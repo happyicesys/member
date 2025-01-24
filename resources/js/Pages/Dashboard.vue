@@ -60,10 +60,10 @@ const isVouchersDisabled = ref(true); // Set the disabled state for the "Voucher
                             <span class="lg:text-lg text-gray-700 font-semibold">Vouchers</span>
                         </button>
                         <button class="py-6 px-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition text-center">
-                            <div class="flex flex-col space-y-1 items-center">
-                                <img src="/images/components/button_history.png" alt="History Button" class="w-1/3 lg:w-1/6 rounded mx-auto" />
+                            <Link :href="route('history')" class="flex flex-col space-y-1 items-center">
+                                <img src="/images/components/button_history.png" alt="Plans History" class="w-1/3 lg:w-1/6 rounded mx-auto" />
                                 <span class="lg:text-lg text-gray-700 font-semibold">History</span>
-                            </div>
+                            </Link>
                         </button>
                         <button class="py-6 px-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition text-center">
                             <Link :href="route('plan.index')" class="flex flex-col space-y-1 items-center">

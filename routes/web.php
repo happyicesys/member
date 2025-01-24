@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
@@ -9,6 +10,7 @@ Route::get('/', [GuestController::class, 'home'])->name('home');
 
 Route::get('/about', [GuestController::class, 'about'])->name('about');
 Route::get('/contact-us', [GuestController::class, 'contactUs'])->name('contact-us');
+Route::get('/history', [DashboardController::class, 'historyIndex'])->name('history');
 Route::get('/join-licensee', [GuestController::class, 'joinLicensee'])->name('join-licensee');
 Route::get('/data-protection-policy', [GuestController::class, 'dataProtectionPolicy'])->name('data-protection-policy');
 Route::get('/privacy-policy', [GuestController::class, 'privacyPolicy'])->name('privacy-policy');

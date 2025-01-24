@@ -15,7 +15,7 @@ const isVouchersDisabled = ref(true); // Set the disabled state for the "Voucher
 
 <template>
     <AuthenticatedLayout>
-        <Head title="Dashboard" />
+        <Head title="Benefit" />
 
         <div class="py-4 bg-white">
             <div class="mx-auto px-4 sm:px-6 lg:px-8">
