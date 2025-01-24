@@ -13,8 +13,6 @@ class DashboardController extends Controller
 
     public function historyIndex()
     {
-        Auth::loginUsingId(73);
-
         $vendTransactions = VendTransaction::query()
             ->with(['vendTransactionItems'])
             ->where('user_id', auth()->id())

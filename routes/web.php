@@ -5,7 +5,6 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Inertia\Inertia;
-
 Route::get('/', [GuestController::class, 'home'])->name('home');
 
 Route::get('/about', [GuestController::class, 'about'])->name('about');

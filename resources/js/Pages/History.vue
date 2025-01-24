@@ -14,13 +14,6 @@ onMounted(() => {
     vendTransactions.value = props.vendTransactions.data;
 });
 
-const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-MY', {
-        style: 'currency',
-        currency: 'MYR',
-    }).format(amount);
-};
-
 const operatorCountry = usePage().props.auth.operatorCountry;
 
 // Compute total saved amount
@@ -38,20 +31,23 @@ const totalSaved = computed(() => {
 
                 <!-- Total Stats Section -->
                 <div class="bg-white py-12 sm:py-16 mb-10 shadow rounded-lg w-fit mx-auto">
-                    <div class="mx-auto max-w-7xl px-6 lg:px-8 ">
-                        <dl class="grid grid-cols-1 gap-x-10 gap-y-16 text-center lg:grid-cols-3">
-                            <div class="mx-auto flex max-w-xs flex-col gap-y-3">
+                    <div class="mx-auto px-12 lg:px-10 flex items-center space-x-2">
+                        <!-- <dl class="grid grid-cols-1 text-center lg:grid-cols-3"> -->
+                            <section class="text-white rounded">
+                                <img src="/images/icon.png" alt="Vion Icon" class="w-36 rounded mx-auto" />
+                            </section>
+                            <div class="mx-auto flex max-w-md flex-col">
                                 <dt class="text-base/7 text-gray-600">You have saved</dt>
-                                <dd class="order-first text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
+                                <dd class="text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
                                     {{ operatorCountry.currency_symbol }} {{ totalSaved.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
                                 </dd>
                             </div>
-                        </dl>
+                        <!-- </dl> -->
                     </div>
                 </div>
 
                 <!-- Transaction History List -->
-                <h1 class="text-2xl font-bold text-gray-700 mb-6">Transaction History</h1>
+                <h1 class="text-2xl font-bold text-red-700 mb-6 px-2">Transaction History</h1>
                 <ul role="list" class="divide-y divide-gray-300 bg-white shadow rounded-lg">
                     <li
                         v-for="transaction in vendTransactions"
@@ -63,7 +59,7 @@ const totalSaved = computed(() => {
                                 <div class="flex-1">
                                     <h2 class="text-lg font-semibold text-gray-700 flex space-x-2 items-center">
                                         <span>
-                                          {{ transaction.customer_name }}
+                                            {{ transaction.customer_name }}
                                         </span>
                                         <small class="text-xs text-gray-500">({{ transaction.datetime_for_humans }})</small>
                                     </h2>
@@ -96,10 +92,6 @@ const totalSaved = computed(() => {
                                         </ul>
                                     </div>
                                 </div>
-                                <ChevronRightIcon
-                                    class="w-6 h-6 text-gray-400 flex-shrink-0"
-                                    aria-hidden="true"
-                                />
                             </div>
                         </div>
                     </li>

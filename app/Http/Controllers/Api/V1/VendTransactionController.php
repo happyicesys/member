@@ -68,6 +68,10 @@ class VendTransactionController extends Controller
             ]);
         }
 
+        $vendTransaction->update([
+            'total_qty' => $vendTransaction->vendTransactionItems()->count(),
+        ]);
+
         if($vendTransaction->total_promo_amount != 0 && $vendTransaction->total_promo_amount != null) {
             $this->settingService->updateTotalDiscountAmount($vendTransaction->total_promo_amount);
         }

@@ -20,6 +20,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'dob',
         'name',
         'email',
         'email_verified_at',
@@ -51,6 +52,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'dob' => 'date',
             'email_verified_at' => 'datetime',
             'is_details_filled' => 'boolean',
             'is_phone_number_validated' => 'boolean',
