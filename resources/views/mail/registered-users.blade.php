@@ -39,7 +39,7 @@
                 <tr>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td>{{ \Carbon\Carbon::parse($user->dob)->format('Y-m-d') }}</td>
+                    <td>{{ $user->dob ? \Carbon\Carbon::parse($user->dob)->format('Y-m-d') : null }}</td>
                     <td>{{ $user->phoneCountry->phone_code ?? 'N/A' }}</td>
                     <td>{{ $user->phone_number }}</td>
                     <td>{{ \Carbon\Carbon::parse($user->created_at)->format('Y-m-d H:i:s') }}</td>

@@ -7,4 +7,4 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('plans:sync')->daily();
-Schedule::job(new SendRegisteredUsersListEmail)->everyTwoMinutes();
+Schedule::job(new SendRegisteredUsersListEmail)->daily();

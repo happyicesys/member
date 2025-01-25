@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendRegisteredUsersListEmail;
 use App\Http\Resources\PlanResource;
 use App\Models\Plan;
 use App\Models\User;
