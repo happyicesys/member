@@ -5,8 +5,8 @@ import { Head, usePage } from '@inertiajs/vue3';
 import { ChevronRightIcon } from '@heroicons/vue/20/solid';
 
 const props = defineProps({
-    transactedCountry: Object,
-    vendTransactions: Object,
+    transactedCountry: [Array, Object],
+    vendTransactions: [Array, Object],
 });
 
 const transactedCountry = ref([])
@@ -17,7 +17,6 @@ onMounted(() => {
     vendTransactions.value = props.vendTransactions.data;
 });
 
-const operatorCountry = usePage().props.auth.operatorCountry;
 
 // Compute total saved amount
 const totalSaved = computed(() => {
@@ -96,6 +95,11 @@ const totalSaved = computed(() => {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </li>
+                    <li v-if="!vendTransactions || !vendTransactions.length">
+                        <div class="flex items-center justify-center py-4">
+                            <p class="text-sm text-gray-600">No records found</p>
                         </div>
                     </li>
                 </ul>
