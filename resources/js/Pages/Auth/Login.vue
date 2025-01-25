@@ -123,7 +123,7 @@
 
             <div class="mt-4 flex items-center justify-between">
                 <Link
-                    :href="route('register')"
+                    :href="route('register', { refID: 'web' })"
                     class="rounded-md text-lg text-red-600 underline hover:text-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Sign Up?

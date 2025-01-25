@@ -119,7 +119,7 @@
                 <strong>New Sign-up:</strong> Free Gold Member package, with FREE upgrade to unlimited times of 30% discount on all products, for 2 months
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
-                <Link :href="route('register')" class="bg-yellow-300 py-8 px-16 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-5xl hover:bg-yellow-400">
+                <Link :href="route('register', { refID: 'web' })" class="bg-yellow-300 py-8 px-16 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-5xl hover:bg-yellow-400">
                     <div class="flex flex-col space-y-2">
                         <span>
                             SIGN UP NOW

@@ -72,7 +72,7 @@ function toggleMenu() {
                             Join Us as Licensee
                         </Link>
                         <Link
-                            :href="route('register')"
+                            :href="route('register', { refID: 'web' })"
                             :class="[
                                 'text-lg text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-[4pt] hover:decoration-red-600 hover:decoration-2',
                                 currentRoute == 'register' ? 'underline decoration-red-600 decoration-2' : ''
@@ -130,7 +130,7 @@ function toggleMenu() {
                         Join Us as Licensee
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('register')"
+                        :href="route('register', { refID: 'web' })"
                         :active="route().current('register')"
                     >
                         Sign Up

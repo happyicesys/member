@@ -22,7 +22,7 @@
         <!-- Call to Action Section -->
         <section class="bg-white py-8 px-6">
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
-                <Link :href="route('register')" class="bg-yellow-300 py-4 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400">
+                <Link :href="route('register', { refID: 'web' })" class="bg-yellow-300 py-4 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400">
                     SIGN UP NOW
                 </Link>
             </div>
