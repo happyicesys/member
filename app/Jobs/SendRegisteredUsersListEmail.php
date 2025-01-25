@@ -27,10 +27,10 @@ class SendRegisteredUsersListEmail implements ShouldQueue
     public function handle(): void
     {
         Mail::to([
-            // 'sean_lee@foodleague.com.sg',
-            // 'daniel.ma@happyice.com.sg',
-            // 'kent@happyice.com.sg'
-            'leehongjie91@gmail.com'
+            'sean_lee@foodleague.com.sg',
+            'daniel.ma@happyice.com.sg',
+            'kent@happyice.com.sg',
+            'brianlee@happyice.com.my'
         ])->send(new RegisteredUsers($this->users));
     }
 }
