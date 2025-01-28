@@ -132,6 +132,14 @@
             </div>
         </section>
 
+                <!-- Product Section -->
+        <section class="pb-4 pt-4 md:pt-8 bg-white">
+            <div class="container mx-auto max-w-4xl text-center">
+                <h2 class="text-3xl font-bold text-red-600 mb-6">Discover Our Products</h2>
+            </div>
+            <img src="/images/menu.jpeg" alt="DCVEND Products" class="w-1/2 mx-auto rounded-lg" />
+        </section>
+
         <!-- Map Section -->
         <section class="pb-4 pt-4 md:pt-8 bg-white">
             <div class="container mx-auto max-w-4xl text-center">
