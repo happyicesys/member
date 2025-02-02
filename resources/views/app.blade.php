@@ -15,13 +15,13 @@
         @vite('resources/js/app.js')
         @inertiaHead
         <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-DTM2YLFZKT"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{env('GOOGLE_ANALYTICS_API_KEY')}}"></script>
         <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-DTM2YLFZKT');
+        gtag('config', "{{ env('GOOGLE_ANALYTICS_API_KEY') }}");
         </script>
     </head>
     <body class="font-sans antialiased">
