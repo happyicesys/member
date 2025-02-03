@@ -15,7 +15,7 @@ class SyncTotalDiscountAmountSetting extends Seeder
     public function run(): void
     {
         $setting = Setting::first();
-        $totalDiscountAmount = VendTransaction::query()->sum('discount_amount');
+        $totalDiscountAmount = VendTransaction::query()->sum('total_promo_amount');
         $setting->update([
             'total_discount_amount' => $totalDiscountAmount
         ]);
