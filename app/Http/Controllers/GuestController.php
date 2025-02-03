@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\SendRegisteredUsersListEmail;
 use App\Http\Resources\PlanResource;
 use App\Models\Plan;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\MapService;
 use App\Services\SysApiService;
@@ -40,11 +41,15 @@ class GuestController extends Controller
     {
         $plans = Plan::active()->get();
 
+        $setting = Setting::first();
+        $setting->update([
+            'total_landing_page_visit_count' => $setting->total_landing_page_visit_count + 1,
+        ]);
+
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'dcvends' => $this->sysApiService->getAllDCVends(env('SYS_OPERATOR_CODE')),
-            // 'dcvends' => [],
             'laravelVersion' => Application::VERSION,
             'mapApiKey' => $this->mapService->getMapApiKey(),
             'phpVersion' => PHP_VERSION,

@@ -16,8 +16,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // CountrySeeder::class,
             // PaymentGatewayStripeSeeder::class,
-            PlanSeeder::class,
-            CompleteCountrySeeder::class,
+            // PlanSeeder::class,
+            // CompleteCountrySeeder::class,
+            SyncTotalDiscountAmountSetting::class,
         ]);
     }
 }

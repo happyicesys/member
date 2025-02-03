@@ -11,7 +11,7 @@ class SettingService
         $setting = Setting::first();
         if ($setting) {
             $setting->update([
-                'total_discount_amount' => $amount,
+                'total_discount_amount' => $setting->total_discount_amount + $amount,
                 'updated_at' => Carbon::now(),
             ]);
         }
