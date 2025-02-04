@@ -56,7 +56,7 @@ class OTPService
     public function sendOtp(string $phoneNumber, string $otp): void
     {
         \Log::info("Sending OTP $otp to $phoneNumber");
-        $message = "DCVEND - Your OTP is: $otp";
+        $message = "DCVend : Your OTP is $otp";
         $this->smsService->sendSms([$phoneNumber], $message);
     }
 
