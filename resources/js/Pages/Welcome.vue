@@ -156,6 +156,7 @@
                     <table class="w-full border-collapse text-left text-sm text-gray-600">
                         <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
                             <tr>
+                                <th class="border border-gray-300 px-4 py-3 text-center">No.</th>
                                 <th class="border border-gray-300 px-4 py-3 text-center">Name</th>
                                 <th class="border border-gray-300 px-4 py-3 text-center">Address</th>
                                 <th class="border border-gray-300 px-4 py-3 text-center">Product Availability</th>
@@ -163,6 +164,13 @@
                         </thead>
                         <tbody>
                             <tr v-for="(vendData, index) in dcvends" :key="vendData.id" @click="highlightMarker(index)" class="cursor-pointer hover:bg-gray-50 transition duration-200">
+                                <td class="border border-gray-300 px-4 py-2">
+                                    <div class="flex flex-col space-y-2">
+                                        <span class="text-gray-800 text-center">
+                                            {{ index + 1 }}
+                                        </span>
+                                    </div>
+                                </td>
                                 <td class="border border-gray-300 px-4 py-2">
                                     <div class="flex flex-col space-y-2">
                                         <span class="text-gray-800 font-semibold text-left">
