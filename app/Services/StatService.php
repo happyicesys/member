@@ -15,6 +15,7 @@ class StatService
         $dateFrom = Carbon::parse($dateFrom)->startOfDay();
         $dateTo = Carbon::parse($dateTo)->endOfDay();
 
+        $cumulativeLandingPageVisitCount = $this->getSettingTotalLandingPageVisitCount();
         $landingPageVisitCount = $this->getLandingPageVisitCount($dateFrom, $dateTo, $type);
         $newUserCount = $this->getNewUserCount($dateFrom, $dateTo);
         $newUserSourceJson = $this->getNewUserSourceJson($dateFrom, $dateTo);
@@ -22,6 +23,7 @@ class StatService
         $salesAmount = $this->getSalesAmount($dateFrom, $dateTo);
 
         Stat::create([
+            'cumulative_landing_page_visit_count' => $cumulativeLandingPageVisitCount,
             'landing_page_visit_count' => $landingPageVisitCount,
             'new_user_count' => $newUserCount,
             'new_user_source_json' => $newUserSourceJson,
@@ -39,7 +41,7 @@ class StatService
         $currentVisitCount = 0;
 
         if ($lastStat) {
-            $currentVisitCount = $setting->total_landing_page_visit_count - $lastStat->landing_page_visit_count;
+            $currentVisitCount = $setting->total_landing_page_visit_count - $lastStat->cumulative_landing_page_visit_count;
         } else {
             $currentVisitCount = $setting->total_landing_page_visit_count;
         }
@@ -78,5 +80,10 @@ class StatService
     private function getSalesAmount($dateFrom, $dateTo)
     {
         return VendTransaction::whereBetween('created_at', [$dateFrom, $dateTo])->sum('total_amount');
+    }
+
+    private function getSettingTotalLandingPageVisitCount()
+    {
+        return Setting::first()->total_landing_page_visit_count;
     }
 }

@@ -10,6 +10,7 @@ class Stat extends Model
     const TYPE_MONTHLY = 2;
 
     protected $fillable = [
+        'cumulative_landing_page_visit_count',
         'landing_page_visit_count',
         'new_user_count',
         'new_user_source_json',
