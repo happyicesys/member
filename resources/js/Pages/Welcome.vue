@@ -26,7 +26,7 @@
                         </span>
                     </p>
                 </div>
-                <div class="bg-yellow-300 py-3 md:py-6 px-10 rounded-lg shadow-md">
+                <div class="bg-yellow-300 py-3 md:py-6 px-10 rounded-lg shadow-md hidden">
                     <p class="text-xl md:text-2xl font-bold text-gray-600 flex flex-col  items-center space-y-2">
                         <span class="text-3xl md:text-5xl font-extrabold drop-shadow-sm">
                             S$ {{ (stats['promo_amount']/ (Math.pow(10, 2))).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}
