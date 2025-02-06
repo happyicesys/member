@@ -26,10 +26,10 @@
                         </span>
                     </p>
                 </div>
-                <div class="bg-yellow-300 py-3 md:py-6 px-10 rounded-lg shadow-md hidden">
+                <div class="bg-yellow-300 py-3 md:py-6 px-10 rounded-lg shadow-md">
                     <p class="text-xl md:text-2xl font-bold text-gray-600 flex flex-col  items-center space-y-2">
                         <span class="text-3xl md:text-5xl font-extrabold drop-shadow-sm">
-                            S$ {{ stats['discount'].toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}
+                            S$ {{ (stats['promo_amount']/ (Math.pow(10, 2))).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}
                         </span>
                         <span>
                             Discount Given
@@ -189,7 +189,7 @@
                                 <td class="border border-gray-300 px-4 py-2">
                                     <div class="flex flex-col space-y-2">
                                         <span>
-                                            {{ vendData.address.full_address }}
+                                            {{ vendData.address?.full_address }}
                                         </span>
                                         <a
                                             :href="`https://www.google.com/maps/search/?api=1&query=${vendData.address.latitude},${vendData.address.longitude}`"

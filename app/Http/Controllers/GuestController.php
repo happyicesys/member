@@ -77,7 +77,7 @@ class GuestController extends Controller
     {
         return [
             'users' => 1000 + User::count(),
-            'discount' => 25,
+            'promo_amount' => Setting::first()->total_discount_amount,
         ];
     }
 
