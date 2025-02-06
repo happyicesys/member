@@ -196,7 +196,7 @@
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             class="bg-green-300 hover:bg-green-400 px-3 py-2 text-xs text-green-800 flex space-x-1 w-fit rounded shadow font-bold"
-                                            v-if="vendData.address.latitude && vendData.address.longitude"
+                                            v-if="vendData.address?.latitude && vendData.address?.longitude"
                                         >
                                             GPS
                                         </a>
