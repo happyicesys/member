@@ -5,6 +5,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Inertia\Inertia;
+
 Route::get('/', [GuestController::class, 'home'])->name('home');
 
 Route::get('/about', [GuestController::class, 'about'])->name('about');
@@ -16,9 +17,6 @@ Route::get('/privacy-policy', [GuestController::class, 'privacyPolicy'])->name('
 Route::get('/privacy-policy-opn', [GuestController::class, 'privacyPolicyOpn'])->name('privacy-policy-opn');
 Route::get('/terms-and-conditions', [GuestController::class, 'termsAndConditions'])->name('terms-and-conditions');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -26,9 +24,11 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('Benefit');
     })->name('benefit');
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'memberIndex'])
+        ->middleware(['auth', 'verified'])
+        ->name('dashboard');
+
+    Route::get('/dashboard-admin', [DashboardController::class, 'adminIndex'])->name('dashboard.admin');
 
     Route::prefix('profile')->group(function () {
         Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');

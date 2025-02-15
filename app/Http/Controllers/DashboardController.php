@@ -12,6 +12,10 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
+    public function adminIndex()
+    {
+        return Inertia::render('AdminDashboard');
+    }
 
     public function historyIndex()
     {
@@ -25,5 +29,10 @@ class DashboardController extends Controller
             'vendTransactions' => VendTransactionResource::collection($vendTransactions->get()),
             'transactedCountry' => CountryResource::make(Country::where('is_default', true)->first()),
         ]);
+    }
+
+    public function memberIndex()
+    {
+        return Inertia::render('Dashboard');
     }
 }

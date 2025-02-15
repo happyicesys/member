@@ -32,7 +32,10 @@ function toggleMenu() {
 
                     <!-- Desktop Navigation Links -->
                     <div class="hidden sm:flex space-x-8 items-center">
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')" v-if="!$page.props.auth.user.is_admin">
+                            Dashboard
+                        </NavLink>
+                        <NavLink :href="route('dashboard.admin')" :active="route().current('dashboard.admin')" v-if="$page.props.auth.user.is_admin">
                             Dashboard
                         </NavLink>
                         <NavLink :href="route('profile.edit')" :active="route().current('profile.edit')">

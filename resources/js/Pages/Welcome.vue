@@ -208,7 +208,7 @@
                                 </td>
                             </tr>
                             <tr v-if="!dcvends || dcvends.length === 0">
-                                <td class="border border-gray-300 px-4 py-2 text-center" colspan="3">No data available</td>
+                                <td class="border border-gray-300 px-4 py-2 text-center" colspan="4">No data available</td>
                             </tr>
                         </tbody>
 

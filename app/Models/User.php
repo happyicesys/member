@@ -24,6 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'email_verified_at',
+        'is_admin',
         'is_details_filled',
         'is_phone_number_validated',
         'password',
@@ -54,6 +55,7 @@ class User extends Authenticatable
         return [
             'dob' => 'date',
             'email_verified_at' => 'datetime',
+            'is_admin' => 'boolean',
             'is_details_filled' => 'boolean',
             'is_phone_number_validated' => 'boolean',
             'password' => 'hashed',
