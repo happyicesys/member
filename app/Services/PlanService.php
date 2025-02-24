@@ -11,31 +11,22 @@ use Carbon\Carbon;
 class PlanService
 {
     /**
-     * Set the default plan for a user.
-     */
-    public function setDefaultPlan($user)
-    {
-        $plan = Plan::where('level', 3)->first();
-        $user->update(['plan_id' => $plan->id]);
-    }
-
-    /**
      * Synchronize a user's plan items.
      */
-    public function syncPlanItems($userID, $planItemID)
+    public function syncPlan($userID, $planID)
     {
-        $planItem = PlanItem::findOrFail($planItemID);
+        $plan = Plan::findOrFail($planID);
         $user = User::findOrFail($userID);
 
         // Fetch the existing active PlanItemUser for the user and plan item
         $isExisting = PlanItemUser::where('user_id', $userID)
-            ->where('plan_item_id', $planItemID)
+            ->where('plan_id', $planID)
             ->where('is_active', true)
             ->latest()
             ->first();
 
         // Determine the start date (latest of user or plan item creation)
-        $startDate = max(Carbon::parse($user->created_at), Carbon::parse($planItem->created_at));
+        $startDate = max(Carbon::parse($user->created_at), Carbon::parse($plan->created_at));
 
         if ($isExisting) {
             // If the current plan item has expired
@@ -44,14 +35,14 @@ class PlanService
             }
         } else {
             // Create a new PlanItemUser entry for a new item
-            $this->createNewPlanItemUser($userID, $planItem, $startDate);
+            $this->createNewPlanItemUser($userID, $planID, $startDate);
         }
     }
 
     /**
      * Create a new PlanItemUser entry.
      */
-    private function createNewPlanItemUser($userID, $planItem, $startDate)
+    private function createNewPlanItemUser($userID, $planID, $startDate)
     {
         $datetimeTo = $this->calculateEndDate($startDate, $planItem);
 
@@ -59,7 +50,7 @@ class PlanService
             'datetime_from' => $startDate,
             'datetime_to' => $datetimeTo,
             'is_active' => true,
-            'plan_item_id' => $planItem->id,
+            'plan_id' => $planID,
             'used_count' => 0, // Initialize usage
             'user_id' => $userID,
         ]);
@@ -89,17 +80,12 @@ class PlanService
      */
     public function syncUserPlan($user)
     {
-        $plan = $user->plan;
+        $planItemUser = $user->planItemUser;
 
-        if (!$plan) {
+        if (!$planItemUser->plan) {
             return;
         }
 
-        // Get all non-base plan items
-        $planItems = $plan->planItems;
-
-        foreach ($planItems as $planItem) {
-            $this->syncPlanItems($user->id, $planItem->id);
-        }
+        $this->syncPlan($user->id, $planItemUser->plan_id);
     }
 }

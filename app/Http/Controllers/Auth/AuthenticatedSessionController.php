@@ -63,6 +63,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        auth()->user()->update([
+            'login_count' => auth()->user()->login_count + 1,
+        ]);
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

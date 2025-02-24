@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\PlanItemUser;
+use App\Http\Resources\PlanItemUserResource;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,9 +38,20 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'operatorCountry' => $user ? $user->phoneCountry : null,
-                'user' => $user ? $user->only(['id', 'name', 'email', 'is_admin', 'phone_country_id', 'phone_number', 'plan_id']) : null,
+                'user' => $user ? $user->only(['id', 'name', 'email', 'is_admin', 'login_count', 'phone_country_id', 'phone_number', 'plan_id']) : null,
                 'plan' => $user && $user->plan ? $user->plan->only(['id', 'name', 'price', 'description']) : null,
+                'planItemUser' => $user && $user->planItemUser ? PlanItemUserResource::make($user->planItemUser) : null,
+                'isPlanExpiringNotification'=> $user && $user->planItemUser ? $this->calculateIsPlanExpiring($user->planItemUser) : null,
             ],
         ];
+    }
+
+    private function calculateIsPlanExpiring($item)
+    {
+        if(abs(Carbon::parse($item->datetime_to)->diffInDays(Carbon::today())) <= PlanItemUser::NOTIFICATION_BEFORE_DAYS) {
+            return true;
+        }
+
+        return false;
     }
 }

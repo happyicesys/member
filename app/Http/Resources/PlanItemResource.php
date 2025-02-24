@@ -30,21 +30,20 @@ class PlanItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $planItemUser = $this->resource->planItemUsers()
-            ->where('user_id', $this->user?->id)
-            ->latest()
-            ->first();
-
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'promo_type' => $this->promo_type,
-            'promo_value' => $this->promo_value,
+            'cycle' => $this->cycle,
+            'datetime_from' => $this->datetime_from ? $this->datetime_from->toDateTimeString() : null,
+            'datetime_to' => $this->datetime_to ? $this->datetime_to->toDateTimeString() : null,
+            'frequency' => $this->frequency,
             'is_base' => $this->is_base,
             'max_count' => $this->max_count,
-            'used_count' => $planItemUser ? $planItemUser->used_count : 0,
-            'datetime_from' => $planItemUser ? $planItemUser->datetime_from->toDateTimeString() : null,
-            'datetime_to' => $planItemUser ? $planItemUser->datetime_to->toDateTimeString() : null,
+            'name' => $this->name,
+            'plan' => PlanResource::make($this->whenLoaded('plan')),
+            'plan_id' => $this->plan_id,
+            'product_codes_json' => $this->product_codes_json,
+            'promo_type' => $this->promo_type,
+            'promo_value' => $this->promo_value,
         ];
     }
 }

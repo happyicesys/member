@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -7,10 +7,29 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
-const showingNavigationDropdown = ref(false);
-const page = usePage();
-const currentRoute = computed(() => page.value?.props?.route?.name || '');
+const isPlanExpiring = usePage().props.auth.isPlanExpiringNotification
+const planItemUser = usePage().props.auth.planItemUser.data
+const user = usePage().props.auth.user;
 const isMenuOpen = ref(false);
+const showPromptUserRenewPlanBanner = ref(false);
+const showFirstTimerBanner = ref(true);
+
+const dismissFirstTimerBanner = () => {
+    showFirstTimerBanner.value = false;
+};
+
+onMounted(() => {
+    if(isPlanExpiring) {
+        showPromptUserRenewPlanBanner.value = true;
+    }
+    if(user.login_count >= 2) {
+        showFirstTimerBanner.value = false;
+    }
+})
+
+function dismissPromptUserRenewPlanBanner() {
+    showPromptUserRenewPlanBanner.value = false;
+}
 
 function toggleMenu() {
     isMenuOpen.value = !isMenuOpen.value;
@@ -118,6 +137,32 @@ function toggleMenu() {
 
         <!-- Page Content -->
         <main>
+            <div v-if="showFirstTimerBanner" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 m-1 rounded-lg relative">
+                <p class="text-yellow-700">
+                    Thanks for signing up for DCVend! Now you can use your <strong>phone number</strong> and the <strong>6-digit passcode</strong> to <strong>log in on the vending machine</strong> and enjoy the best deals ever.
+                </p>
+                <button
+                    @click="dismissFirstTimerBanner"
+                    class="absolute top-1/2 right-4 transform -translate-y-1/2 text-yellow-700 hover:text-yellow-900 focus:outline-none"
+                >
+                    <span class="sr-only">Dismiss</span>
+                    &times;
+                </button>
+            </div>
+            <div v-if="showPromptUserRenewPlanBanner" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 m-1 rounded-lg relative">
+                <p class="text-yellow-700">
+                    Your plan is expiring on <strong>{{ planItemUser.date_to }}</strong>. Please
+                    <a href="/plan" target="_blank" class="text-blue-600 underline">renew your plan</a>
+                    to continue enjoying the best deals ever.
+                </p>
+                <button
+                    @click="dismissPromptUserRenewPlanBanner"
+                    class="absolute top-1/2 right-4 transform -translate-y-1/2 text-yellow-700 hover:text-yellow-900 focus:outline-none"
+                >
+                    <span class="sr-only">Dismiss</span>
+                    &times;
+                </button>
+            </div>
             <slot />
         </main>
 

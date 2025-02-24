@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class PlanItemUser extends Model
 {
+    const NOTIFICATION_BEFORE_DAYS = 30;
+
     protected $fillable = [
         'datetime_from',
         'datetime_to',
         'is_active',
-        'plan_item_id',
+        'plan_id',
         'used_count',
         'user_id',
     ];
@@ -21,10 +24,11 @@ class PlanItemUser extends Model
         'is_active' => 'boolean',
     ];
 
-    public function planItem()
+    public function plan()
     {
-        return $this->belongsTo(PlanItem::class);
+        return $this->belongsTo(Plan::class);
     }
+
 
     public function user()
     {

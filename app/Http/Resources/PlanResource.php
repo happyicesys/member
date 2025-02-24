@@ -22,6 +22,7 @@ class PlanResource extends JsonResource
             'description' => $this->desc,
             'is_active' => $this->is_active,
             'is_available' => $this->is_available,
+            'is_required_payment' => $this->is_required_payment,
             'is_stackable' => $this->is_stackable,
             'base' => $this->getBasePlanItem($request->user()),
             'planItems' => PlanItemResource::collection(

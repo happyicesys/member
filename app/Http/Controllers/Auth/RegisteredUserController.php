@@ -90,7 +90,6 @@ class RegisteredUserController extends Controller
             'phone_country_id' => $request->country_id,
             'phone_number' => $request->phone_number,
             'phone_number_verified_at' => Carbon::now(),
-            'plan_id' => 3,
         ]);
 
         if($request->ref_id) {
@@ -106,6 +105,10 @@ class RegisteredUserController extends Controller
         // Fire the Registered event and log the user in
         event(new Registered($user));
         Auth::login($user);
+
+        $user->update([
+            'login_count' => $user->login_count + 1
+        ]);
 
         return redirect(route('dashboard', absolute: false));
     }

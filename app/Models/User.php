@@ -27,11 +27,11 @@ class User extends Authenticatable
         'is_admin',
         'is_details_filled',
         'is_phone_number_validated',
+        'login_count',
         'password',
         'phone_country_id',
         'phone_number',
         'phone_number_verified_at',
-        'plan_id',
         'ref_id',
     ];
 
@@ -69,8 +69,9 @@ class User extends Authenticatable
         return $this->belongsTo(Country::class, 'phone_country_id');
     }
 
-    public function plan()
+    public function planItemUser()
     {
-        return $this->belongsTo(Plan::class);
+        return $this->hasOne(PlanItemUser::class)->latestOfMany();
     }
+
 }

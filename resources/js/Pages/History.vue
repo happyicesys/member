@@ -49,7 +49,7 @@ const totalSaved = computed(() => {
                 </div>
 
                 <!-- Transaction History List -->
-                <h1 class="text-2xl font-bold text-red-700 mb-6 px-2">Transaction History</h1>
+                <h1 class="text-2xl font-bold text-red-700 mb-6 px-2">Purchase History</h1>
                 <ul role="list" class="divide-y divide-gray-300 bg-white shadow rounded-lg">
                     <li
                         v-for="transaction in vendTransactions"

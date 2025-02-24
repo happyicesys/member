@@ -18,7 +18,9 @@ class DatabaseSeeder extends Seeder
             // PaymentGatewayStripeSeeder::class,
             // PlanSeeder::class,
             // CompleteCountrySeeder::class,
-            SyncTotalDiscountAmountSetting::class,
+            // SyncTotalDiscountAmountSetting::class,
+            PlanItemUserPlanSeeder::class,
+            PlanItemPlatinumBaseSeeder::class,
         ]);
     }
 }

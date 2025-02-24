@@ -4,12 +4,6 @@ import { ClockIcon, TicketIcon, SparklesIcon } from '@heroicons/vue/20/solid';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
-const showBanner = ref(true);
-
-const dismissBanner = () => {
-    showBanner.value = false;
-};
-
 const isVouchersDisabled = ref(true); // Set the disabled state for the "Vouchers" button
 </script>
 
@@ -20,18 +14,6 @@ const isVouchersDisabled = ref(true); // Set the disabled state for the "Voucher
         <div class="py-4 bg-white">
             <div class="mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Closable Banner -->
-                <div v-if="showBanner" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4 rounded-lg relative">
-                    <p class="text-yellow-700">
-                        Thanks for signing up for DCVend! Now you can use your <strong>phone number</strong> and the <strong>6-digit passcode</strong> to <strong>log in on the vending machine</strong> and enjoy the best deals ever.
-                    </p>
-                    <button
-                        @click="dismissBanner"
-                        class="absolute top-1/2 right-4 transform -translate-y-1/2 text-yellow-700 hover:text-yellow-900 focus:outline-none"
-                    >
-                        <span class="sr-only">Dismiss</span>
-                        &times;
-                    </button>
-                </div>
 
                 <div class="p-8 bg-gray-50 rounded-lg shadow-md text-center">
                     <section class="text-white rounded my-2 md:w-4/6 mx-auto py-5">
@@ -62,13 +44,13 @@ const isVouchersDisabled = ref(true); // Set the disabled state for the "Voucher
                         <button class="py-6 px-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition text-center">
                             <Link :href="route('history')" class="flex flex-col space-y-1 items-center">
                                 <img src="/images/components/button_history.png" alt="Plans History" class="w-1/3 lg:w-1/6 rounded mx-auto" />
-                                <span class="lg:text-lg text-gray-700 font-semibold">History</span>
+                                <span class="lg:text-lg text-gray-700 font-semibold">Purchase History</span>
                             </Link>
                         </button>
                         <button class="py-6 px-4 bg-gray-100 rounded-lg shadow-md hover:shadow-lg transition text-center">
                             <Link :href="route('plan.index')" class="flex flex-col space-y-1 items-center">
                                 <img src="/images/components/button_plans.png" alt="Plans Button" class="w-1/3 lg:w-1/6 rounded mx-auto" />
-                                <span class="lg:text-lg text-gray-700 font-semibold">Plans</span>
+                                <span class="lg:text-lg text-gray-700 font-semibold">Membership Plan</span>
                             </Link>
                         </button>
                     </div>

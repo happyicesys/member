@@ -6,6 +6,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Inertia\Inertia;
 
+// auth()->loginUsingId(1);
+
 Route::get('/', [GuestController::class, 'home'])->name('home');
 
 Route::get('/about', [GuestController::class, 'about'])->name('about');
@@ -38,6 +40,10 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('plan')->group(function () {
         Route::get('/', [PaymentController::class, 'planIndex'])->name('plan.index');
+        Route::post('/subscribe', [PaymentController::class, 'subscribe'])->name('plan.subscribe');
+        Route::get('/payment', [PaymentController::class, 'paymentIndex'])->name('plan.payment');
+        Route::get('/retention', [PaymentController::class, 'retentionIndex'])->name('plan.retention');
+        Route::post('/downgrade', [PaymentController::class, 'downgrade'])->name('plan.downgrade');
     });
 });
 

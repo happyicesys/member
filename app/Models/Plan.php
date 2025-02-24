@@ -14,12 +14,14 @@ class Plan extends Model
         'desc',
         'is_active',
         'is_available',
+        'is_required_payment',
         'is_stackable',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_available' => 'boolean',
+        'is_required_payment' => 'boolean',
         'is_stackable' => 'boolean',
     ];
 
@@ -48,7 +50,7 @@ class Plan extends Model
         return $query->where('is_active', true);
     }
 
-    public function getStripeProductId()
+    public function getStripePriceId()
     {
         return $this->external_ref_id;
     }
