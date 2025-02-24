@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlanItemUser extends Model
 {
-    const NOTIFICATION_BEFORE_DAYS = 30;
+    const NOTIFICATION_BEFORE_DAYS = 14;
 
     protected $fillable = [
         'datetime_from',
