@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\PlanItemUser;
+use App\Http\Resources\PlanResource;
 use App\Http\Resources\PlanItemUserResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,14 +33,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $user = $request->user();
+        $user = $request->user() ? $request->user()->load(['phoneCountry', 'planItemUser.plan']) : null;
 
         return [
             ...parent::share($request),
             'auth' => [
                 'operatorCountry' => $user ? $user->phoneCountry : null,
                 'user' => $user ? $user->only(['id', 'name', 'email', 'is_admin', 'login_count', 'phone_country_id', 'phone_number', 'plan_id']) : null,
-                'plan' => $user && $user->plan ? $user->plan->only(['id', 'name', 'price', 'description']) : null,
+                'plan' => $user && $user->planItemUser && $user->planItemUser->plan ? PlanResource::make($user->planItemUser->plan) : null,
                 'planItemUser' => $user && $user->planItemUser ? PlanItemUserResource::make($user->planItemUser) : null,
                 'isPlanExpiringNotification'=> $user && $user->planItemUser ? $this->calculateIsPlanExpiring($user->planItemUser) : null,
             ],

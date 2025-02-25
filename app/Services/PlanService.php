@@ -10,6 +10,11 @@ use Carbon\Carbon;
 
 class PlanService
 {
+    public function getDefaultPlan()
+    {
+        return Plan::findOrFail(3);
+    }
+
     /**
      * Synchronize a user's plan items.
      */
@@ -42,9 +47,9 @@ class PlanService
     /**
      * Create a new PlanItemUser entry.
      */
-    private function createNewPlanItemUser($userID, $planID, $startDate)
+    public function createNewPlanItemUser($userID, $planID, $startDate)
     {
-        $datetimeTo = $this->calculateEndDate($startDate, $planItem);
+        $datetimeTo = $this->calculateEndDate($startDate, $planID);
 
         PlanItemUser::create([
             'datetime_from' => $startDate,
@@ -59,8 +64,12 @@ class PlanService
     /**
      * Calculate the next cycle end date based on the frequency of the plan item.
      */
-    private function calculateEndDate($startDate, $planItem)
+    private function calculateEndDate($startDate, $planID)
     {
+        $plan = Plan::findOrFail($planID);
+
+        $planItem = PlanItem::where('plan_id', $planID)->where('is_base', true)->first();
+
         switch ($planItem->frequency) {
             case 'daily':
                 return Carbon::parse($startDate)->addDays($planItem->cycle);
@@ -82,7 +91,8 @@ class PlanService
     {
         $planItemUser = $user->planItemUser;
 
-        if (!$planItemUser->plan) {
+        if (!$planItemUser or !$planItemUser->plan) {
+            $this->syncPlan($user->id, $this->getDefaultPlan()->id);
             return;
         }
 

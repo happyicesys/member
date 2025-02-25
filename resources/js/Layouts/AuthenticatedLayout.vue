@@ -8,6 +8,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const isPlanExpiring = usePage().props.auth.isPlanExpiringNotification
+const plan = usePage().props.auth.plan.data
 const planItemUser = usePage().props.auth.planItemUser.data
 const user = usePage().props.auth.user;
 const isMenuOpen = ref(false);
@@ -151,7 +152,7 @@ function toggleMenu() {
             </div>
             <div v-if="showPromptUserRenewPlanBanner" class="bg-yellow-100 border-l-4 border-yellow-500 p-4 m-1 rounded-lg relative">
                 <p class="text-yellow-700">
-                    Your plan is expiring on <strong>{{ planItemUser.date_to }}</strong>. Please
+                    Your <strong>{{ plan.name }}</strong> plan is expiring on <strong>{{ planItemUser.date_to }}</strong>. Please
                     <a href="/plan" target="_blank" class="text-blue-600 underline">renew your plan</a>
                     to continue enjoying the best deals ever.
                 </p>

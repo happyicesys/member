@@ -8,12 +8,20 @@ use App\Http\Resources\UserResource;
 use App\Models\Plan;
 use App\Models\PlanItem;
 use App\Models\PlanItemUser;
+use App\Services\PlanService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
 {
+    protected $planService;
+
+    public function __construct()
+    {
+        $this->planService = new PlanService();
+    }
+
     public function planIndex()
     {
         $user = auth()->user();
@@ -71,16 +79,13 @@ class PaymentController extends Controller
         if (!$plan->is_required_payment) {
             // End the previous planItemUser if it exists
             if ($currentPlanItemUser) {
-                $currentPlanItemUser->update(['datetime_to' => Carbon::now()]);
+                $currentPlanItemUser->update([
+                    'datetime_to' => Carbon::now(),
+                    'is_active' => false,
+                ]);
             }
 
-            // Create a new planItemUser
-            PlanItemUser::create([
-                'user_id' => $user->id,
-                'plan_id' => $plan->id,
-                'datetime_from' => Carbon::now(),
-                'is_active' => true,
-            ]);
+            $this->planService->createNewPlanItemUser($user->id, $plan->id, Carbon::now());
 
             return redirect()->route('dashboard')->with('success', 'Subscription successful!');
         }
@@ -96,16 +101,13 @@ class PaymentController extends Controller
 
         // End the previous planItemUser if it exists
         if ($currentPlanItemUser) {
-            $currentPlanItemUser->update(['datetime_to' => Carbon::now()]);
+            $currentPlanItemUser->update([
+                'datetime_to' => Carbon::now(),
+                'is_active' => false,
+            ]);
         }
 
-        // Create a new planItemUser
-        PlanItemUser::create([
-            'user_id' => $user->id,
-            'plan_id' => $plan->id,
-            'datetime_from' => Carbon::now(),
-            'is_active' => true,
-        ]);
+        $this->planService->createNewPlanItemUser($user->id, $plan->id, Carbon::now());
 
         return redirect()->route('plan.index')->with('success', 'Subscription successful!');
     }
@@ -146,16 +148,13 @@ class PaymentController extends Controller
 
         if ($currentPlanItemUser) {
             // Set `datetime_to` to now for the existing plan
-            $currentPlanItemUser->update(['datetime_to' => Carbon::now()]);
+            $currentPlanItemUser->update([
+                'datetime_to' => Carbon::now(),
+                'is_active' => false,
+            ]);
         }
 
-        // Create a new PlanItemUser record for the downgraded plan
-        PlanItemUser::create([
-            'user_id' => $user->id,
-            'plan_id' => $plan->id,
-            'datetime_from' => Carbon::now(),
-            'is_active' => true,
-        ]);
+        $this->planService->createNewPlanItemUser($user->id, $plan->id, Carbon::now());
 
         return redirect()->route('dashboard')->with('success', 'Your plan has been downgraded.');
     }
