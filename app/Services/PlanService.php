@@ -15,6 +15,15 @@ class PlanService
         return Plan::findOrFail(3);
     }
 
+    public function getExternalPriceID($plan)
+    {
+        if($this->getEnvironment() === 'production') {
+            return $plan->external_ref_id;
+        }else {
+            return $plan->external_ref_test_id;
+        }
+    }
+
     /**
      * Synchronize a user's plan items.
      */
@@ -97,5 +106,11 @@ class PlanService
         }
 
         $this->syncPlan($user->id, $planItemUser->plan_id);
+    }
+
+
+    private function getEnvironment()
+    {
+        return config('app.env');
     }
 }

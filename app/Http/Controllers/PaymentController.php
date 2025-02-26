@@ -38,10 +38,11 @@ class PaymentController extends Controller
 
     public function paymentIndex()
     {
+        // dd($this->getKey());
         return Inertia::render('Payment/Plan/Payment', [
             'plans' => PlanResource::collection(Plan::active()->get()),
             'planID' => request('plan_id'),
-            'stripeKey' => config('cashier.key'), // Only pass STRIPE_KEY to the payment page
+            'stripeKey' => $this->getKey(),
         ]);
     }
 
@@ -52,10 +53,12 @@ class PaymentController extends Controller
 
         // Save payment method
         $user->addPaymentMethod($request->payment_method);
-        $user->updateDefaultPaymentMethod($request->payment_method);
+        if(!$user->hasDefaultPaymentMethod()) {
+            $user->updateDefaultPaymentMethod($request->payment_method);
+        }
 
         // Subscribe the user
-        $user->newSubscription('default', $plan->getStripePriceId())
+        $user->newSubscription('default', $this->planService->getExternalPriceID($plan))
             ->create($user->defaultPaymentMethod()->id);
 
         // Associate the user with the plan (if applicable)
@@ -90,13 +93,19 @@ class PaymentController extends Controller
             return redirect()->route('dashboard')->with('success', 'Subscription successful!');
         }
 
+        // make sure user as stripe customer at first
+        if (!$user->hasStripeId()) {
+            $user->createAsStripeCustomer();
+        }
+
         // Check if the user has a saved payment method
-        if (!$user->hasDefaultPaymentMethod()) {
-            return redirect()->route('plan.payment', ['plan_id' => $plan->id]);
+        if (!$user->hasDefaultPaymentMethod() and $request->payment_method) {
+            $user->addPaymentMethod($request->payment_method);
+            $user->updateDefaultPaymentMethod($request->payment_method);
         }
 
         // User has a payment method, proceed with subscription
-        $user->newSubscription('default', $plan->getStripePriceId())
+        $user->newSubscription('default', $this->planService->getExternalPriceID($plan))
              ->create($user->defaultPaymentMethod()->id);
 
         // End the previous planItemUser if it exists
@@ -157,6 +166,18 @@ class PaymentController extends Controller
         $this->planService->createNewPlanItemUser($user->id, $plan->id, Carbon::now());
 
         return redirect()->route('dashboard')->with('success', 'Your plan has been downgraded.');
+    }
+
+    public function getKey()
+    {
+        return config('cashier.key');
+        // if(env('APP_ENV') === 'local') {
+        //     return config('cashier.test_key');
+        // }
+
+        // if(env('APP_ENV') === 'production') {
+        //     return config('cashier.key');
+        // }
     }
 
 

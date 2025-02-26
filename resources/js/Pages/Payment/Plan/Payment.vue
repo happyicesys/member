@@ -20,34 +20,15 @@ const selectedPlan = computed(() => {
     return props.plans.data.find(plan => plan.id == selectedPlanId.value);
 });
 
-// Redirect if no plan is selected
-onMounted(() => {
-    if (!selectedPlan.value) {
-        alert('No plan selected. Redirecting to plan selection...');
-        router.visit('/plan');
-    }
-
-    // If the plan does not require payment, subscribe directly
-    if (!selectedPlan.value.is_required_payment) {
-        form.post('/plan/subscribe', {
-            plan_id: selectedPlanId.value,
-            preserveScroll: true,
-            onSuccess: () => {
-                alert('Subscribed successfully!');
-                router.visit('/dashboard');
-            },
-            onError: (errors) => console.error(errors),
-        });
-    }
-});
-
-
 // Initialize Stripe
 const stripePromise = loadStripe(props.stripeKey);
 const stripe = ref(null);
 const cardElement = ref(null);
 const card = ref(null);
-const form = useForm({ plan_id: selectedPlanId.value });
+const form = useForm({
+    plan_id: '',
+    payment_method: ''
+});
 
 onMounted(async () => {
     stripe.value = await stripePromise;
@@ -81,9 +62,10 @@ const handlePayment = async () => {
     if (error) {
         alert(error.message);
     } else {
+        form.plan_id = selectedPlanId.value;
+        form.payment_method = paymentMethod.id;
+
         form.post('/plan/subscribe', {
-            payment_method: paymentMethod.id,
-            plan_id: selectedPlanId.value, // Send selected plan ID
             preserveScroll: true,
             onSuccess: () => {
                 alert('Payment successful! Subscription activated.');

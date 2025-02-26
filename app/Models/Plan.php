@@ -12,6 +12,8 @@ class Plan extends Model
         'name',
         'price',
         'desc',
+        'external_ref_id',
+        'external_ref_test_id',
         'is_active',
         'is_available',
         'is_required_payment',
@@ -48,11 +50,6 @@ class Plan extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
-    }
-
-    public function getStripePriceId()
-    {
-        return $this->external_ref_id;
     }
 
     /**
