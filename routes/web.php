@@ -8,7 +8,7 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProfileController;
 use Inertia\Inertia;
 
-auth()->loginUsingId(1);
+// auth()->loginUsingId(1);
 
 Route::get('/', [GuestController::class, 'home'])->name('home');
 
