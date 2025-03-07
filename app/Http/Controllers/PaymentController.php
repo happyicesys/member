@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PaymentMethodResource;
 use App\Http\Resources\PlanResource;
 use App\Http\Resources\PlanItemUserResource;
 use App\Http\Resources\UserResource;
+use App\Models\PaymentMethod;
 use App\Models\Plan;
-use App\Models\PlanItem;
 use App\Models\PlanItemUser;
 use App\Services\PlanService;
+use App\Traits\HasCashier;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
 {
+    use HasCashier;
+
     protected $planService;
 
     public function __construct()
@@ -27,9 +31,10 @@ class PaymentController extends Controller
         $user = auth()->user();
 
         return Inertia::render('Payment/Plan/Index', [
+            'allPaymentMethods' => PaymentMethodResource::collection(PaymentMethod::with('attachment')->get()),
             'plans' => PlanResource::collection(Plan::active()->get()),
             'user' => UserResource::make($user),
-            'planItemUser' => PlanItemUserResource::make($user->planItemUser()->with('plan')->first()),
+            'planItemUser' => PlanItemUserResource::make($user->planItemUser()->with(['plan', 'scheduledDowngradePlan'])->first()),
             'userPaymentMethods' => $user->paymentMethods(),
             'userHasAnyPaymentMethod' => $user->hasDefaultPaymentMethod(),
             'needsPaymentMethod' => Plan::where('id', $user->plan_id)->value('is_required_payment'),
@@ -38,49 +43,31 @@ class PaymentController extends Controller
 
     public function paymentIndex()
     {
-        // dd($this->getKey());
         return Inertia::render('Payment/Plan/Payment', [
             'plans' => PlanResource::collection(Plan::active()->get()),
             'planID' => request('plan_id'),
-            'stripeKey' => $this->getKey(),
+            'stripeKey' => $this->getCashierKey(),
         ]);
-    }
-
-    public function storePaymentMethod(Request $request)
-    {
-        $user = auth()->user();
-        $plan = Plan::findOrFail($request->plan_id);
-
-        // Save payment method
-        $user->addPaymentMethod($request->payment_method);
-        if(!$user->hasDefaultPaymentMethod()) {
-            $user->updateDefaultPaymentMethod($request->payment_method);
-        }
-
-        // Subscribe the user
-        $user->newSubscription('default', $this->planService->getExternalPriceID($plan))
-            ->create($user->defaultPaymentMethod()->id);
-
-        // Associate the user with the plan (if applicable)
-        $user->plan()->associate($plan);
-        $user->save();
-
-        return redirect()->route('plan.index')->with('success', 'Subscription successful!');
     }
 
     public function subscribe(Request $request)
     {
         $user = auth()->user();
         $plan = Plan::findOrFail($request->plan_id);
-        $currentPlanItemUser = $user->planItemUser; // Get the latest plan item user
+        $currentPlanItemUser = $user->planItemUser()->with('plan')->first();
 
-        // Check if the user is downgrading
+        \Log::info("User ID: {$user->id} attempting to subscribe to Plan ID: {$plan->id}");
+
+        // **1️⃣ Handle Downgrade: Redirect to Retention Page Before Proceeding**
         if ($currentPlanItemUser && $plan->level < $currentPlanItemUser->plan->level) {
+            \Log::info("User ID: {$user->id} is downgrading to Plan ID: {$plan->id}. Redirecting to retention page.");
             return redirect()->route('plan.retention', ['plan_id' => $plan->id]);
         }
 
+        // **2️⃣ Handle Free Plans (No Payment Required)**
         if (!$plan->is_required_payment) {
-            // End the previous planItemUser if it exists
+            \Log::info("User ID: {$user->id} subscribing to a free plan. Ending previous plan (if exists).");
+
             if ($currentPlanItemUser) {
                 $currentPlanItemUser->update([
                     'datetime_to' => Carbon::now(),
@@ -93,43 +80,34 @@ class PaymentController extends Controller
             return redirect()->route('dashboard')->with('success', 'Subscription successful!');
         }
 
-        // make sure user as stripe customer at first
-        if (!$user->hasStripeId()) {
-            $user->createAsStripeCustomer();
+        // **3️⃣ Ensure User Has a Default Payment Method Before Proceeding**
+        if (!$request->payment_method and !$user->hasDefaultPaymentMethod()) {
+            \Log::warning("User ID: {$user->id} has no default payment method. Prompting for payment details.");
+            return back()->withErrors(['message' => 'Please add a payment method before subscribing.']);
         }
 
-        // Check if the user has a saved payment method
-        if (!$user->hasDefaultPaymentMethod() and $request->payment_method) {
-            $user->addPaymentMethod($request->payment_method);
-            $user->updateDefaultPaymentMethod($request->payment_method);
-        }
+        // **4️⃣ Process Stripe Subscription**
+        // try {
+            // \Log::info("User ID: {$user->id} subscribing to a paid plan. Processing Stripe subscription.");
+            $this->planService->createSubscription($user, $plan->id, $request->payment_method);
+        // } catch (\Exception $e) {
+        //     \Log::error("Subscription failed for User ID: {$user->id}. Error: " . $e->getMessage());
+        //     return back()->withErrors(['message' => 'Subscription failed. Please check your billing details.']);
+        // }
 
-        // User has a payment method, proceed with subscription
-        $user->newSubscription('default', $this->planService->getExternalPriceID($plan))
-             ->create($user->defaultPaymentMethod()->id);
-
-        // End the previous planItemUser if it exists
-        if ($currentPlanItemUser) {
-            $currentPlanItemUser->update([
-                'datetime_to' => Carbon::now(),
-                'is_active' => false,
-            ]);
-        }
-
-        $this->planService->createNewPlanItemUser($user->id, $plan->id, Carbon::now());
+        \Log::info("Subscription successful for User ID: {$user->id}, Plan ID: {$plan->id}.");
 
         return redirect()->route('plan.index')->with('success', 'Subscription successful!');
     }
-
 
     public function retentionIndex(Request $request)
     {
         $user = auth()->user();
         $plans = Plan::all();
-        $selectedPlan = $plans->find($request->plan_id);
-        $currentPlanItemUser = $user->planItemUser()->with('plan')->first(); // Get the latest planItemUser
+        $selectedPlan = Plan::findOrFail($request->plan_id);
+        $currentPlanItemUser = $user->planItemUser()->with('plan')->first();
 
-        // dd($selectedPlan, $currentPlanItemUser->toArray());
+        \Log::info("Displaying retention page for user ID: {$user->id}, downgrading to plan ID: {$selectedPlan->id}");
 
         return Inertia::render('Payment/Plan/Retention', [
             'selectedPlan' => PlanResource::make($selectedPlan),
@@ -142,43 +120,13 @@ class PaymentController extends Controller
         $user = auth()->user();
         $plan = Plan::findOrFail($request->plan_id);
 
-        if (!$plan) {
-            return back()->withErrors(['message' => 'Invalid plan selected.']);
-        }
+        $this->planService->scheduleDowngradeSubscription($user, $plan->id);
 
-        // Find the plan item associated with the new downgraded plan
-        $plan = Plan::find($request->plan_id);
-        if (!$plan) {
-            return back()->withErrors(['message' => 'No plan item found for the selected plan.']);
-        }
-
-        // Get the user's latest planItemUser
-        $currentPlanItemUser = $user->planItemUser()->latest()->first();
-
-        if ($currentPlanItemUser) {
-            // Set `datetime_to` to now for the existing plan
-            $currentPlanItemUser->update([
-                'datetime_to' => Carbon::now(),
-                'is_active' => false,
-            ]);
-        }
-
-        $this->planService->createNewPlanItemUser($user->id, $plan->id, Carbon::now());
-
-        return redirect()->route('dashboard')->with('success', 'Your plan has been downgraded.');
+        return redirect()->route('plan.index')->with('success', 'Your downgrade has been scheduled.');
     }
 
     public function getKey()
     {
         return config('cashier.key');
-        // if(env('APP_ENV') === 'local') {
-        //     return config('cashier.test_key');
-        // }
-
-        // if(env('APP_ENV') === 'production') {
-        //     return config('cashier.key');
-        // }
     }
-
-
 }

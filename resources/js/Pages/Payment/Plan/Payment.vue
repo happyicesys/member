@@ -25,6 +25,8 @@ const stripePromise = loadStripe(props.stripeKey);
 const stripe = ref(null);
 const cardElement = ref(null);
 const card = ref(null);
+const processing = ref(false);
+
 const form = useForm({
     plan_id: '',
     payment_method: ''
@@ -54,6 +56,7 @@ const handlePayment = async () => {
         return;
     }
 
+    processing.value = true;
     const { paymentMethod, error } = await stripe.value.createPaymentMethod({
         type: 'card',
         card: card.value,
@@ -61,6 +64,7 @@ const handlePayment = async () => {
 
     if (error) {
         alert(error.message);
+        processing.value = false;
     } else {
         form.plan_id = selectedPlanId.value;
         form.payment_method = paymentMethod.id;
@@ -70,10 +74,11 @@ const handlePayment = async () => {
             onSuccess: () => {
                 alert('Payment successful! Subscription activated.');
                 router.visit('/dashboard'); // Redirect back to plan selection
+                processing.value = false;
             },
             onError: (errors) => {
-                console.error(errors);
                 alert('Payment failed. Please try again.');
+                processing.value = false;
             },
         });
     }
@@ -123,8 +128,9 @@ const handlePayment = async () => {
                         <button
                             @click="handlePayment"
                             class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-600 transition duration-200"
+                            :disabled="processing"
                         >
-                            Proceed to Payment
+                            {{ processing ? 'Processing...' : 'Proceed to Payment' }}
                         </button>
                     </div>
 

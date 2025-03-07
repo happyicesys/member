@@ -23,6 +23,8 @@ class PlanItemUserResource extends JsonResource
             'is_active' => $this->is_active,
             'plan' => PlanResource::make($this->whenLoaded('plan')),
             'plan_id' => $this->plan_id,
+            'scheduled_downgrade_plan_id' => $this->scheduled_downgrade_plan_id,
+            'scheduledDowngradePlan' => PlanResource::make($this->whenLoaded('scheduledDowngradePlan')),
             'used_count' => $this->used_count,
             'user' => UserResource::make($this->whenLoaded('user')),
             'user_id' => $this->user_id,

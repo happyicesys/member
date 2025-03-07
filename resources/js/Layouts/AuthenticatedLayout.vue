@@ -58,9 +58,6 @@ function toggleMenu() {
                         <NavLink :href="route('dashboard.admin')" :active="route().current('dashboard.admin')" v-if="$page.props.auth.user.is_admin">
                             Dashboard
                         </NavLink>
-                        <NavLink :href="route('profile.edit')" :active="route().current('profile.edit')">
-                            Profile
-                        </NavLink>
                         <NavLink :href="route('about')" :active="route().current('about')">
                             About Us
                         </NavLink>
@@ -81,6 +78,7 @@ function toggleMenu() {
                                     <span class="inline-flex rounded-md">
                                         <button type="button" class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">
                                             {{ $page.props.auth.user.name }}
+                                            ({{ $page.props.auth.plan.data.name }})
                                             <svg class="ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                             </svg>
@@ -89,6 +87,7 @@ function toggleMenu() {
                                 </template>
                                 <template #content>
                                     <DropdownLink :href="route('profile.edit')">Profile</DropdownLink>
+                                    <DropdownLink :href="route('billing')">Billing</DropdownLink>
                                     <DropdownLink :href="route('logout')" method="post" as="button">Log Out</DropdownLink>
                                 </template>
                             </Dropdown>
@@ -111,7 +110,6 @@ function toggleMenu() {
             <div :class="{ block: isMenuOpen, hidden: !isMenuOpen }" class="sm:hidden">
                 <div class="space-y-1 pb-3 pt-2">
                     <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">Dashboard</ResponsiveNavLink>
-                    <ResponsiveNavLink :href="route('profile.edit')" :active="route().current('profile.edit')">Profile</ResponsiveNavLink>
                     <ResponsiveNavLink :href="route('about')" :active="route().current('about')">About Us</ResponsiveNavLink>
                     <ResponsiveNavLink :href="route('contact-us')" :active="route().current('contact-us')">Contact
                         Us</ResponsiveNavLink>
@@ -120,7 +118,13 @@ function toggleMenu() {
                 <div class="border-t border-gray-200 pb-1 pt-4">
                     <div class="px-4">
                         <div class="text-base font-medium text-gray-800">{{ $page.props.auth.user.name }}</div>
-                        <div class="text-sm font-medium text-gray-500">{{ $page.props.auth.user.email }}</div>
+                        <div class="text-sm font-medium text-gray-500">({{ $page.props.auth.plan.data.name }})</div>
+                    </div>
+                    <div class="mt-3 space-y-1">
+                        <ResponsiveNavLink :href="route('profile.edit')" :active="route().current('profile.edit')">Profile</ResponsiveNavLink>
+                    </div>
+                    <div class="mt-3 space-y-1">
+                        <ResponsiveNavLink :href="route('billing')" :active="route().current('billing')">Billing</ResponsiveNavLink>
                     </div>
                     <div class="mt-3 space-y-1">
                         <ResponsiveNavLink :href="route('logout')" method="post" as="button">Log Out</ResponsiveNavLink>

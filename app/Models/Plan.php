@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Plan extends Model
 {
+    const GRACE_PERIOD_DAYS = 3;
+
     protected $fillable = [
         'level',
         'name',
@@ -18,6 +20,7 @@ class Plan extends Model
         'is_available',
         'is_required_payment',
         'is_stackable',
+        'renew_frequency',
     ];
 
     protected $casts = [
