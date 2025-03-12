@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Models\PlanItem;
 use App\Models\VendTransaction;
 use App\Models\VendTransactionItem;
 use App\Models\User;
@@ -77,6 +78,13 @@ class VendTransactionController extends Controller
         }
 
         DB::commit();
+
+        $transactionPlanItem = PlanItem::where('id', $request->plan_item_id)->first();
+        if($transactionPlanItem and $transactionPlanItem->is_base) {
+            $user->planItemUser->update([
+                'used_count' => $user->planItemUser->used_count + 1,
+            ]);
+        }
 
         return $this->success('Transaction created successfully');
     }
