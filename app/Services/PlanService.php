@@ -43,8 +43,6 @@ class PlanService
 
     public function syncPlan($userID, $planID)
     {
-        \Log::info("Syncing plan for user ID: {$userID}, plan ID: {$planID}");
-
         $plan = Plan::findOrFail($planID);
         $user = User::findOrFail($userID);
 
@@ -59,7 +57,6 @@ class PlanService
 
         // **1️⃣ Handle Upgrades (Immediate Effect)**
         if (!$currentPlanItemUser || $plan->level > $currentPlanItemUser->plan->level || (!$currentPlanItemUser->plan->is_required_payment && $plan->is_required_payment)) {
-            \Log::info("Upgrading plan immediately for user ID: {$userID}");
 
             if ($currentPlanItemUser) {
                 $currentPlanItemUser->update([
@@ -83,15 +80,19 @@ class PlanService
 
         // **2️⃣ Handle Downgrades (Scheduled, NOT Immediate)**
         } else if ($plan->level < $currentPlanItemUser->plan->level) {
-            \Log::info("Downgrade scheduled for user ID: {$userID}, plan ID: {$planID}, effective after {$currentPlanItemUser->datetime_to}");
+
+            if($currentPlanItemUser->datetime_to < Carbon::now()) {
+                $this->createNewPlanItemUser($userID, $planID, $datetimeFrom, $datetimeTo);
+            }else {
+                // **Downgrade: Schedule for later**
+                $this->scheduleDowngradeSubscription($user, $planID);
+            }
 
             // **Instead of downgrading now, schedule it**
             $currentPlanItemUser->update(['scheduled_downgrade_plan_id' => $planID]);
 
         // **3️⃣ Handle Plan Renewals**
         } else {
-            \Log::info("Renewing existing plan for user ID: {$userID}");
-
             // Instead of creating a new entry, update existing one if possible
             if ($currentPlanItemUser) {
                 $currentPlanItemUser->update(['datetime_to' => $datetimeTo]);
@@ -110,8 +111,6 @@ class PlanService
      */
     public function createNewPlanItemUser($userID, $planID, $startDate, $endDate)
     {
-        \Log::info("Creating new PlanItemUser for user ID: {$userID}, plan ID: {$planID}");
-
         // Expire any existing active plans
         PlanItemUser::where('user_id', $userID)->where('is_active', true)->update([
             'is_active' => false,
@@ -223,6 +222,8 @@ class PlanService
         // Calculate grace period end date
         $gracePeriodEnd = $planItemUser ? Carbon::parse($planItemUser->datetime_to)->addDays($planItemUser->plan::GRACE_PERIOD_DAYS) : null;
 
+        // dd($planItemUser->toArray(), $stripeSubscription, $gracePeriodEnd->toDatetimeString());
+
         // If no active plan OR plan has expired
         if (!$planItemUser or !$planItemUser->plan or $planItemUser->datetime_to < Carbon::today()) {
             if ($gracePeriodEnd && $gracePeriodEnd >= Carbon::today()) {
@@ -243,7 +244,6 @@ class PlanService
             return;
         }
 
-        // Keep existing plan if everything is up to date
         $this->syncPlan($user->id, $planItemUser->plan_id);
     }
 

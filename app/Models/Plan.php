@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Plan extends Model
 {
-    const GRACE_PERIOD_DAYS = 3;
+    const GRACE_PERIOD_DAYS = 0;
 
     protected $fillable = [
         'level',
