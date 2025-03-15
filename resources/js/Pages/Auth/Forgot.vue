@@ -97,7 +97,7 @@
                             <span class="text-yellow-700 text-sm">(Choose your 6 digits PIN)</span>
                     </label>
                     <div class="relative">
-                        <TextInput
+                        <!-- <TextInput
                             id="password"
                             :type="isPasswordVisible ? 'text' : 'password'"
                             class="mt-1 w-full pr-10"
@@ -108,6 +108,14 @@
                             v-model="form.password"
                             @input="onInputUpdate()"
                             :disabled="!isFilledFieldEditable"
+                            placeholder="Numbers Only"
+                        /> -->
+                        <TextInput
+                            id="password"
+                            :type="isPasswordVisible ? 'text' : 'password'"
+                            class="mt-1 w-full pr-10"
+                            v-model="form.password"
+                            @input="onInputUpdate()"
                             placeholder="Numbers Only"
                         />
                         <button
@@ -152,10 +160,10 @@
                         type="submit"
                         class="bg-yellow-300 py-2 px-8 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-xl hover:bg-yellow-400"
                         :class="{
-                            'opacity-25': !form.otp || form.passwordParts.some(part => part === ''),
-                            'cursor-not-allowed': !form.otp || form.passwordParts.some(part => part === '')
+                            'opacity-25': !form.password || form.otpParts.some(part => part === ''),
+                            'cursor-not-allowed': !form.password || form.otpParts.some(part => part === '')
                         }"
-                        :disabled="!form.otp || form.passwordParts.some(part => part === '')"
+                        :disabled="!form.password || form.otpParts.some(part => part === '')"
                         v-if="isOtpRequested"
                     >
                         RESET PIN
@@ -251,7 +259,7 @@ const onInput = (index) => {
 };
 
 const submit = () => {
-  form.post(route('reset.pin'), {
+  form.post(route('pin.reset'), {
       onFinish: () => form.reset('otpParts', 'password'),
   });
 };

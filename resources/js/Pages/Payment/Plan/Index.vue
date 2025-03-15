@@ -23,9 +23,9 @@ const form = useForm({
 // Load plans when the component is mounted
 onMounted(() => {
     allPaymentMethods.value = props.allPaymentMethods.data;
-    plans.value = props.plans.data;
     planItemUser.value = props.planItemUser.data;
     form.plan_id = planItemUser.value.plan_id; // Ensure it does not default to undefined
+    plans.value = props.plans.data.filter((plan) => plan.is_available || plan.id == planItemUser.value.plan_id);
 });
 
 // Find the selected plan's details
@@ -139,19 +139,26 @@ const getCardBrandLogo = (brand) => {
                             ]"
                             @click="onPlanClicked(plan)"
                         >
-                            <div class="flex flex-col space-y-3 pr-4">
-                                <h3 class="text-xl font-bold text-gray-800">{{ plan.name }}</h3>
-                                <p class="text-gray-600 whitespace-pre-line">{{ plan.description }}</p>
-                                <p class="mt-2 text-red-400 font-semibold">
-                                    {{ plan.price > 0 ? `$${plan.price.toFixed(2)} per month` : 'Free' }}
-                                </p>
-                                <span v-if="planItemUser.plan_id === plan.id && !planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-right text-sm font-medium">
-                                    **Your plan will be renewed on <strong>{{ planItemUser.date_to }}</strong>
-                                </span>
-                                <span v-if="planItemUser.plan_id === plan.id && planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-right text-sm font-medium">
-                                    **Your plan will be expired on <strong>{{ planItemUser.date_to }}</strong>. You will be downgraded to the <strong>{{ planItemUser.scheduledDowngradePlan.name }}</strong> plan.
+                            <div class="flex justify-between items-center w-full">
+                                <div class="flex flex-col space-y-3 pr-4">
+                                    <h3 class="text-xl font-bold text-gray-800">{{ plan.name }}</h3>
+                                    <p class="text-gray-600 whitespace-pre-line">{{ plan.description }}</p>
+                                    <p class="mt-2 text-red-400 font-semibold">
+                                        {{ plan.price > 0 ? `$${plan.price.toFixed(2)} per month` : 'Free' }}
+                                    </p>
+                                    <span v-if="planItemUser.plan_id === plan.id && !planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-right text-sm font-medium">
+                                        **Your plan will be renewed on <strong>{{ planItemUser.date_to }}</strong>
+                                    </span>
+                                    <span v-if="planItemUser.plan_id === plan.id && planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-right text-sm font-medium">
+                                        **Your plan will be expired on <strong>{{ planItemUser.date_to }}</strong>. You will be downgraded to the <strong>{{ planItemUser.scheduledDowngradePlan.name }}</strong> plan.
+                                    </span>
+                                </div>
+                                <!-- Keep the badge at the rightmost -->
+                                <span class="ml-auto inline-flex rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/40 w-fit h-fit" v-if="planItemUser.plan_id === plan.id">
+                                    Current
                                 </span>
                             </div>
+
                         </div>
                     </div>
 

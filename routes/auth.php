@@ -46,6 +46,9 @@ Route::middleware('guest')->group(function () {
 
     Route::post('verify-phone-number', [RegisteredUserController::class, 'verifyPhoneNumber'])
         ->name('verification.phone-number');
+
+    Route::post('reset-pin', [RegisteredUserController::class, 'reset'])
+        ->name('pin.reset');
 });
 
 Route::middleware('auth')->group(function () {

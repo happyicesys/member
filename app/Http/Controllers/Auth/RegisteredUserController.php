@@ -12,11 +12,13 @@ use App\Services\OneWaySmsService;
 use App\Services\PlanService;
 use App\Services\UserService;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -65,6 +67,34 @@ class RegisteredUserController extends Controller
             ),
             'refID' => $refID,
         ]);
+    }
+
+    public function reset(Request $request): RedirectResponse
+    {
+        $this->validateResetRequest($request);
+
+        // Verify OTP
+        $this->validateOtp($request);
+
+        // Find user by phone country ID and phone number
+        $user = User::where('phone_country_id', $request->country_id)
+            ->where('phone_number', $request->phone_number)
+            ->first();
+
+        if (!$user) {
+            return back()->withErrors(['phone_number' => 'Phone number not registered.']);
+        }
+
+        // Reset the password
+        $user->forceFill([
+            'password' => Hash::make($request->password),
+            'remember_token' => \Illuminate\Support\Str::random(60),
+        ])->save();
+
+        // Fire password reset event
+        event(new PasswordReset($user));
+
+        return redirect()->route('login');
     }
 
     /**
@@ -198,6 +228,38 @@ class RegisteredUserController extends Controller
         if($replicatedNumber) {
             throw ValidationException::withMessages([
                 'phone_number' => 'Phone number already exists.',
+            ]);
+        }
+    }
+
+    private function validateResetRequest(Request $request)
+    {
+        $country = Country::find($request->country_id);
+
+        if (!$country) {
+            throw ValidationException::withMessages([
+                'country_id' => 'Invalid country selected.',
+            ]);
+        }
+
+        $request->merge([
+            'full_phone_number' => $country->phone_code . $request->phone_number,
+        ]);
+
+        $request->validate([
+            'country_id' => 'required|integer|exists:countries,id',
+            'password' => 'required|digits:6',
+            'phone_number' => 'required|string|phone:' . $country->abbreviation,
+        ]);
+
+        // Validate phone number
+        $existedNumber = User::where('phone_country_id', $request->country_id)
+        ->where('phone_number', $request->phone_number)
+        ->first();
+
+        if(!$existedNumber) {
+            throw ValidationException::withMessages([
+                'phone_number' => 'Phone number havent registered yet.',
             ]);
         }
     }

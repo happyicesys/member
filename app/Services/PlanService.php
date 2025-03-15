@@ -23,7 +23,8 @@ class PlanService
 
     public function getDefaultFreePlan()
     {
-        return Plan::findOrFail(1);
+        return $this->getDefaultPromoPlan();
+        // return Plan::findOrFail(1);
     }
 
 
@@ -41,7 +42,7 @@ class PlanService
         }
     }
 
-    public function syncPlan($userID, $planID)
+    public function syncPlan($userID, $planID, $extended_month_count = null)
     {
         $plan = Plan::findOrFail($planID);
         $user = User::findOrFail($userID);
@@ -53,17 +54,10 @@ class PlanService
 
         $renewFrequency = $plan->renew_frequency ?? 'monthly'; // Default to monthly
         $datetimeFrom = Carbon::now();
-        $datetimeTo = $this->calculateEndDate($datetimeFrom, $planID);
+        $datetimeTo = $this->calculateEndDate($datetimeFrom, $planID, $extended_month_count);
 
         // **1️⃣ Handle Upgrades (Immediate Effect)**
         if (!$currentPlanItemUser || $plan->level > $currentPlanItemUser->plan->level || (!$currentPlanItemUser->plan->is_required_payment && $plan->is_required_payment)) {
-
-            if ($currentPlanItemUser) {
-                $currentPlanItemUser->update([
-                    'datetime_to' => Carbon::now(),
-                    'is_active' => false,
-                ]);
-            }
 
             // Assign new plan immediately
             $this->createNewPlanItemUser($userID, $planID, $datetimeFrom, $datetimeTo);
@@ -88,9 +82,6 @@ class PlanService
                 $this->scheduleDowngradeSubscription($user, $planID);
             }
 
-            // **Instead of downgrading now, schedule it**
-            $currentPlanItemUser->update(['scheduled_downgrade_plan_id' => $planID]);
-
         // **3️⃣ Handle Plan Renewals**
         } else {
             // Instead of creating a new entry, update existing one if possible
@@ -100,11 +91,7 @@ class PlanService
                 $this->createNewPlanItemUser($userID, $planID, $datetimeFrom, $datetimeTo);
             }
         }
-
-        // Ensure the user's `plan_id` is updated
-        $user->update(['plan_id' => $planID]);
     }
-
 
     /**
      * Create a new PlanItemUser entry.
@@ -146,20 +133,17 @@ class PlanService
         if ($currentPlanItemUser) {
             if ($plan->level > $currentPlanItemUser->plan->level && ($plan->is_required_payment && $currentPlanItemUser->plan->is_required_payment)) {
                 // **Upgrade: Swap to new plan with prorated billing**
-                \Log::info("User ID: {$user->id} upgrading to Plan ID: {$planID} with proration.");
                 $currentSubscription->swapAndInvoice($this->getExternalPriceID($plan));
                 $currentSubscription->update([
                     'type' => $subscriptionName
                 ]);
             } else {
                 // **Downgrade or new subscription: Create new plan subscription**
-                \Log::info("User ID: {$user->id} subscribing to new plan ID: {$planID}.");
                 $user->newSubscription($subscriptionName, $this->getExternalPriceID($plan))
                     ->create($paymentMethod->id);
             }
         } else {
             // **New user subscription**
-            \Log::info("User ID: {$user->id} subscribing to Plan ID: {$planID} for the first time.");
             $user->newSubscription($subscriptionName, $this->getExternalPriceID($plan))
                 ->create($paymentMethod->id);
         }
@@ -194,9 +178,13 @@ class PlanService
     /**
      * Calculate the next cycle end date based on the frequency of the plan item.
      */
-    private function calculateEndDate($startDate, $planID)
+    private function calculateEndDate($startDate, $planID, $extended_month_count = null)
     {
         $plan = Plan::findOrFail($planID);
+
+        if($extended_month_count) {
+            return Carbon::parse($startDate)->addMonths($extended_month_count);
+        }
 
         switch ($plan->renew_frequency) {
             case 'monthly':
@@ -211,40 +199,43 @@ class PlanService
     {
         $planItemUser = $user->planItemUser;
 
-        // Get the current Stripe subscription for the user's plan
-        if ($planItemUser) {
-            $subscriptionName = strtolower(preg_replace('/\s+/', '_', trim($planItemUser->plan->name)));
-            $stripeSubscription = $user->subscription($subscriptionName);
-        } else {
-            $stripeSubscription = null;
-        }
-
         // Calculate grace period end date
-        $gracePeriodEnd = $planItemUser ? Carbon::parse($planItemUser->datetime_to)->addDays($planItemUser->plan::GRACE_PERIOD_DAYS) : null;
-
-        // dd($planItemUser->toArray(), $stripeSubscription, $gracePeriodEnd->toDatetimeString());
+        $gracePeriodEnd = $planItemUser ? Carbon::parse($planItemUser->datetime_to)->addDays(Plan::GRACE_PERIOD_DAYS) : null;
 
         // If no active plan OR plan has expired
-        if (!$planItemUser or !$planItemUser->plan or $planItemUser->datetime_to < Carbon::today()) {
-            if ($gracePeriodEnd && $gracePeriodEnd >= Carbon::today()) {
+        if($planItemUser) {
+            if ($gracePeriodEnd && $gracePeriodEnd >= Carbon::now()) {
                 // Still within grace period → Keep plan active
                 $planItemUser->update([
                     'is_active' => true,
                     'datetime_to' => $gracePeriodEnd,
                 ]);
-            } elseif (!$stripeSubscription || $stripeSubscription->canceled()) {
-                // If grace period is over and no active Stripe subscription, downgrade to free plan
-                $this->syncPlan($user->id, $this->getDefaultFreePlan()->id);
-            } else {
-                // Ensure the local database matches Stripe's subscription period
-                $planItemUser->update([
-                    'datetime_to' => Carbon::createFromTimestamp($stripeSubscription->current_period_end),
-                ]);
-            }
-            return;
-        }
 
-        $this->syncPlan($user->id, $planItemUser->plan_id);
+            } elseif ($gracePeriodEnd < Carbon::now()) {
+                // Grace period is over → Expire plan
+                // If grace period is over and no active Stripe subscription, downgrade to free plan
+                $scheduledDowngradePlanID = $planItemUser->scheduled_downgrade_plan_id;
+                $scheduledDowngradePlan = Plan::find($scheduledDowngradePlanID);
+
+                if($scheduledDowngradePlan and $scheduledDowngradePlan->is_required_payment and $user->hasPaymentMethod) {
+                    $this->syncPlan($user->id, $scheduledDowngradePlanID);
+
+                    return;
+                }
+
+                if(!$scheduledDowngradePlan and $user->hasPaymentMethod) {
+                    $this->syncPlan($user->id, $planItemUser->plan_id);
+
+                    return;
+                }
+
+                // Expire plan
+                $this->syncPlan($user->id, $this->getDefaultFreePlan()->id);
+            }
+
+        }else {
+            $this->syncPlan($user->id, $this->getDefaultFreePlan()->id, 2);
+        }
     }
 
 
