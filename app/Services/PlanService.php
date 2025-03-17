@@ -23,8 +23,8 @@ class PlanService
 
     public function getDefaultFreePlan()
     {
-        return $this->getDefaultPromoPlan();
-        // return Plan::findOrFail(1);
+        // return $this->getDefaultPromoPlan();
+        return Plan::findOrFail(1);
     }
 
 
@@ -84,12 +84,7 @@ class PlanService
 
         // **3️⃣ Handle Plan Renewals**
         } else {
-            // Instead of creating a new entry, update existing one if possible
-            if ($currentPlanItemUser) {
-                $currentPlanItemUser->update(['datetime_to' => $datetimeTo]);
-            } else {
-                $this->createNewPlanItemUser($userID, $planID, $datetimeFrom, $datetimeTo);
-            }
+            $this->createNewPlanItemUser($userID, $planID, $datetimeFrom, $datetimeTo);
         }
     }
 
@@ -217,13 +212,13 @@ class PlanService
                 $scheduledDowngradePlanID = $planItemUser->scheduled_downgrade_plan_id;
                 $scheduledDowngradePlan = Plan::find($scheduledDowngradePlanID);
 
-                if($scheduledDowngradePlan and $scheduledDowngradePlan->is_required_payment and $user->hasPaymentMethod) {
+                if($scheduledDowngradePlan and $scheduledDowngradePlan->is_required_payment and $user->hasPaymentMethod()) {
                     $this->syncPlan($user->id, $scheduledDowngradePlanID);
 
                     return;
                 }
 
-                if(!$scheduledDowngradePlan and $user->hasPaymentMethod) {
+                if(!$scheduledDowngradePlan and $user->hasPaymentMethod()) {
                     $this->syncPlan($user->id, $planItemUser->plan_id);
 
                     return;
@@ -234,11 +229,9 @@ class PlanService
             }
 
         }else {
-            $this->syncPlan($user->id, $this->getDefaultFreePlan()->id, 2);
+            $this->syncPlan($user->id, $this->getDefaultPromoPlan()->id, 2);
         }
     }
-
-
 
     private function getEnvironment()
     {
