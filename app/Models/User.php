@@ -28,6 +28,7 @@ class User extends Authenticatable
         'is_details_filled',
         'is_phone_number_validated',
         'login_count',
+        'meta_json',
         'password',
         'phone_country_id',
         'phone_number',
@@ -58,6 +59,7 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
             'is_details_filled' => 'boolean',
             'is_phone_number_validated' => 'boolean',
+            'meta_json' => 'json',
             'password' => 'hashed',
             'phone_number_verified_at' => 'datetime',
         ];

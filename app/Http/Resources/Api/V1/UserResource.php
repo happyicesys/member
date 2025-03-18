@@ -4,12 +4,21 @@ namespace App\Http\Resources\Api\V1;
 
 use App\Http\Resources\Api\V1\CountryResource;
 use App\Http\Resources\PlanResource;
+use App\Services\VoucherService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
+    protected $voucherService;
+
+    public function __construct()
+    {
+        parent::__construct(...func_get_args());
+        $this->voucherService = new VoucherService();
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -49,6 +58,7 @@ class UserResource extends JsonResource
                 ];
                 return $data;
             }),
+            'vouchers' => $this->voucherService->getVouchers($this->id),
         ];
     }
 }
