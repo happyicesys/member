@@ -38,20 +38,22 @@ const currentPlanDetails = computed(() => {
     return plans.value.find((plan) => plan.id === planItemUser.value.plan_id);
 });
 
-// Determine button label dynamically based on `plan.level`
-const buttonLabel = computed(() => {
+const buttonLabel = (plan) => {
     if (processing.value) return 'Processing...';
     if (!currentPlanDetails.value) return 'Subscribe';
-    if (form.plan_id === currentPlanDetails.value.id) return 'Subscribed';
-    if (selectedPlanDetails.value.level > currentPlanDetails.value.level) return 'Upgrade Plan';
-    if (selectedPlanDetails.value.level < currentPlanDetails.value.level) return 'Downgrade Plan';
+    if (plan.id === currentPlanDetails.value.id) return 'Subscribed';
+    if (plan.level > currentPlanDetails.value.level) return 'Upgrade';
+    if (plan.level < currentPlanDetails.value.level) return 'Downgrade';
     return 'Subscribe';
-});
+};
 
-// Determine if button should be disabled
-const isButtonDisabled = computed(() => !form.plan_id || form.plan_id === currentPlanDetails.value?.id || processing.value);
+const isButtonDisabled = (plan) => {
+    return !plan.id || plan.id === currentPlanDetails.value?.id || processing.value;
+};
 
-const handleSubscription = () => {
+const handleSubscription = (plan_id) => {
+    form.plan_id = plan_id;
+
     if (!form.plan_id) {
         alert('Please select a plan before proceeding.');
         return;
@@ -72,18 +74,18 @@ const handleSubscription = () => {
         }
     }
 
-    processing.value = true; // Set processing state
+    processing.value = true;
     form.post('/plan/subscribe', {
         preserveScroll: true,
         onSuccess: () => {
             alert('Subscription successful!');
-            processing.value = false; // Reset processing state
-            // **✅ Update current plan immediately**
+            processing.value = false;
             planItemUser.value.plan_id = form.plan_id;
         },
         onError: (errors) => console.error(errors),
     });
 };
+
 
 // Handle plan selection
 const onPlanClicked = (plan) => {
@@ -129,36 +131,47 @@ const getCardBrandLogo = (brand) => {
 
                 <div>
                     <div class="space-y-4">
-                        <div
-                            v-for="plan in plans"
-                            :key="plan.id"
+                        <div v-for="plan in plans" :key="plan.id"
                             :class="[
-                                'p-6 bg-white rounded-lg shadow-md flex items-center justify-between border-2 cursor-pointer transition duration-200',
+                                'p-6 bg-white rounded-lg shadow-md flex flex-col md:flex-row items-center justify-between border-2 cursor-pointer transition duration-200',
                                 form.plan_id === plan.id ? 'border-red-400 bg-red-50' : 'border-gray-200',
                                 plan.is_available ? '' : 'opacity-50 cursor-not-allowed',
                             ]"
                             @click="onPlanClicked(plan)"
                         >
-                            <div class="flex justify-between items-center w-full">
-                                <div class="flex flex-col space-y-3 pr-4">
-                                    <h3 class="text-xl font-bold text-gray-800">{{ plan.name }}</h3>
-                                    <p class="text-gray-600 whitespace-pre-line">{{ plan.description }}</p>
-                                    <p class="mt-2 text-red-400 font-semibold">
-                                        {{ plan.price > 0 ? `$${plan.price.toFixed(2)} per month` : 'Free' }}
-                                    </p>
-                                    <span v-if="planItemUser.plan_id === plan.id && !planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-right text-sm font-medium">
-                                        **Your plan will be renewed on <strong>{{ planItemUser.date_to }}</strong>
+                            <div class="flex flex-col space-y-3 pr-4">
+                                <h3 class="text-xl font-bold text-gray-800 flex items-center space-x-2">
+                                    <div class="text-2xl">{{ plan.name }}</div>
+                                    <span class="bg-yellow-300 py-1 px-2 rounded-md border-2 border-red-600 text-red-600 font-bold text-xs hover:bg-yellow-400"
+                                        v-if="planItemUser.plan_id === plan.id">
+                                        Current
                                     </span>
-                                    <span v-if="planItemUser.plan_id === plan.id && planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-right text-sm font-medium">
-                                        **Your plan will be expired on <strong>{{ planItemUser.date_to }}</strong>. You will be downgraded to the <strong>{{ planItemUser.scheduledDowngradePlan.name }}</strong> plan.
-                                    </span>
-                                </div>
-                                <!-- Keep the badge at the rightmost -->
-                                <span class="ml-auto inline-flex rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/40 w-fit h-fit" v-if="planItemUser.plan_id === plan.id">
-                                    Current
+                                </h3>
+                                <p class="text-gray-600 whitespace-pre-line">{{ plan.description }}</p>
+                                <p class="mt-2 text-lg text-red-400 font-semibold">
+                                    {{ plan.price > 0 ? `$${plan.price.toFixed(2)} per month` : 'Free' }}
+                                </p>
+                                <span v-if="planItemUser.plan_id === plan.id && !planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-left text-sm font-medium">
+                                    **Your plan will be renewed on <strong>{{ planItemUser.date_to }}</strong>
+                                </span>
+                                <span v-if="planItemUser.plan_id === plan.id && planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-left text-sm font-medium">
+                                    **Your plan will be expired on <strong>{{ planItemUser.date_to }}</strong>. <br>
+                                    You will be downgraded to the <strong>{{ planItemUser.scheduledDowngradePlan.name }}</strong> plan.
                                 </span>
                             </div>
 
+                            <!-- Action Button next to each plan -->
+                            <button @click.stop="handleSubscription(plan.id)"
+                                class="text-white font-bold mt-8 md:mt-1 py-3 px-6 rounded-lg shadow-md transition duration-200"
+                                :class="{
+                                    'bg-green-400 hover:bg-green-500': buttonLabel(plan) === 'Subscribe',
+                                    'bg-green-400 hover:bg-green-500': buttonLabel(plan).includes('Upgrade'),
+                                    'bg-yellow-400 hover:bg-yellow-500': buttonLabel(plan).includes('Downgrade'),
+                                    'bg-gray-400 cursor-not-allowed': isButtonDisabled(plan),
+                                }"
+                                :disabled="isButtonDisabled(plan)">
+                                {{ buttonLabel(plan) }}
+                            </button>
                         </div>
                     </div>
 
@@ -180,23 +193,6 @@ const getCardBrandLogo = (brand) => {
                                 Manage Billing
                             </a>
                         </div>
-                    </div>
-
-                    <!-- Single Dynamic Button -->
-                    <div class="mt-6 text-center">
-                        <button
-                            @click="handleSubscription"
-                            class="text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200"
-                            :class="{
-                                'bg-green-400 hover:bg-green-500': buttonLabel === 'Subscribe',
-                                'bg-blue-400 hover:bg-blue-500': buttonLabel.includes('Upgrade'),
-                                'bg-yellow-400 hover:bg-yellow-500': buttonLabel.includes('Downgrade'),
-                                'bg-gray-400 cursor-not-allowed': isButtonDisabled,
-                            }"
-                            :disabled="isButtonDisabled"
-                        >
-                            {{ buttonLabel }}
-                        </button>
                     </div>
 
                 </div>
