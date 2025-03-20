@@ -80,6 +80,15 @@ function toggleMenu() {
                         >
                             Sign Up
                         </Link>
+                        <Link
+                            :href="route('forget')"
+                            :class="[
+                                'text-lg text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-[4pt] hover:decoration-red-600 hover:decoration-2',
+                                currentRoute == 'forget' ? 'underline decoration-red-600 decoration-2' : ''
+                            ]"
+                        >
+                            Reset Password
+                        </Link>
                     </div>
                 </nav>
                 <div v-if="!isAuthenticated">
@@ -134,6 +143,12 @@ function toggleMenu() {
                         :active="route().current('register')"
                     >
                         Sign Up
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        :href="route('forget')"
+                        :active="route().current('forget')"
+                    >
+                        Reset Password
                     </ResponsiveNavLink>
                 </div>
             </div>

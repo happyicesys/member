@@ -142,7 +142,7 @@ const getCardBrandLogo = (brand) => {
                             <div class="flex flex-col space-y-3 pr-4">
                                 <h3 class="text-xl font-bold text-gray-800 flex items-center space-x-2">
                                     <div class="text-2xl">{{ plan.name }}</div>
-                                    <span class="bg-yellow-300 py-1 px-2 rounded-md border-2 border-red-600 text-red-600 font-bold text-xs hover:bg-yellow-400"
+                                    <span class="bg-yellow-300 py-2 px-4 rounded-md border-2 border-red-600 text-red-600 font-bold text-md hover:bg-yellow-400"
                                         v-if="planItemUser.plan_id === plan.id">
                                         Current
                                     </span>
@@ -151,10 +151,10 @@ const getCardBrandLogo = (brand) => {
                                 <p class="mt-2 text-lg text-red-400 font-semibold">
                                     {{ plan.price > 0 ? `$${plan.price.toFixed(2)} per month` : 'Free' }}
                                 </p>
-                                <span v-if="planItemUser.plan_id === plan.id && !planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-left text-sm font-medium">
+                                <span v-if="planItemUser.plan_id === plan.id && !planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-left text-md font-medium">
                                     **Your plan will be renewed on <strong>{{ planItemUser.date_to }}</strong>
                                 </span>
-                                <span v-if="planItemUser.plan_id === plan.id && planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-left text-sm font-medium">
+                                <span v-if="planItemUser.plan_id === plan.id && planItemUser.scheduled_downgrade_plan_id" class="text-gray-800 text-left text-md font-medium">
                                     **Your plan will be expired on <strong>{{ planItemUser.date_to }}</strong>. <br>
                                     You will be downgraded to the <strong>{{ planItemUser.scheduledDowngradePlan.name }}</strong> plan.
                                 </span>
@@ -162,13 +162,17 @@ const getCardBrandLogo = (brand) => {
 
                             <!-- Action Button next to each plan -->
                             <button @click.stop="handleSubscription(plan.id)"
-                                class="text-white font-bold mt-8 md:mt-1 py-3 px-6 rounded-lg shadow-md transition duration-200"
+                                v-if="planItemUser.scheduled_downgrade_plan_id !== plan.id"
+                                class="font-bold mt-8 md:mt-1 py-3 px-6 rounded-lg shadow-md transition duration-200"
                                 :class="{
-                                    'bg-green-400 hover:bg-green-500': buttonLabel(plan) === 'Subscribe',
-                                    'bg-green-400 hover:bg-green-500': buttonLabel(plan).includes('Upgrade'),
-                                    'bg-yellow-400 hover:bg-yellow-500': buttonLabel(plan).includes('Downgrade'),
-                                    'bg-gray-400 cursor-not-allowed': isButtonDisabled(plan),
+                                    'bg-green-400 hover:bg-green-500 text-white': buttonLabel(plan) === 'Subscribe',
+                                    'bg-green-400 hover:bg-green-500 text-white': buttonLabel(plan).includes('Upgrade'),
+                                    'bg-yellow-400 hover:bg-yellow-500 text-white': buttonLabel(plan).includes('Downgrade'),
+                                    'bg-yellow-300 border-2 border-red-600 text-red-600 font-bold cursor-not-allowed': buttonLabel(plan) === 'Subscribed',
+                                    'bg-gray-400 cursor-not-allowed text-white': isButtonDisabled(plan) && buttonLabel(plan) !== 'Subscribed',
                                 }"
+
+
                                 :disabled="isButtonDisabled(plan)">
                                 {{ buttonLabel(plan) }}
                             </button>

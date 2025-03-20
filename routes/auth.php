@@ -25,7 +25,7 @@ Route::middleware('guest')->group(function () {
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('forget', [AuthenticatedSessionController::class, 'forgot'])
-        ->name('forgot');
+        ->name('forget');
 
     Route::post('forget', [AuthenticatedSessionController::class, 'updateForgot']);
 
