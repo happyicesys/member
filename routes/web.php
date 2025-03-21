@@ -19,6 +19,7 @@ Route::get('/join-licensee', [GuestController::class, 'joinLicensee'])->name('jo
 Route::get('/data-protection-policy', [GuestController::class, 'dataProtectionPolicy'])->name('data-protection-policy');
 Route::get('/privacy-policy', [GuestController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/privacy-policy-opn', [GuestController::class, 'privacyPolicyOpn'])->name('privacy-policy-opn');
+Route::get('/refund', [GuestController::class, 'refund'])->name('refund');
 Route::get('/terms-and-conditions', [GuestController::class, 'termsAndConditions'])->name('terms-and-conditions');
 
 

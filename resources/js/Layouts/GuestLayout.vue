@@ -9,6 +9,7 @@ const showingNavigationDropdown = ref(false);
 const page = usePage();
 const currentRoute = computed(() => page.props.value?.route?.name || '');
 const isAuthenticated = usePage().props.auth.user !== null;
+const isContactDropdownOpen = ref(false);
 const isMenuOpen = ref(false);
 
 function toggleMenu() {
@@ -53,7 +54,7 @@ function toggleMenu() {
                         >
                             About Us
                         </Link>
-                        <Link
+                        <!-- <Link
                             :href="route('contact-us')"
                             :class="[
                                 'text-lg text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-[4pt] hover:decoration-red-600 hover:decoration-2',
@@ -61,7 +62,44 @@ function toggleMenu() {
                             ]"
                         >
                             Contact Us
-                        </Link>
+                        </Link> -->
+                        <!-- Contact Us Dropdown -->
+                        <div
+                            class="relative"
+                            @mouseenter="isContactDropdownOpen = true"
+                            @mouseleave="isContactDropdownOpen = false"
+                        >
+                            <div>
+                                <button
+                                    class="text-lg text-gray-600 hover:text-gray-800 hover:underline hover:underline-offset-[4pt] hover:decoration-red-600 hover:decoration-2 focus:outline-none"
+                                >
+                                    Contact Us
+                                </button>
+                            </div>
+                            <transition name="fade">
+                                <div
+                                    v-show="isContactDropdownOpen"
+                                    class="absolute z-50 mt-2 w-48 bg-white border border-gray-200 shadow-md rounded-md"
+                                >
+                                    <Link
+                                        :href="route('contact-us')"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        :class="{ 'font-semibold text-red-600': currentRoute === 'contact-us' }"
+                                    >
+                                        Reach Us
+                                    </Link>
+                                    <Link
+                                        :href="route('refund')"
+                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                        :class="{ 'font-semibold text-red-600': currentRoute === 'refund' }"
+                                    >
+                                        Refund
+                                    </Link>
+                                </div>
+                            </transition>
+                        </div>
+
+
                         <Link
                             :href="route('join-licensee')"
                             :class="[
@@ -126,12 +164,25 @@ function toggleMenu() {
                     >
                         About Us
                     </ResponsiveNavLink>
+                    <!-- <ResponsiveNavLink
+                        :href="route('contact-us')"
+                        :active="route().current('contact-us')"
+                    >
+                        Contact Us
+                    </ResponsiveNavLink> -->
                     <ResponsiveNavLink
                         :href="route('contact-us')"
                         :active="route().current('contact-us')"
                     >
                         Contact Us
                     </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        :href="route('refund')"
+                        :active="route().current('refund')"
+                    >
+                        Refund
+                    </ResponsiveNavLink>
+
                     <ResponsiveNavLink
                         :href="route('join-licensee')"
                         :active="route().current('join-licensee')"

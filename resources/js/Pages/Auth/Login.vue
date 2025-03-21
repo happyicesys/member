@@ -131,7 +131,7 @@
 
                 <Link
                     v-if="canResetPassword"
-                    :href="route('forgot')"
+                    :href="route('forget')"
                     class="rounded-md text-lg text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Forgot your password?

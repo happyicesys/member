@@ -7,6 +7,7 @@ import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
+const isContactDropdownOpen = ref(false)
 const isPlanExpiring = usePage().props.auth.isPlanExpiringNotification
 const plan = usePage().props.auth.plan.data
 const planItemUser = usePage().props.auth.planItemUser.data
@@ -18,6 +19,19 @@ const showFirstTimerBanner = ref(true);
 const dismissFirstTimerBanner = () => {
     showFirstTimerBanner.value = false;
 };
+
+let contactDropdownTimeout = null;
+
+function openContactDropdown() {
+    if (contactDropdownTimeout) clearTimeout(contactDropdownTimeout);
+    isContactDropdownOpen.value = true;
+}
+
+function closeContactDropdown() {
+    contactDropdownTimeout = setTimeout(() => {
+        isContactDropdownOpen.value = false;
+    }, 200); // Adjust delay if needed
+}
 
 onMounted(() => {
     if(isPlanExpiring) {
@@ -61,9 +75,44 @@ function toggleMenu() {
                         <NavLink :href="route('about')" :active="route().current('about')">
                             About Us
                         </NavLink>
-                        <NavLink :href="route('contact-us')" :active="route().current('contact-us')">
+                        <!-- <NavLink :href="route('contact-us')" :active="route().current('contact-us')">
                             Contact Us
-                        </NavLink>
+                        </NavLink> -->
+                        <div
+                            class="relative"
+                            @mouseenter="openContactDropdown"
+                            @mouseleave="closeContactDropdown"
+                        >
+                            <button
+                                class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none"
+                            >
+                                Contact Us
+                                <svg class="ms-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l5 5 5-5" />
+                                </svg>
+                            </button>
+
+                            <div
+                                v-show="isContactDropdownOpen"
+                                class="absolute left-0 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+                            >
+                                <Link
+                                    :href="route('contact-us')"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    :class="{ 'font-semibold text-red-600': route().current('contact-us') }"
+                                >
+                                    Reach Us
+                                </Link>
+                                <Link
+                                    :href="route('refund')"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    :class="{ 'font-semibold text-red-600': route().current('refund') }"
+                                >
+                                    Refund
+                                </Link>
+                            </div>
+                        </div>
+
                         <NavLink :href="route('join-licensee')" :active="route().current('join-licensee')">
                             Join Us as Licensee
                         </NavLink>
@@ -111,8 +160,15 @@ function toggleMenu() {
                 <div class="space-y-1 pb-3 pt-2">
                     <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">Dashboard</ResponsiveNavLink>
                     <ResponsiveNavLink :href="route('about')" :active="route().current('about')">About Us</ResponsiveNavLink>
-                    <ResponsiveNavLink :href="route('contact-us')" :active="route().current('contact-us')">Contact
-                        Us</ResponsiveNavLink>
+                    <!-- <ResponsiveNavLink :href="route('contact-us')" :active="route().current('contact-us')">Contact
+                        Us</ResponsiveNavLink> -->
+                        <ResponsiveNavLink :href="route('contact-us')" :active="route().current('contact-us')">
+                            Contact Us
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('refund')" :active="route().current('refund')">
+                            Refund
+                        </ResponsiveNavLink>
+
                     <ResponsiveNavLink :href="route('join-licensee')" :active="route().current('join-licensee')">Join Us as Licensee</ResponsiveNavLink>
                 </div>
                 <div class="border-t border-gray-200 pb-1 pt-4">
