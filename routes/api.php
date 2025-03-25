@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CountryController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\VendTransactionController;
-use App\Http\Controllers\Api\V1\WebhookController;
+use App\Http\Controllers\Api\V1\PaymentGatewayController;
 use App\Http\Controllers\GuestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,7 +16,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/countries', [CountryController::class, 'index']);
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:3,1');
     Route::get('/stats', [GuestController::class, 'stats']);
-    Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
+    Route::post('/stripe/webhook', [PaymentGatewayController::class, 'createWebhookLog']);
 
     Route::prefix('transactions')->group(function() {
         Route::post('/create/users/{userID}', [VendTransactionController::class, 'create']);

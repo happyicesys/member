@@ -42,7 +42,7 @@ class VoucherService
             return [];
         }
 
-        $dateTo = Carbon::parse($user->created_at)->addDays(self::HARDCODE_PROMO_DAYS)->format('Y-m-d H:i:s');
+        $dateTo = Carbon::parse($user->created_at)->addDays(self::HARDCODE_PROMO_DAYS)->format('Y-m-d');
 
         return [
             [
@@ -50,9 +50,9 @@ class VoucherService
                 'code' => self::HARDCODE_PROMO_VOUCHER,
                 'type' => self::HARDCODE_PROMO_TYPE,
                 'channels' => ['11', '12'],
-                'date_from' => Carbon::parse($user->created_at)->format('Y-m-d H:i:s'),
+                'date_from' => Carbon::parse($user->created_at)->format('Y-m-d'),
                 'date_to' => $dateTo,
-                'name' => 'Free 1 item for new user',
+                'name' => 'Free 1 Cornetto for New User',
                 'desc' => '',
                 'status' => self::STATUS_ACTIVE,
                 'min_value' => null,
