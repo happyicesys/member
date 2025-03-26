@@ -19,7 +19,7 @@ class VoucherService
     const HARDCODE_PROMO_START_DATE = '2025-03-19 00:00:00';
     const HARDCODE_PROMO_END_DATE = null;
     const HARDCODE_PROMO_VOUCHER = 'NEWUSERVOUCHER';
-    const HARDCODE_PROMO_DAYS = 100;
+    const HARDCODE_PROMO_DAYS = 8;
     const HARDCODE_PROMO_TYPE = 'item';
 
     public function getVouchers($userID)
@@ -49,7 +49,7 @@ class VoucherService
                 'id' => 1,
                 'code' => self::HARDCODE_PROMO_VOUCHER,
                 'type' => self::HARDCODE_PROMO_TYPE,
-                'channels' => ['11', '12'],
+                'channels' => ['14', '22', '15', '16'],
                 'date_from' => Carbon::parse($user->created_at)->format('Y-m-d'),
                 'date_to' => $dateTo,
                 'name' => 'Free 1 Cornetto for New User',
