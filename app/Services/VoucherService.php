@@ -19,7 +19,7 @@ class VoucherService
     const HARDCODE_PROMO_START_DATE = '2025-03-19 00:00:00';
     const HARDCODE_PROMO_END_DATE = null;
     const HARDCODE_PROMO_VOUCHER = 'NEWUSERVOUCHER';
-    const HARDCODE_PROMO_DAYS = 8;
+    const HARDCODE_PROMO_DAYS = 60;
     const HARDCODE_PROMO_TYPE = 'item';
 
     public function getVouchers($userID)
