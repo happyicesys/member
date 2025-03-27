@@ -33,7 +33,7 @@ class UserRetention extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mai.user-retention',
+            view: 'mail.user-retention',
             with: ['user' => $this->user], // pass data to view if needed
         );
     }
