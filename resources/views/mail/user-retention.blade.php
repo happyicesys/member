@@ -16,19 +16,19 @@
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" style="font-size: 22px; font-weight: bold; color: #333;">
+                        <td align="center" style="font-size: 22px; font-weight: bold; color: #333; padding:30px 0;">
                             Hi {{ $user->name }},
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 20px 0; font-size: 16px; color: #555;">
+                        <td style="padding: 35px 0; font-size: 16px; color: #555;">
                             Your DCVend membership is expiring soon. Renew now to continue enjoying the best deals.
                         </td>
                     </tr>
                     <tr>
                         <td align='center'>
                             <a href="{{route('plan.index')}}" target="_blank">
-                                <img src="{{asset('/images/components/email_cta_button.png') }}"  alt="Call to Action Button" style="max-width:200px;">
+                                <img src="{{asset('/images/components/email_cta_button.png') }}"  alt="Call to Action Button" style="max-width:300px;">
                             </a>
                         </td>
                         {{-- <td align="center" style="padding: 20px;">
