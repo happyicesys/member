@@ -12,7 +12,6 @@
                 <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; padding: 30px; border-radius: 8px;">
                     <tr>
                         <td align='center'>
-                            {{asset('/images/retention_email_banner.gif')}}
                             <img src="{{asset('/images/retention_email_banner.gif')}}" alt="Retention Email Banner">
                         </td>
                     </tr>
@@ -28,7 +27,9 @@
                     </tr>
                     <tr>
                         <td align='center'>
-                            <img src="{{asset('/images/components/email_cta_button.png') }}" alt="Call to Action Button">
+                            <a href="{{route('plan.index')}}" target="_blank">
+                                <img src="{{asset('/images/components/email_cta_button.png') }}"  alt="Call to Action Button" style="max-width:200px;">
+                            </a>
                         </td>
                         {{-- <td align="center" style="padding: 20px;">
                             <a href="https://dcvend.com/plan"
