@@ -16,13 +16,13 @@
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" style="font-size: 22px; font-weight: bold; color: #333; padding:30px 0;">
+                        <td align="center" style="font-size: 22px; font-weight: bold; color: #333; padding:30px 0px 20px 0px;">
                             Hi {{ $user->name }},
                         </td>
                     </tr>
                     <tr>
                         <td style="padding: 35px 0; font-size: 16px; color: #555;">
-                            Your DCVend membership is expiring soon. Renew now to continue enjoying the best deals.
+                            Your Unlimited Plan of 30% discount has expired. Please subscribe to Gold Plan to enjoy 4 times of 30% discount (per month) to keep enjoying discount.
                         </td>
                     </tr>
                     <tr>

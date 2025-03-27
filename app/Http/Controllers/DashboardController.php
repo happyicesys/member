@@ -9,6 +9,7 @@ use App\Http\Resources\Api\V1\VendTransactionResource;
 use App\Http\Resources\CountryResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -33,6 +34,7 @@ class DashboardController extends Controller
 
     public function memberIndex()
     {
+        // dd(Carbon::today()->addDays(-14)->toDateString());
         return Inertia::render('Dashboard');
     }
 }

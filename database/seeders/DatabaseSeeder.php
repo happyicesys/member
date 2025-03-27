@@ -21,7 +21,8 @@ class DatabaseSeeder extends Seeder
             // SyncTotalDiscountAmountSetting::class,
             // PlanItemUserPlanSeeder::class,
             // PlanItemPlatinumBaseSeeder::class,
-            PaymentMethodSeeder::class,
+            // PaymentMethodSeeder::class,
+            SetInitPlanRequiredEmailRetention::class,
         ]);
     }
 }
