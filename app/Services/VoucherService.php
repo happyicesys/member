@@ -19,6 +19,7 @@ class VoucherService
     const HARDCODE_PROMO_START_DATE = '2025-03-19 00:00:00';
     const HARDCODE_PROMO_END_DATE = null;
     const HARDCODE_PROMO_VOUCHER = 'NEWUSERVOUCHER';
+    const HARDCODE_PROMO_VOUCHER_ID = 1;
     const HARDCODE_PROMO_DAYS = 60;
     const HARDCODE_PROMO_TYPE = 'item';
 
@@ -34,19 +35,31 @@ class VoucherService
     private function getHardcodeVoucher($user)
     {
         // if(Carbon::now()->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE)) || $user->created_at->gt(Carbon::now())) {
-        if(Carbon::now()->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
+        if(Carbon::today()->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
             return [];
         }
 
-        if(self::HARDCODE_PROMO_END_DATE && Carbon::now()->gt(Carbon::parse(self::HARDCODE_PROMO_END_DATE))) {
+        if(self::HARDCODE_PROMO_END_DATE && Carbon::today()->gt(Carbon::parse(self::HARDCODE_PROMO_END_DATE))) {
             return [];
         }
 
         $dateTo = Carbon::parse($user->created_at)->addDays(self::HARDCODE_PROMO_DAYS)->format('Y-m-d');
+        $isExpired = Carbon::today()->gt(Carbon::parse($dateTo)) ? true : false;
+
+
+        $status = self::STATUS_ACTIVE;
+
+        if($user->is_one_time_voucher_used and $user->phone_number != '81300257') {
+            $status = self::STATUS_REDEEMED;
+        }
+
+        if($isExpired) {
+            $status = self::STATUS_EXPIRED;
+        }
 
         return [
             [
-                'id' => 1,
+                'id' => self::HARDCODE_PROMO_VOUCHER_ID,
                 'code' => self::HARDCODE_PROMO_VOUCHER,
                 'type' => self::HARDCODE_PROMO_TYPE,
                 'channels' => ['14', '22', '15', '16'],
@@ -54,7 +67,7 @@ class VoucherService
                 'date_to' => $dateTo,
                 'name' => 'Free 1 Cornetto for New User',
                 'desc' => '',
-                'status' => self::STATUS_ACTIVE,
+                'status' => $status,
                 'min_value' => null,
                 'max_promo_value' => null,
                 'qty' => 1,

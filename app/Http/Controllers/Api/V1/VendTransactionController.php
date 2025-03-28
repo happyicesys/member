@@ -86,6 +86,16 @@ class VendTransactionController extends Controller
             ]);
         }
 
+        // hardcode for voucher claim
+        if($request->vouchers) {
+            $voucher = $request->vouchers[0];
+
+            if($voucher['id'] == '1') {
+                $user->is_one_time_voucher_used = true;
+                $user->save();
+            }
+        }
+
         return $this->success('Transaction created successfully');
     }
 }
