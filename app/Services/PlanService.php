@@ -30,7 +30,7 @@ class PlanService
 
     public function getDefaultPromoPlan()
     {
-        return Plan::findOrFail(3);
+        return Plan::findOrFail(2);
     }
 
     public function getExternalPriceID($plan)
@@ -229,7 +229,7 @@ class PlanService
             }
 
         }else {
-            $this->syncPlan($user->id, $this->getDefaultPromoPlan()->id, 2);
+            $this->syncPlan($user->id, $this->getDefaultPromoPlan()->id, 1);
         }
     }
 
