@@ -44,7 +44,7 @@ class SendRetentionMail implements ShouldQueue
         }
 
         foreach($this->users as $user) {
-            Mail::to($user->email)->send(new UserRetention($user));
+            Mail::to($user->email)->queue(new UserRetention($user));
             $user->planItemUser->update([
                 'is_email_retention_sent' => true
             ]);
