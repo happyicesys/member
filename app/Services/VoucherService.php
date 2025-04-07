@@ -16,7 +16,7 @@ class VoucherService
     const TYPE_PERCENT = 'percent';
     const TYPE_AMOUNT = 'amount';
 
-    const HARDCODE_PROMO_START_DATE = '2025-03-19 00:00:00';
+    const HARDCODE_PROMO_START_DATE = '2025-04-07 00:00:00';
     const HARDCODE_PROMO_END_DATE = null;
     const HARDCODE_PROMO_VOUCHER = 'NEWUSERVOUCHER';
     const HARDCODE_PROMO_VOUCHER_ID = 1;
@@ -65,7 +65,7 @@ class VoucherService
                 'channels' => ['14', '22', '15', '16'],
                 'date_from' => Carbon::parse($user->created_at)->format('Y-m-d'),
                 'date_to' => $dateTo,
-                'name' => 'Free 1 Cornetto for New User',
+                'name' => 'Free 1 Cornetto for New Sign-up',
                 'desc' => '',
                 'status' => $status,
                 'min_value' => null,

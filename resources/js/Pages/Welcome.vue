@@ -116,7 +116,7 @@
         <!-- Call to Action Section -->
         <section class="bg-white py-8 px-6">
             <div class="text-center text-gray-600 text-2xl font-semibold tracking-wide md:w-3/5 mx-auto">
-                <strong>New Sign-up:</strong> Free Gold Member package, with FREE upgrade to unlimited times of 30% discount on all products, for 2 months
+                <strong>New Sign-up:</strong> Free Gold Member package, with 4 times of 30% discount on all products for a month.
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
                 <Link :href="route('register', { refID: 'web' })" class="bg-yellow-300 py-8 px-16 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-5xl hover:bg-yellow-400">

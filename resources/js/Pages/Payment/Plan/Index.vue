@@ -25,7 +25,7 @@ onMounted(() => {
     allPaymentMethods.value = props.allPaymentMethods.data;
     planItemUser.value = props.planItemUser.data;
     form.plan_id = planItemUser.value.plan_id; // Ensure it does not default to undefined
-    plans.value = props.plans.data.filter((plan) => plan.is_available || plan.id == planItemUser.value.plan_id);
+    plans.value = props.plans.data.filter((plan) => plan.is_active || plan.id == planItemUser.value.plan_id);
 });
 
 // Find the selected plan's details
@@ -162,7 +162,7 @@ const getCardBrandLogo = (brand) => {
 
                             <!-- Action Button next to each plan -->
                             <button @click.stop="handleSubscription(plan.id)"
-                                v-if="planItemUser.scheduled_downgrade_plan_id !== plan.id"
+                                v-if="planItemUser.scheduled_downgrade_plan_id !== plan.id && plan.is_available"
                                 class="font-bold mt-8 md:mt-1 py-3 px-6 rounded-lg shadow-md transition duration-200"
                                 :class="{
                                     'bg-green-400 hover:bg-green-500 text-white': buttonLabel(plan) === 'Subscribe',
