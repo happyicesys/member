@@ -74,6 +74,38 @@ class VoucherService
                 'value' => null,
                 'matrix' => []
             ],
+            [
+                'id' => 2,
+                'code' => 'PERCENTVOUCHER',
+                'type' => self::TYPE_PERCENT,
+                'channels' => ['14', '22', '15', '16'],
+                'date_from' => Carbon::parse($user->created_at)->format('Y-m-d'),
+                'date_to' => $dateTo,
+                'name' => '15 Percent Off',
+                'desc' => '',
+                'status' => self::STATUS_ACTIVE,
+                'min_value' => null,
+                'max_promo_value' => null,
+                'qty' => 1,
+                'value' => 15,
+                'matrix' => []
+            ],
+            [
+                'id' => 3,
+                'code' => 'AMOUNTVOUCHER',
+                'type' => self::TYPE_AMOUNT,
+                'channels' => ['14', '22', '15', '16'],
+                'date_from' => Carbon::parse($user->created_at)->format('Y-m-d'),
+                'date_to' => $dateTo,
+                'name' => '1 Dollar Off for 5 Dollar Spend',
+                'desc' => '',
+                'status' => self::STATUS_ACTIVE,
+                'min_value' => 500,
+                'max_promo_value' => null,
+                'qty' => 1,
+                'value' => 100,
+                'matrix' => []
+            ],
         ];
     }
 
