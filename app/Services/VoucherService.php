@@ -84,7 +84,7 @@ class VoucherService
                 'name' => '15 Percent Off',
                 'desc' => '',
                 'status' => self::STATUS_ACTIVE,
-                'min_value' => null,
+                'min_value' => 100,
                 'max_promo_value' => 500,
                 'qty' => 1,
                 'value' => 15,
