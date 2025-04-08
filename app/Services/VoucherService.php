@@ -49,12 +49,12 @@ class VoucherService
 
         $status = self::STATUS_ACTIVE;
 
-        if($user->is_one_time_voucher_used and $user->phone_number != '81300257') {
-            $status = self::STATUS_REDEEMED;
-        }
-
         if($isExpired) {
             $status = self::STATUS_EXPIRED;
+        }
+
+        if($user->is_one_time_voucher_used and $user->phone_number != '81300257') {
+            $status = self::STATUS_REDEEMED;
         }
 
         return [
