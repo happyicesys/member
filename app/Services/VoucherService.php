@@ -16,7 +16,7 @@ class VoucherService
     const TYPE_PERCENT = 'percent';
     const TYPE_AMOUNT = 'amount';
 
-    const HARDCODE_PROMO_START_DATE = '2025-04-07 00:00:00';
+    const HARDCODE_PROMO_START_DATE = '2025-04-09 00:00:00';
     const HARDCODE_PROMO_END_DATE = null;
     const HARDCODE_PROMO_VOUCHER = 'NEWUSERVOUCHER';
     const HARDCODE_PROMO_VOUCHER_ID = 1;
