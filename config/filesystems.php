@@ -57,6 +57,18 @@ return [
             'throw' => false,
         ],
 
+        'digitaloceanspaces' => [
+            'driver' => 's3',
+            'key' => env('DIGITALOCEAN_SPACES_KEY'),
+            'secret' => env('DIGITALOCEAN_SPACES_SECRET'),
+            'endpoint' => env('DIGITALOCEAN_SPACES_ENDPOINT'),
+            'region' => env('DIGITALOCEAN_SPACES_REGION'),
+            'bucket' => env('DIGITALOCEAN_SPACES_BUCKET'),
+            'use_path_style_endpoint' => false, // important for DO Spaces
+            'visibility' => 'public',           // or 'private' if that's your intention
+            'throw' => false,
+        ],
+
     ],
 
     /*
