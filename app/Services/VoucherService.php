@@ -34,17 +34,19 @@ class VoucherService
 
     private function getHardcodeVoucher($user)
     {
-        // if(Carbon::now()->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE)) || $user->created_at->gt(Carbon::now())) {
-        if(Carbon::today()->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
-            return [];
-        }
 
-        if(self::HARDCODE_PROMO_END_DATE && Carbon::today()->gt(Carbon::parse(self::HARDCODE_PROMO_END_DATE))) {
-            return [];
-        }
+        if($user->phone_number != '169354741') {
+            if(Carbon::today()->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
+                return [];
+            }
 
-        if(Carbon::parse($user->created_at)->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
-            return [];
+            if(self::HARDCODE_PROMO_END_DATE && Carbon::today()->gt(Carbon::parse(self::HARDCODE_PROMO_END_DATE))) {
+                return [];
+            }
+
+            if(Carbon::parse($user->created_at)->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
+                return [];
+            }
         }
 
         $dateTo = Carbon::parse($user->created_at)->addDays(self::HARDCODE_PROMO_DAYS)->format('Y-m-d');
