@@ -43,6 +43,10 @@ class VoucherService
             return [];
         }
 
+        if(Carbon::parse($user->created_at)->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
+            return [];
+        }
+
         $dateTo = Carbon::parse($user->created_at)->addDays(self::HARDCODE_PROMO_DAYS)->format('Y-m-d');
         $isExpired = Carbon::today()->gt(Carbon::parse($dateTo)) ? true : false;
 
