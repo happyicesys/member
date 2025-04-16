@@ -34,6 +34,7 @@ class User extends Authenticatable
         'phone_country_id',
         'phone_number',
         'phone_number_verified_at',
+        'referral_code',
         'ref_id',
     ];
 
@@ -76,6 +77,11 @@ class User extends Authenticatable
     public function planItemUser()
     {
         return $this->hasOne(PlanItemUser::class)->latestOfMany();
+    }
+
+    public function referral()
+    {
+        return $this->hasOne(Referral::class);
     }
 
 }

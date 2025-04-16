@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             // PlanItemUserPlanSeeder::class,
             // PlanItemPlatinumBaseSeeder::class,
             // PaymentMethodSeeder::class,
-            SetInitPlanRequiredEmailRetention::class,
+            // SetInitPlanRequiredEmailRetention::class,
+            ReferralCodeSeeder::class,
         ]);
     }
 }

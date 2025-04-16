@@ -122,6 +122,8 @@ class RegisteredUserController extends Controller
             'phone_number_verified_at' => Carbon::now(),
         ]);
 
+        $this->userService->createReferral($user);
+
         if($request->ref_id) {
             $this->userService->assignReferral($user, $request->ref_id);
         }
