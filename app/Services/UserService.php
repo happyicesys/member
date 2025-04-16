@@ -46,11 +46,11 @@ class UserService
     {
         $referral = new Referral();
         $referral->user_id = $user->id;
-        $referral->code = $this->generateReferralCode($user);
+        $referral->code = $this->generateReferralCode();
         $referral->save();
     }
 
-    public function generateReferralCode(User $user): string
+    public function generateReferralCode(): string
     {
         // Generate a unique referral code
         $referralCode = strtoupper(Str::random(6));
