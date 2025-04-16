@@ -9,15 +9,21 @@ class Referral extends Model
     protected $fillable = [
         'user_id',
         'code',
-        'referral_user_id',
         'is_active',
         'is_welcome_used',
+        'parent_id',
+        'referral_user_id',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_welcome_used' => 'boolean',
     ];
+
+    public function parent()
+    {
+        return $this->belongsTo(Referral::class, 'parent_id');
+    }
 
     public function user()
     {

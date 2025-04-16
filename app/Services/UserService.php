@@ -34,6 +34,7 @@ class UserService
     {
         if($referral = Referral::where('code', $refID)->first()) {
             $user->referral()->update([
+                'parent_id' => $referral->id,
                 'referral_user_id' => $referral->user_id,
             ]);
         }
