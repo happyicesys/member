@@ -10,7 +10,6 @@ class VoucherService
     const STATUS_ACTIVE = 'active';
     const STATUS_REDEEMED = 'redeemed';
     const STATUS_EXPIRED = 'expired';
-    const STATUS_CANCELLED = 'cancelled';
 
     const TYPE_ITEM = 'item';
     const TYPE_PERCENT = 'percent';

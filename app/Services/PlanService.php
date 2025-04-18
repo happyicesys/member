@@ -159,10 +159,14 @@ class PlanService
         }
 
         if ($currentPlanItemUser) {
-            if($nextPlan->is_required_payment) {
-                $currentSubscription = $user->subscription(strtolower(preg_replace('/\s+/', '_', trim($currentPlanItemUser->plan->name))));
+            $currentSubscription = $user->subscription(strtolower(preg_replace('/\s+/', '_', trim($currentPlanItemUser->plan->name))));
 
+            if($nextPlan->is_required_payment) {
                 $currentSubscription->swap($this->getExternalPriceID($nextPlan));
+            }
+
+            if(!$nextPlan->is_required_payment) {
+                $currentSubscription->cancel();
             }
 
             $currentPlanItemUser->update(['scheduled_downgrade_plan_id' => $planID]);
