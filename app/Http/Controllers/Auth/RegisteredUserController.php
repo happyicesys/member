@@ -152,9 +152,11 @@ class RegisteredUserController extends Controller
     {
         $this->validateRequest($request);
 
+        $ipKey = 'otp_ip_' . $request->ip();
         $phoneKey = 'otp_request_' . $request->full_phone_number;
 
         // Apply throttling
+        $this->otpService->throttleOtpRequests($ipKey, true);
         $this->otpService->throttleOtpRequests($phoneKey);
 
         // Generate and send OTP

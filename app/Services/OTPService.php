@@ -13,7 +13,7 @@ class OTPService
     const OTP_EXPIRY = 300;
 
     // Throttle duration for OTP requests in seconds (e.g., 1 minute)
-    const THROTTLE_DURATION = 60;
+    const THROTTLE_DURATION = 2;
 
     protected $smsService;
 
@@ -85,9 +85,15 @@ class OTPService
      * @param string $key
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function throttleOtpRequests(string $key): void
+    public function throttleOtpRequests(string $key, bool $isSilent = false): void
     {
         if (Cache::has($key)) {
+            if ($isSilent) {
+                // Log silently and return without throwing
+                \Log::warning("Silent OTP block triggered for: {$key}");
+                return;
+            }
+
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'otp' => 'Please wait before requesting another OTP.',
             ]);
