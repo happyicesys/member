@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Stevebauman\Location\Facades\Location;
 
 class RegisteredUserController extends Controller
 {
@@ -203,6 +204,13 @@ class RegisteredUserController extends Controller
      */
     private function validateRequest(Request $request)
     {
+        // validate request ip is from Singapore
+        // $ip = $request->ip();
+        // $location = Location::get($ip);
+        // if ($location && ($location->countryCode !== 'SG' || $location->countryCode !== 'MY')) {
+        //     return;
+        // }
+
         $country = Country::find($request->country_id);
 
         if (!$country) {

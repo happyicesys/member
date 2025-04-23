@@ -25,7 +25,7 @@
         "rap2hpoutre/fast-excel": "^5.6",
         "resend/resend-php": "^0.15.1",
         "spatie/laravel-permission": "^6.10",
-        "stevebauman/location": "^7.4",
+        "stevebauman/location": "^7.5",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
