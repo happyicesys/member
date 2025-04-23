@@ -15,10 +15,12 @@ class RegisteredUsers extends Mailable
     use Queueable, SerializesModels;
 
     protected string $remotePath;
+    protected array $data;
 
-    public function __construct(string $remotePath)
+    public function __construct(string $remotePath, array $data = [])
     {
         $this->remotePath = $remotePath;
+        $this->data = $data;
     }
 
     public function envelope(): Envelope
@@ -33,6 +35,9 @@ class RegisteredUsers extends Mailable
     {
         return new Content(
             view: 'mail.simple-registered-users',
+            with: [
+                'data' => $this->data,
+            ],
         );
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 class OneWaySmsService
 {
     const API_URL = 'https://gateway.onewaysms.sg/api.aspx';
+    const CREDIT_URL = 'https://gateway.onewaysms.sg/bulkcredit.aspx';
 
     const ERROR_APIPASSNAME_APIPASSWORD_INVALID = 'APIPASSNAME OR APIPASSWORD IS INVALID';
     const ERROR_SENDERID_PARAMETER_INVALID = 'SENDERID PARAMETER IS INVALID';
@@ -23,6 +24,18 @@ class OneWaySmsService
         -500 => self::ERROR_CHARACTERS_INVALID,
         -600 => self::ERROR_INSUFFICIENT_CREDIT,
     ];
+
+    public function getCreditBalance()
+    {
+        // Send a request to check the credit balance
+        $response = Http::get(self::CREDIT_URL, [
+            'apiusername' => config('onewaysms.username'),
+            'apipassword' => config('onewaysms.password'),
+        ]);
+
+        // Parse the response and return
+        return $response?->body() ?? null;
+    }
 
     /**
      * Send an SMS message
@@ -51,4 +64,5 @@ class OneWaySmsService
         // Parse the response and return
         return $response;
     }
+
 }

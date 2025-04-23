@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Mail\RegisteredUsers;
+use App\Services\IsmsService;
+use App\Services\OneWaySmsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -18,11 +20,27 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected string $remotePath;
+    protected $smsService;
 
     public function handle(): void
     {
         // 1. Get users
         $users = User::with('phoneCountry')->oldest()->get();
+
+        // stat totals
+        $yesterdayTotal = User::whereDate('created_at', now()->subDay())->count();
+        $last2DaysTotal = User::whereDate('created_at', now()->subDays(2))->count();
+        $last3DaysTotal = User::whereDate('created_at', now()->subDays(3))->count();
+
+        $totals = [
+            'yesterday' => $yesterdayTotal,
+            'last_2_days' => $last2DaysTotal,
+            'last_3_days' => $last3DaysTotal,
+        ];
+
+        // get sms balance
+        $this->smsService = $this->getSmsService();
+        $creditBalance = $this->smsService->getCreditBalance();
 
         // 2. Map export data
         $exportData = $users->map(function ($user) {
@@ -50,6 +68,12 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         // 5. Delete temp file
         unlink($tempPath);
 
+
+        $data = [
+            'totals' => $totals,
+            'sms_credit_balance' => $creditBalance,
+        ];
+
         // 6. Send email with attachment from Spaces
         Mail::to([
             'sean_lee@foodleague.com.sg',
@@ -57,6 +81,19 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
             'kent@happyice.com.sg',
             'brianlee@happyice.com.my',
             // 'leehongjie91@gmail.com'
-        ])->send(new RegisteredUsers($this->remotePath));
+        ])->send(new RegisteredUsers($this->remotePath, $data));
+    }
+
+    private function getSmsService()
+    {
+        $smsService = config('sms.sms_service');  // Read from .env
+
+        switch ($smsService) {
+            case 'oneway':
+                return new OneWaySmsService();
+            case 'isms':
+            default:
+                return new IsmsService();
+        }
     }
 }
