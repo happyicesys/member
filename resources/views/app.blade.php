@@ -23,6 +23,7 @@
 
         gtag('config', "{{ env('GOOGLE_ANALYTICS_API_KEY') }}");
         </script>
+        {!! RecaptchaV3::initJs() !!}
     </head>
     <body class="font-sans antialiased">
         @inertia

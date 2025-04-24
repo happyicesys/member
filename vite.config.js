@@ -17,4 +17,7 @@ export default defineConfig({
             },
         }),
     ],
+    define: {
+        'import.meta.env.VITE_RECAPTCHA_SITEKEY': JSON.stringify(process.env.VITE_RECAPTCHA_SITEKEY),
+    },
 });

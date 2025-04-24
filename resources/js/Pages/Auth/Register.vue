@@ -311,6 +311,7 @@ const form = useForm({
     password: '',
     phone_number: '',
     ref_id: '',
+    'g-recaptcha-response': '',
 });
 
 const isFormValid = computed(() => {
@@ -448,6 +449,12 @@ onUnmounted(() => {
 });
 
 const submit = () => {
-    form.post(route('register'));
+  grecaptcha.ready(() => {
+    grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITEKEY, { action: 'register' })
+      .then((token) => {
+        form['g-recaptcha-response'] = token;
+        form.post(route('register'));
+      });
+  });
 };
 </script>

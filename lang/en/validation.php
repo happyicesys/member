@@ -177,6 +177,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'g-recaptcha-response' => [
+            'recaptchav3' => 'reCAPTCHA validation failed. Please try again.',
+        ],
     ],
 
     /*

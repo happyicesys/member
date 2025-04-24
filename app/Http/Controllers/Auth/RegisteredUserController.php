@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Lunaweb\RecaptchaV3\Facades\RecaptchaV3;
 use Stevebauman\Location\Facades\Location;
 
 class RegisteredUserController extends Controller
@@ -231,6 +232,7 @@ class RegisteredUserController extends Controller
             'password' => 'required|digits:6',
             // 'passwordParts.*' => 'required|digits:1',
             'phone_number' => 'required|string|phone:' . $country->abbreviation,
+            'g-recaptcha-response' => 'required|recaptchav3:register,0.7'
         ]);
 
         // Validate phone number
