@@ -314,7 +314,6 @@ const form = useForm({
 });
 
 const isFormValid = computed(() => {
-    console.log('name', form.name, 'email', form.email, 'dob', form.dob, 'country_id', form.country_id, 'phone_number', form.phone_number, 'isPasswordValid', isPasswordValid.value, 'phone_number_error', form.errors.phone_number)
     return (
         form.name &&
         form.email &&
