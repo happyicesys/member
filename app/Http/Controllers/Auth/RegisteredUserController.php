@@ -161,6 +161,7 @@ class RegisteredUserController extends Controller
         $phoneKey = 'otp_request_' . $request->full_phone_number;
 
         // Apply throttling
+        $this->otpService->throttleGlobalOtpRequests();
         $this->otpService->throttleOtpRequests($ipKey, true);
         $this->otpService->throttleOtpRequests($phoneKey);
 
@@ -215,7 +216,7 @@ class RegisteredUserController extends Controller
         //     return;
         // }
 
-        $country = Country::find($request->country_id);
+        $country = Country::where('id', $request->country_id)->where('is_active', true)->first();
 
         if (!$country) {
             throw ValidationException::withMessages([

@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Cache;
 
 class OTPService
 {
+    const GLOBAL_OTP_LIMIT = 3; // Max 3 OTP globally per minute
+
+    const GLOBAL_OTP_DURATION = 60; // 1 minute (60 seconds)
+
     // The length of OTP (e.g., 5-digit OTP)
     const OTP_LENGTH = 5;
 
@@ -102,4 +106,29 @@ class OTPService
         // Lock the key for the throttle duration
         Cache::put($key, true, self::THROTTLE_DURATION);
     }
+
+    /**
+     * Globally throttle OTP requests (all users combined).
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function throttleGlobalOtpRequests(): void
+    {
+        $globalKey = 'global_otp_counter';
+
+        if (Cache::has($globalKey)) {
+            $count = Cache::get($globalKey);
+
+            if ($count >= self::GLOBAL_OTP_LIMIT) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'otp' => 'OTP request limit reached. Please try again later.',
+                ]);
+            }
+
+            Cache::increment($globalKey);
+        } else {
+            Cache::put($globalKey, 1, self::GLOBAL_OTP_DURATION);
+        }
+    }
+
 }
