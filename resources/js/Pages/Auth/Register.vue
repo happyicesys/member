@@ -401,7 +401,7 @@ function verifyPhoneNumber() {
     grecaptcha.ready(() => {
         grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITEKEY, { action: 'register' })
             .then((token) => {
-                form.recaptcha_token.value = token;
+                form.recaptcha_token = token; // ✅ FIXED
 
                 isVerifying.value = true;
 
@@ -420,7 +420,6 @@ function verifyPhoneNumber() {
                     },
                 });
 
-                // reset countdown
                 if (countdownInterval) clearInterval(countdownInterval);
                 countdownInterval = setInterval(() => {
                     if (countdown.value > 0) {
@@ -436,6 +435,7 @@ function verifyPhoneNumber() {
             });
     });
 }
+
 
 onMounted(() => {
     countryOptions.value = props.countryOptions.data;
