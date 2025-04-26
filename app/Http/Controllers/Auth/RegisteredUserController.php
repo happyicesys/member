@@ -235,7 +235,7 @@ class RegisteredUserController extends Controller
             'password' => 'required|digits:6',
             // 'passwordParts.*' => 'required|digits:1',
             'phone_number' => 'required|string|phone:' . $country->abbreviation,
-            'captcha_token' => ['required', new Recaptcha()],
+            'recaptcha_token' => ['required', new Recaptcha()],
         ]);
 
         // Validate phone number

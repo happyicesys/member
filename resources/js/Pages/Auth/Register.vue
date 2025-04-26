@@ -282,6 +282,10 @@
                     Already Sign Up?
                 </Link>
             </div>
+
+            <div>
+                <InputError class="mt-2" :message="form.errors.recaptcha_token" />
+            </div>
         </form>
     </GuestLayout>
 </template>
@@ -322,7 +326,7 @@ const recaptcha = async () => {
     await recaptchaLoaded()
 
     // Execute reCAPTCHA with action "login".
-    form.captcha_token = await executeRecaptcha('login')
+    form.recaptcha_token = await executeRecaptcha('login')
     submit();
     // Do stuff with the received token.
 };
