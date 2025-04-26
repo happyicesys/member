@@ -311,6 +311,7 @@ const form = useForm({
     password: '',
     phone_number: '',
     ref_id: '',
+    recaptcha_token: '',
 });
 
 const isFormValid = computed(() => {
@@ -397,40 +398,43 @@ let countdownInterval = null;
 function verifyPhoneNumber() {
     if (isVerifying.value) return;
 
-    isVerifying.value = true;
+    grecaptcha.ready(() => {
+        grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITEKEY, { action: 'register' })
+            .then((token) => {
+                form.recaptcha_token.value = token;
 
-    form.post(route('verification.phone-number'), {
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
-        onSuccess: (page) => {
-            isShowOtpDiv.value = true;
-            isFilledFieldEditable.value = false;
-            isOtpRequested.value = true;
+                isVerifying.value = true;
 
-            countdown.value = 60;
-            isCountdownActive.value = true;
-            nowAddTwoMinutes.value = moment().add(2, 'minutes').format('hh:mm:ss a');
-        },
+                form.post(route('verification.phone-number'), {
+                    preserveState: true,
+                    preserveScroll: true,
+                    replace: true,
+                    onSuccess: (page) => {
+                        isShowOtpDiv.value = true;
+                        isFilledFieldEditable.value = false;
+                        isOtpRequested.value = true;
+
+                        countdown.value = 60;
+                        isCountdownActive.value = true;
+                        nowAddTwoMinutes.value = moment().add(2, 'minutes').format('hh:mm:ss a');
+                    },
+                });
+
+                // reset countdown
+                if (countdownInterval) clearInterval(countdownInterval);
+                countdownInterval = setInterval(() => {
+                    if (countdown.value > 0) {
+                        countdown.value--;
+                    } else {
+                        clearInterval(countdownInterval);
+                        countdownInterval = null;
+                        isCountdownActive.value = false;
+                        nowAddTwoMinutes.value = null;
+                        isVerifying.value = false;
+                    }
+                }, 1000);
+            });
     });
-
-    // Clear existing interval before starting a new one
-    if (countdownInterval) {
-        clearInterval(countdownInterval);
-    }
-
-    // Start the countdown timer
-    countdownInterval = setInterval(() => {
-        if (countdown.value > 0) {
-            countdown.value--;
-        } else {
-            clearInterval(countdownInterval); // Clear the interval
-            countdownInterval = null; // Reset the interval ID
-            isCountdownActive.value = false;
-            nowAddTwoMinutes.value = null
-            isVerifying.value = false
-        }
-    }, 1000);
 }
 
 onMounted(() => {
