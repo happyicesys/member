@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                 'planItemUser' => $user && $user->planItemUser ? PlanItemUserResource::make($user->planItemUser) : null,
                 'isPlanExpiringNotification'=> $user && $user->planItemUser ? $this->calculateIsPlanExpiring($user->planItemUser) : null,
             ],
+            'recaptcha_site_key' => config('services.google_recaptcha.site_key'),
         ];
     }
 

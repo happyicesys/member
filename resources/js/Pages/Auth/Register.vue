@@ -287,20 +287,23 @@
 </template>
 
 <script setup>
+import { useReCaptcha } from 'vue-recaptcha-v3'
+import { onMounted, ref, watch, computed, defineProps, onUnmounted } from 'vue';
+import { useForm, Head, Link } from '@inertiajs/vue3';
 import DatePicker from '@/Components/DatePicker.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed, defineProps, onMounted, onUnmounted, ref, watch } from 'vue';
 import moment from 'moment';
 
 const countryOptions = ref([]);
 const countdown = ref(60); // Countdown timer for OTP resend
 const isCountdownActive = ref(false); // Track whether the countdown is active
 const nowAddTwoMinutes = ref(null);
+const { executeRecaptcha, recaptchaLoaded } = useReCaptcha(); // <--- Important!
+
 
 const form = useForm({
     country_id: '',
@@ -311,7 +314,18 @@ const form = useForm({
     password: '',
     phone_number: '',
     ref_id: '',
+    recaptcha_token: '',
 });
+
+const recaptcha = async () => {
+    // (optional) Wait until recaptcha has been loaded.
+    await recaptchaLoaded()
+
+    // Execute reCAPTCHA with action "login".
+    form.captcha_token = await executeRecaptcha('login')
+    submit();
+    // Do stuff with the received token.
+};
 
 const isFormValid = computed(() => {
     return (
@@ -393,8 +407,15 @@ function togglePasswordVisibility() {
 
 let countdownInterval = null;
 
-function verifyPhoneNumber() {
+async function verifyPhoneNumber() {
     if (isVerifying.value) return;
+
+    // Wait until recaptcha is ready
+    await recaptchaLoaded();
+
+    // Execute recaptcha with action "verify-phone"
+    const token = await executeRecaptcha('verify-phone');
+    form.recaptcha_token = token; // <-- assign token into your form
 
     isVerifying.value = true;
 
@@ -413,24 +434,23 @@ function verifyPhoneNumber() {
         },
     });
 
-    // Clear existing interval before starting a new one
     if (countdownInterval) {
         clearInterval(countdownInterval);
     }
 
-    // Start the countdown timer
     countdownInterval = setInterval(() => {
         if (countdown.value > 0) {
             countdown.value--;
         } else {
-            clearInterval(countdownInterval); // Clear the interval
-            countdownInterval = null; // Reset the interval ID
+            clearInterval(countdownInterval);
+            countdownInterval = null;
             isCountdownActive.value = false;
-            nowAddTwoMinutes.value = null
-            isVerifying.value = false
+            nowAddTwoMinutes.value = null;
+            isVerifying.value = false;
         }
     }, 1000);
 }
+
 
 onMounted(() => {
     countryOptions.value = props.countryOptions.data;

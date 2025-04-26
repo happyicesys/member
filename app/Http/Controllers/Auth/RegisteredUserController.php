@@ -6,6 +6,7 @@ use App\Http\Resources\CountryResource;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\User;
+use App\Rules\Recaptcha;
 use App\Services\OTPService;
 use App\Services\IsmsService;
 use App\Services\OneWaySmsService;
@@ -234,7 +235,7 @@ class RegisteredUserController extends Controller
             'password' => 'required|digits:6',
             // 'passwordParts.*' => 'required|digits:1',
             'phone_number' => 'required|string|phone:' . $country->abbreviation,
-            // 'recaptcha_token' => 'required|recaptchav3:register,0.7'
+            'captcha_token' => ['required', new Recaptcha()],
         ]);
 
         // Validate phone number
