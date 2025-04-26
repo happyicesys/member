@@ -403,10 +403,15 @@ let countdownInterval = null;
 function verifyPhoneNumber() {
     if (isVerifying.value) return;
 
+    if (typeof grecaptcha === 'undefined') {
+        console.error('reCAPTCHA not yet loaded.');
+        return;
+    }
+
     grecaptcha.ready(() => {
         grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITEKEY, { action: 'register' })
             .then((token) => {
-                form.recaptcha_token = token; // ✅ FIXED
+                form.recaptcha_token = token;
 
                 isVerifying.value = true;
 
@@ -437,9 +442,13 @@ function verifyPhoneNumber() {
                         isVerifying.value = false;
                     }
                 }, 1000);
+            })
+            .catch((error) => {
+                console.error('reCAPTCHA execution error:', error);
             });
     });
 }
+
 
 
 onMounted(() => {
