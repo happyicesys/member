@@ -414,7 +414,7 @@ async function verifyPhoneNumber() {
     await recaptchaLoaded();
 
     // Execute recaptcha with action "verify-phone"
-    const token = await executeRecaptcha('verify-phone');
+    const token = await executeRecaptcha('verifyPhone');
     form.recaptcha_token = token; // <-- assign token into your form
 
     isVerifying.value = true;
