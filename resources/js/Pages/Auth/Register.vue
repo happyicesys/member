@@ -311,10 +311,10 @@ const form = useForm({
     password: '',
     phone_number: '',
     ref_id: '',
-    recaptcha_token: '',
 });
 
 const isFormValid = computed(() => {
+    console.log('name', form.name, 'email', form.email, 'dob', form.dob, 'country_id', form.country_id, 'phone_number', form.phone_number, 'isPasswordValid', isPasswordValid.value, 'phone_number_error', form.errors.phone_number)
     return (
         form.name &&
         form.email &&
@@ -376,17 +376,11 @@ watch(
 
 function onInputUpdate() {
     form.errors = {};
-
-    if (countdownInterval) {
-        clearInterval(countdownInterval);
-        countdownInterval = null;
-    }
-
+    countdownInterval = null; // Reset the interval ID
     isCountdownActive.value = false;
-    nowAddTwoMinutes.value = null;
-    isVerifying.value = false;
+    nowAddTwoMinutes.value = null
+    isVerifying.value = false
 }
-
 
 function onBackButtonClicked() {
     isShowOtpDiv.value = false;
@@ -403,53 +397,41 @@ let countdownInterval = null;
 function verifyPhoneNumber() {
     if (isVerifying.value) return;
 
-    if (typeof grecaptcha === 'undefined') {
-        console.error('reCAPTCHA not yet loaded.');
-        return;
+    isVerifying.value = true;
+
+    form.post(route('verification.phone-number'), {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+        onSuccess: (page) => {
+            isShowOtpDiv.value = true;
+            isFilledFieldEditable.value = false;
+            isOtpRequested.value = true;
+
+            countdown.value = 60;
+            isCountdownActive.value = true;
+            nowAddTwoMinutes.value = moment().add(2, 'minutes').format('hh:mm:ss a');
+        },
+    });
+
+    // Clear existing interval before starting a new one
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
     }
 
-    grecaptcha.ready(() => {
-        grecaptcha.execute(import.meta.env.VITE_RECAPTCHA_SITEKEY, { action: 'register' })
-            .then((token) => {
-                form.recaptcha_token = token;
-
-                isVerifying.value = true;
-
-                form.post(route('verification.phone-number'), {
-                    preserveState: true,
-                    preserveScroll: true,
-                    replace: true,
-                    onSuccess: (page) => {
-                        isShowOtpDiv.value = true;
-                        isFilledFieldEditable.value = false;
-                        isOtpRequested.value = true;
-
-                        countdown.value = 60;
-                        isCountdownActive.value = true;
-                        nowAddTwoMinutes.value = moment().add(2, 'minutes').format('hh:mm:ss a');
-                    },
-                });
-
-                if (countdownInterval) clearInterval(countdownInterval);
-                countdownInterval = setInterval(() => {
-                    if (countdown.value > 0) {
-                        countdown.value--;
-                    } else {
-                        clearInterval(countdownInterval);
-                        countdownInterval = null;
-                        isCountdownActive.value = false;
-                        nowAddTwoMinutes.value = null;
-                        isVerifying.value = false;
-                    }
-                }, 1000);
-            })
-            .catch((error) => {
-                console.error('reCAPTCHA execution error:', error);
-            });
-    });
+    // Start the countdown timer
+    countdownInterval = setInterval(() => {
+        if (countdown.value > 0) {
+            countdown.value--;
+        } else {
+            clearInterval(countdownInterval); // Clear the interval
+            countdownInterval = null; // Reset the interval ID
+            isCountdownActive.value = false;
+            nowAddTwoMinutes.value = null
+            isVerifying.value = false
+        }
+    }, 1000);
 }
-
-
 
 onMounted(() => {
     countryOptions.value = props.countryOptions.data;
