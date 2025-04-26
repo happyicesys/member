@@ -376,11 +376,17 @@ watch(
 
 function onInputUpdate() {
     form.errors = {};
-    countdownInterval = null; // Reset the interval ID
+
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+
     isCountdownActive.value = false;
-    nowAddTwoMinutes.value = null
-    isVerifying.value = false
+    nowAddTwoMinutes.value = null;
+    isVerifying.value = false;
 }
+
 
 function onBackButtonClicked() {
     isShowOtpDiv.value = false;
