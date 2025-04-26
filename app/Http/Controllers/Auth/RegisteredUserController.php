@@ -63,7 +63,9 @@ class RegisteredUserController extends Controller
     {
         return Inertia::render('Auth/Register', [
             'countryOptions' => CountryResource::collection(
-                Country::orderByRaw('ISNULL(sequence), sequence ASC')
+                Country::query()
+                ->where('is_active', true)
+                ->orderByRaw('ISNULL(sequence), sequence ASC')
                 ->orderBy('phone_code')
                 ->get()
             ),
