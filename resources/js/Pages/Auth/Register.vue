@@ -470,7 +470,15 @@ onUnmounted(() => {
     }
 });
 
-const submit = () => {
-    form.post(route('register'));
+const submit = async () => {
+    try {
+        await recaptchaLoaded(); // 保证 recaptcha ready
+        form.recaptcha_token = await executeRecaptcha('register'); // 👈注意用新的 token
+
+        form.post(route('register'));
+    } catch (error) {
+        console.error('Recaptcha execution failed:', error);
+    }
 };
+
 </script>
