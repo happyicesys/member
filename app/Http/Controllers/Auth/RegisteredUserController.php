@@ -230,7 +230,7 @@ class RegisteredUserController extends Controller
 
         $request->validate([
             'country_id' => 'required|integer|exists:countries,id',
-            'dob' => 'date|before:-10 years',
+            'dob' => 'nullable|date|before:-10 years',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'name' => 'required|string|max:255',
             'password' => 'required|digits:6',

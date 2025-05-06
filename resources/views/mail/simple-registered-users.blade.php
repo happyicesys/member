@@ -15,6 +15,9 @@
     <p>
         SMS Credit Balance: {{ $data['sms_credit_balance'] }}<br>
     </p>
+    <p>
+        Yesterday - Avg SMS Credit per Sign Up: {{ $data['avg_credit_per_user'] }}<br>
+    </p>
 
     <p>Regards,<br>DCVend System</p>
 </body>

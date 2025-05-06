@@ -6,6 +6,8 @@ use App\Models\Setting;
 use App\Models\Stat;
 use App\Models\User;
 use App\Models\VendTransaction;
+use App\Services\IsmsService;
+use App\Services\OneWaySmsService;
 use Carbon\Carbon;
 
 class StatService
@@ -17,6 +19,7 @@ class StatService
 
         $cumulativeLandingPageVisitCount = $this->getSettingTotalLandingPageVisitCount();
         $landingPageVisitCount = $this->getLandingPageVisitCount($dateFrom, $dateTo, $type);
+        $latestSmsCreditBalance = $this->getLatestSmsCreditBalance($dateFrom, $dateTo);
         $newUserCount = $this->getNewUserCount($dateFrom, $dateTo);
         $newUserSourceJson = $this->getNewUserSourceJson($dateFrom, $dateTo);
         $promoAmount = $this->getPromoAmount($dateFrom, $dateTo);
@@ -25,6 +28,7 @@ class StatService
         Stat::create([
             'cumulative_landing_page_visit_count' => $cumulativeLandingPageVisitCount,
             'landing_page_visit_count' => $landingPageVisitCount,
+            'latest_sms_credit_balance' => $latestSmsCreditBalance,
             'new_user_count' => $newUserCount,
             'new_user_source_json' => $newUserSourceJson,
             'promo_amount' => $promoAmount,
@@ -47,6 +51,14 @@ class StatService
         }
 
         return $currentVisitCount;
+    }
+
+    private function getLatestSmsCreditBalance($dateFrom, $dateTo)
+    {
+        $smsService = $this->getSmsService();
+        $creditBalance = $smsService->getCreditBalance();
+
+        return $creditBalance;
     }
 
     private function getNewUserCount($dateFrom, $dateTo)
@@ -85,5 +97,18 @@ class StatService
     private function getSettingTotalLandingPageVisitCount()
     {
         return Setting::first()->total_landing_page_visit_count;
+    }
+
+    private function getSmsService()
+    {
+        $smsService = config('sms.sms_service');  // Read from .env
+
+        switch ($smsService) {
+            case 'oneway':
+                return new OneWaySmsService();
+            case 'isms':
+            default:
+                return new IsmsService();
+        }
     }
 }

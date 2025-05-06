@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Stat;
 use App\Models\User;
 use App\Mail\RegisteredUsers;
 use App\Services\IsmsService;
@@ -14,6 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Carbon\Carbon;
 
 class SendRegisteredUsersListEmailJob implements ShouldQueue
 {
@@ -41,6 +43,15 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         // get sms balance
         $this->smsService = $this->getSmsService();
         $creditBalance = $this->smsService->getCreditBalance();
+        $avgCreditPerUser = 0;
+
+        $yesterdayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', '<', Carbon::today)->latest()->first();
+        $todayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', Carbon::today)->first();
+
+        if($yesterdayStat and $todayStat) {
+            $usedSmsCreditBalance = $todayStat->latest_sms_credit_balance - $yesterdayStat->latest_sms_credit_balance;
+            $avgCreditPerUser = $usedSmsCreditBalance / $todayStat->new_user_count;
+        }
 
         // 2. Map export data
         $exportData = $users->map(function ($user) {
@@ -72,6 +83,7 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         $data = [
             'totals' => $totals,
             'sms_credit_balance' => $creditBalance,
+            'avg_credit_per_user' => round($avgCreditPerUser, 2),
         ];
 
         // 6. Send email with attachment from Spaces
