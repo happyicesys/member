@@ -8,4 +8,4 @@ use Illuminate\Support\Facades\Schedule;
 Schedule::command('plans:sync')->daily();
 Schedule::command('sync:daily-stats')->daily();
 Schedule::command('send:retention-email')->daily();
-Schedule::command('send:registered-users-list-email')->daily();
+Schedule::command('send:registered-users-list-email')->dailyAt('00:02');
