@@ -45,8 +45,8 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         $creditBalance = $this->smsService->getCreditBalance();
         $avgCreditPerUser = 0;
 
-        $yesterdayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', '<', Carbon::today)->latest()->first();
-        $todayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', Carbon::today)->first();
+        $yesterdayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', '<', Carbon::today())->latest()->first();
+        $todayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', Carbon::today())->first();
 
         if($yesterdayStat and $todayStat) {
             $usedSmsCreditBalance = $todayStat->latest_sms_credit_balance - $yesterdayStat->latest_sms_credit_balance;
@@ -83,7 +83,7 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         $data = [
             'totals' => $totals,
             'sms_credit_balance' => $creditBalance,
-            'avg_credit_per_user' => round($avgCreditPerUser, 2),
+            'avg_credit_per_user' => round(abs($avgCreditPerUser), 2),
         ];
 
         // 6. Send email with attachment from Spaces
