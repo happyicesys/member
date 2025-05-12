@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendRegisteredUsersListEmailJob;
 use App\Http\Resources\PlanResource;
 use App\Models\Plan;
 use App\Models\Setting;

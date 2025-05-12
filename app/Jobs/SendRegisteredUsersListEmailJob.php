@@ -14,6 +14,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Carbon\Carbon;
 
@@ -26,21 +28,67 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
 
     public function handle(): void
     {
-        // 1. Get users
-        $users = User::with('phoneCountry')->oldest()->get();
 
-        // stat totals
-        $yesterdayTotal = User::whereDate('created_at', now()->subDay())->count();
-        $last2DaysTotal = User::whereDate('created_at', now()->subDays(2))->count();
-        $last3DaysTotal = User::whereDate('created_at', now()->subDays(3))->count();
+        // Step 1: Run raw SQL for fast data
+        $rawUsers = collect(DB::select("
+            SELECT
+                users.id,
+                users.name,
+                users.email,
+                users.converted_at,
+                users.dob,
+                users.phone_number,
+                users.ref_id,
+                users.is_converted,
+                users.is_one_time_voucher_used,
+                users.created_at AS created_at,
+                countries.phone_code AS country_code,
+                plans.name AS plan_name,
+                plan_item_users.datetime_to AS plan_expiry,
+                plan_items.max_count AS plan_max_count,
+                plan_item_users.used_count AS used_count,
+                COALESCE(vt.total_transactions, 0) AS transaction_count,
+                COALESCE(vt.total_qty, 0) AS total_qty,
+                COALESCE(vt30.total_transactions_l30d, 0) AS transaction_count_l30d,
+                COALESCE(vt30.total_qty_l30d, 0) AS total_qty_l30d,
+                vtl.latest_purchase_date
+            FROM users
+            LEFT JOIN countries ON countries.id = users.phone_country_id
+            LEFT JOIN plan_item_users ON users.id = plan_item_users.user_id AND plan_item_users.is_active = 1
+            LEFT JOIN plans ON plans.id = plan_item_users.plan_id
+            LEFT JOIN plan_items ON plans.id = plan_items.plan_id
+            LEFT JOIN (
+                SELECT user_id, COUNT(*) AS total_transactions, SUM(total_qty) AS total_qty
+                FROM vend_transactions
+                GROUP BY user_id
+            ) AS vt ON users.id = vt.user_id
+            LEFT JOIN (
+                SELECT user_id, COUNT(*) AS total_transactions_l30d, SUM(total_qty) AS total_qty_l30d
+                FROM vend_transactions
+                WHERE created_at >= NOW() - INTERVAL 30 DAY
+                GROUP BY user_id
+            ) AS vt30 ON users.id = vt30.user_id
+            LEFT JOIN (
+                SELECT user_id, MAX(created_at) AS latest_purchase_date
+                FROM vend_transactions
+                GROUP BY user_id
+            ) AS vtl ON users.id = vtl.user_id
+            ORDER BY users.created_at ASC
+        "));
 
+
+        // 2. Stat totals
         $totals = [
-            'yesterday' => $yesterdayTotal,
-            'last_2_days' => $last2DaysTotal,
-            'last_3_days' => $last3DaysTotal,
+            'yesterday' => User::whereDate('created_at', now()->subDay())->count(),
+            'last_2_days' => User::whereDate('created_at', now()->subDays(2))->count(),
+            'last_3_days' => User::whereDate('created_at', now()->subDays(3))->count(),
+            'new_paid_gold_users' => User::where('is_converted', true)
+                ->whereDate('converted_at', Carbon::yesterday())
+                ->count(),
+            'total_paid_gold_users' => User::where('is_converted', true)->count(),
         ];
 
-        // get sms balance
+        // 3. SMS stats
         $this->smsService = $this->getSmsService();
         $creditBalance = $this->smsService->getCreditBalance();
         $avgCreditPerUser = 0;
@@ -48,64 +96,73 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         $yesterdayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', '<', Carbon::today())->latest()->first();
         $todayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', Carbon::today())->first();
 
-        if($yesterdayStat and $todayStat) {
+        if ($yesterdayStat && $todayStat) {
             $usedSmsCreditBalance = $todayStat->latest_sms_credit_balance - $yesterdayStat->latest_sms_credit_balance;
-            $avgCreditPerUser = $usedSmsCreditBalance / $todayStat->new_user_count;
+            $avgCreditPerUser = $todayStat->new_user_count > 0
+                ? $usedSmsCreditBalance / $todayStat->new_user_count
+                : 0;
         }
 
-        // 2. Map export data
-        $exportData = $users->map(function ($user) {
+        // 4. Map export data
+        $exportData = $rawUsers->map(function ($user) {
             return [
+                'Member ID' => $user->id,
                 'Name' => $user->name,
                 'Email' => $user->email,
-                'Date of Birth' => $user->dob ? \Carbon\Carbon::parse($user->dob)->format('Y-m-d') : '',
-                'Country Code' => $user->phoneCountry->phone_code ?? 'N/A',
+                'Date of Birth' => $user->dob ? Carbon::parse($user->dob)->format('Y-m-d') : '',
+                'Country Code' => $user->country_code ?? 'N/A',
                 'Phone Number' => $user->phone_number,
-                'Created At' => $user->created_at->format('Y-m-d H:i:s'),
+                'Created At' => Carbon::parse($user->created_at)->format('Y-m-d H:i:s'),
                 'Reference ID' => $user->ref_id,
-                'Member ID' => $user->id,
+                'Plan Name' => $user->plan_name ?? 'Free',
+                'Plan Expiry' => $user->plan_expiry ? Carbon::parse($user->plan_expiry)->format('Y-m-d') : '',
+                'Plan Max Count' => $user->plan_max_count,
+                'Used Count' => $user->used_count,
+                'Transaction Count' => $user->transaction_count,
+                'Total Quantity' => $user->total_qty,
+                '30D Transaction Count' => $user->transaction_count_l30d,
+                '30D Total Quantity' => $user->total_qty_l30d,
+                'Latest Purchase Date' => $user->latest_purchase_date,
+                'Is Converted' => $user->is_converted ? 'Yes' : 'No',
+                'Converted At' => $user->is_converted ? Carbon::parse($user->converted_at)->format('Y-m-d H:i:s') : '',
                 'Is Claim Free Ice Cream' => $user->is_one_time_voucher_used ? 'Yes' : 'No',
             ];
         });
 
-        // 3. Export to local temp path
+        // 5. Export to local temp path
         $tempPath = storage_path('app/temp_registered_users.xlsx');
         (new FastExcel($exportData))->export($tempPath);
 
-        // 4. Upload to DigitalOcean Spaces
+        // 6. Upload to DigitalOcean Spaces
         $this->remotePath = 'exports/excels/registered/' . now()->format('Ymd_His') . '.xlsx';
         Storage::disk('digitaloceanspaces')->put($this->remotePath, fopen($tempPath, 'r+'), 'public');
 
-        // 5. Delete temp file
+        // 7. Delete temp file
         unlink($tempPath);
 
-
+        // 8. Email with data
         $data = [
             'totals' => $totals,
             'sms_credit_balance' => $creditBalance,
             'avg_credit_per_user' => round(abs($avgCreditPerUser), 2),
         ];
 
-        // 6. Send email with attachment from Spaces
         Mail::to([
             'sean_lee@foodleague.com.sg',
             'daniel.ma@happyice.com.sg',
             'kent@happyice.com.sg',
             'brianlee@happyice.com.my',
-            // 'leehongjie91@gmail.com'
+            // 'leehongjie91@gmail.com',
         ])->send(new RegisteredUsers($this->remotePath, $data));
     }
 
     private function getSmsService()
     {
-        $smsService = config('sms.sms_service');  // Read from .env
+        $smsService = config('sms.sms_service');  // .env setting
 
-        switch ($smsService) {
-            case 'oneway':
-                return new OneWaySmsService();
-            case 'isms':
-            default:
-                return new IsmsService();
-        }
+        return match ($smsService) {
+            'oneway' => new OneWaySmsService(),
+            default => new IsmsService(),
+        };
     }
 }

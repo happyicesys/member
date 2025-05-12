@@ -13,6 +13,10 @@
         Last 3 days registered users: {{ $data['totals']['last_3_days'] }}<br>
     </p>
     <p>
+        Yesterday new paid Gold Members: {{ $data['totals']['new_paid_gold_users'] }}<br>
+        Total new paid Gold Members: {{ $data['totals']['total_paid_gold_users'] }}<br>
+    </p>
+    <p>
         SMS Credit Balance: {{ $data['sms_credit_balance'] }}<br>
     </p>
     <p>

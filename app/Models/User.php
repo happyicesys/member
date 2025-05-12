@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -20,11 +21,14 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'converted_at',
         'dob',
         'name',
         'email',
         'email_verified_at',
         'is_admin',
+        'is_converted',
+        'is_converted_voucher_used',
         'is_details_filled',
         'is_one_time_voucher_used',
         'is_phone_number_validated',
@@ -56,9 +60,12 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'converted_at' => 'datetime',
             'dob' => 'date',
             'email_verified_at' => 'datetime',
             'is_admin' => 'boolean',
+            'is_converted' => 'boolean',
+            'is_converted_voucher_used' => 'boolean',
             'is_details_filled' => 'boolean',
             'is_one_time_voucher_used' => 'boolean',
             'is_phone_number_validated' => 'boolean',
@@ -76,12 +83,25 @@ class User extends Authenticatable
 
     public function planItemUser()
     {
-        return $this->hasOne(PlanItemUser::class)->latestOfMany();
+        return $this->hasOne(PlanItemUser::class)->where('is_active', true)->latestOfMany();
     }
 
     public function referral()
     {
         return $this->hasOne(Referral::class);
+    }
+
+    public function vendTransactions()
+    {
+        return $this->hasMany(VendTransaction::class);
+    }
+
+    // mutator or setter
+    protected function phoneNumber(): Attribute
+    {
+        return Attribute::make(
+            set: fn ($value) => $value ? str_replace(' ', '', $value) : null,
+        );
     }
 
 }

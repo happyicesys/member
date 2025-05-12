@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Interfaces\SmsInterface;
+use App\Services\IsmsService;
+use App\Services\OneWaySmsService;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -14,7 +17,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Dynamically bind the correct SMS service based on config
+        $this->app->bind(SmsInterface::class, function () {
+            return match (config('sms.sms_service')) {
+                'oneway' => app(OneWaySmsService::class),
+                'isms' => app(IsmsService::class),
+                default => app(IsmsService::class),
+            };
+        });
     }
 
     /**

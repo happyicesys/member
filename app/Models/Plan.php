@@ -31,6 +31,11 @@ class Plan extends Model
     ];
 
     // relationships
+    public function basePlanItem()
+    {
+        return $this->hasOne(PlanItem::class)->where('is_base', true)->latestOfMany();
+    }
+
     public function planItems()
     {
         return $this->hasMany(PlanItem::class);

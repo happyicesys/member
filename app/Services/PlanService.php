@@ -143,6 +143,18 @@ class PlanService
                 ->create($paymentMethod->id);
         }
 
+        // ✅ Check for successful activation
+        $latestSubscription = $user->subscription($subscriptionName);
+
+        if ($latestSubscription && $latestSubscription->active()) {
+            if (!$user->is_converted) {
+                $user->update([
+                    'converted_at' => Carbon::now(),
+                    'is_converted' => true,
+                ]);
+            }
+        }
+
         // **Sync plan in the database after successful Stripe subscription**
         $this->syncPlan($user->id, $planID);
 
