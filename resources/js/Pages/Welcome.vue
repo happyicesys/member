@@ -4,8 +4,32 @@
 
         <!-- Hero Section -->
         <section class="text-white rounded my-2 px-2">
-            <img src="/images/banner_6.jpg" alt="DCVend Banner" class="w-full rounded hidden md:block" />
-            <img src="/images/banner_mobile_6.jpg" alt="DCVend Banner Mobile" class="w-full rounded md:hidden">
+            <Carousel v-bind="carouselConfig" :autoplay="2500" :transition="800" class="hidden md:block">
+                <Slide v-for="banner in banners" :key="banner">
+                <div class="carousel__item">
+                    <img :src="banner.src" alt="DCVend Banner" class="w-full rounded " />
+                </div>
+                </Slide>
+
+                <template #addons>
+                <Navigation />
+                <Pagination />
+                </template>
+            </Carousel>
+            <Carousel v-bind="carouselConfig" :autoplay="2500" :transition="800" class="md:hidden">
+                <Slide v-for="banner in mobileBanners" :key="banner">
+                <div class="carousel__item">
+                    <img :src="banner.src" alt="DCVend Banner" class="w-full rounded " />
+                </div>
+                </Slide>
+
+                <template #addons>
+                <Navigation />
+                <Pagination />
+                </template>
+            </Carousel>
+            <!-- <img src="/images/banner_6.jpg" alt="DCVend Banner" class="w-full rounded hidden md:block" />
+            <img src="/images/banner_mobile_6.jpg" alt="DCVend Banner Mobile" class="w-full rounded md:hidden"> -->
         </section>
 
         <!-- Stats Section -->
@@ -240,6 +264,35 @@ import { Head, Link } from '@inertiajs/vue3';
 import moment from 'moment';
 import Swiper from 'swiper';
 import { defineProps, onMounted, ref } from 'vue';
+import 'vue3-carousel/carousel.css'
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+
+const banners = [
+  {
+    src: '/images/banner_6.jpg',
+    alt: 'DCVend Banner',
+  },
+  {
+    src: '/images/converted_banner.jpg',
+    alt: 'Converted User Banner',
+  },
+];
+
+const mobileBanners = [
+  {
+    src: '/images/banner_mobile_6.jpg',
+    alt: 'DCVend Banner Mobile',
+  },
+  {
+    src: '/images/converted_banner_mobile.jpg',
+    alt: 'Converted User Banner',
+  },
+];
+
+const carouselConfig = {
+  itemsToShow: 1,
+  wrapAround: true
+}
 
 const props = defineProps({
     dcvends: [Array, Object],
