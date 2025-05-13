@@ -40,6 +40,7 @@ class User extends Authenticatable
         'phone_number_verified_at',
         'referral_code',
         'ref_id',
+        'vend_code',
     ];
 
     /**

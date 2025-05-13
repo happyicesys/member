@@ -29,6 +29,12 @@ class AuthController extends Controller
             'login_count' => $user->login_count + 1
         ]);
 
+        if($user->login_count == 1 and $request->vend_code) {
+            $user->update([
+                'vend_code' => $request->vend_code
+            ]);
+        }
+
         $user->tokens()->delete();
 
         // dd($user->toArray());

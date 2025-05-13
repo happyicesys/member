@@ -52,6 +52,7 @@ class UserLoginRequest extends FormRequest
             // 'passwordParts.*' => 'required|digits:1',
             // 'remember' => 'boolean',
             'password' => 'required|digits:6',
+            'vend_code' => 'nullable',
         ];
     }
 }

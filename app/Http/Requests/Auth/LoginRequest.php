@@ -55,6 +55,7 @@ class LoginRequest extends FormRequest
             ],
             'passwordParts.*' => 'required|digits:1',
             'remember' => 'boolean',
+            'vend_code' => 'nullable',
         ];
     }
 
