@@ -18,12 +18,16 @@ class SendOneTimeMarketingSMSExistingFreeMember extends Command
         $planService = new PlanService();
         $freePlan = $planService->getDefaultFreePlan();
 
+        // $users = User::query()
+        //     ->with('planItemUser')
+        //     ->whereHas('planItemUser', function ($query) use ($freePlan) {
+        //         $query->where('plan_id', $freePlan->id);
+        //     })
+        //     ->oldest()
+        //     ->get();
+
         $users = User::query()
-            ->with('planItemUser')
-            ->whereHas('planItemUser', function ($query) use ($freePlan) {
-                $query->where('plan_id', $freePlan->id);
-            })
-            ->oldest()
+            ->where('phone_number', '96977973')
             ->get();
 
         if ($users->isEmpty()) {

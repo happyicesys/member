@@ -42,7 +42,7 @@ class VoucherService
                 'id' => 2,
                 'code' => 'NEWCONVERTMAGNUM',
                 'type' => self::TYPE_ITEM,
-                'channels' => ['19', '21'],
+                'channels' => ['19', '20', '21'],
                 'date_from' => $user->converted_at->format('Y-m-d'),
                 'date_to' => null,
                 'name' => 'Free Magnum for Paid Plan User',
