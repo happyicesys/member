@@ -27,6 +27,11 @@ class PlanService
         return Plan::findOrFail(1);
     }
 
+    public function getGoldPlan()
+    {
+        return Plan::findOrFail(2);
+    }
+
 
     public function getDefaultPromoPlan()
     {

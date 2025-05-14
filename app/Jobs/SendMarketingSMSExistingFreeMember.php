@@ -21,13 +21,15 @@ class SendMarketingSmsExistingFreeMember implements ShouldQueue
         $this->user = $user;
     }
 
-    public function handle(SmsInterface $smsService): void
+    public function handle(): void
     {
         if (!$this->user->phone) {
             return;
         }
+        // Check if the user is already a Gold member
+        $smsService = app(\App\Interfaces\SmsInterface::class);
 
-        $message = "Your DCVend free membership has expired. Upgrade to Gold for RM2.90/mth and get a FREE Magnum ice cream! Redeem at any vending machine today!";
-        $smsService->sendSms([$this->user->phone], $message);
+        $message = "DCVend: Your free membership has expired. Upgrade to Gold for RM2.90/mth and get a FREE Magnum ice cream! Redeem at any vending machine today!";
+        $smsService->sendSms([$this->user->phoneCountry->phone_code.$this->user->phone_number], $message);
     }
 }

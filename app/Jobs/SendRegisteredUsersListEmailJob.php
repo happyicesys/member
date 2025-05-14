@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Mail\RegisteredUsers;
 use App\Services\IsmsService;
 use App\Services\OneWaySmsService;
+use App\Services\PlanService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -25,6 +26,12 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
 
     protected string $remotePath;
     protected $smsService;
+    protected $planService;
+
+    public function __construct()
+    {
+        $this->planService = new PlanService();
+    }
 
     public function handle(): void
     {
@@ -51,7 +58,9 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
                 COALESCE(vt.total_qty, 0) AS total_qty,
                 COALESCE(vt30.total_transactions_l30d, 0) AS transaction_count_l30d,
                 COALESCE(vt30.total_qty_l30d, 0) AS total_qty_l30d,
-                vtl.latest_purchase_date
+                vtl.latest_purchase_date,
+                vtf.first_purchase_date,
+                vtf.vend_code AS first_vend_code
             FROM users
             LEFT JOIN countries ON countries.id = users.phone_country_id
             LEFT JOIN plan_item_users ON users.id = plan_item_users.user_id AND plan_item_users.is_active = 1
@@ -73,6 +82,15 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
                 FROM vend_transactions
                 GROUP BY user_id
             ) AS vtl ON users.id = vtl.user_id
+            LEFT JOIN (
+                SELECT user_id, vend_code, created_at AS first_purchase_date
+                FROM (
+                    SELECT user_id, vend_code, created_at,
+                           ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at ASC) AS rn
+                    FROM vend_transactions
+                ) AS ranked
+                WHERE rn = 1
+            ) AS vtf ON users.id = vtf.user_id
             ORDER BY users.created_at ASC
         "));
 
@@ -85,7 +103,9 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
             'new_paid_gold_users' => User::where('is_converted', true)
                 ->whereDate('converted_at', Carbon::yesterday())
                 ->count(),
-            'total_paid_gold_users' => User::where('is_converted', true)->count(),
+            'total_paid_gold_users' => User::where('is_converted', true)->whereHas('planItemUser', function($query) {
+                $query->where('plan_id', $this->planService->getGoldPlan()->id);
+            })->count(),
         ];
 
         // 3. SMS stats
@@ -113,6 +133,7 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
                 'Country Code' => $user->country_code ?? 'N/A',
                 'Phone Number' => $user->phone_number,
                 'Created At' => Carbon::parse($user->created_at)->format('Y-m-d H:i:s'),
+                'First Purchase Machine' => $user->first_vend_code ?? '',
                 'Reference ID' => $user->ref_id,
                 'Plan Name' => $user->plan_name ?? 'Free',
                 'Plan Expiry' => $user->plan_expiry ? Carbon::parse($user->plan_expiry)->format('Y-m-d') : '',
