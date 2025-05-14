@@ -41,7 +41,7 @@ class SendMarketingExistingFreeMember extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.send-marketing-existing-free-member',
+            view: 'mail.send-marketing-existing-free-member',
             with: ['user' => $this->user]
         );
     }
