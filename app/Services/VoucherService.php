@@ -44,7 +44,7 @@ class VoucherService
                 'type' => self::TYPE_ITEM,
                 'channels' => ['19', '20', '21'],
                 'date_from' => $user->converted_at->format('Y-m-d'),
-                'date_to' => null,
+                'date_to' => $user->converted_at->addDays(100)->format('Y-m-d'),
                 'name' => 'Free Magnum for Paid Plan User',
                 'desc' => '',
                 'status' => $convertedStatus,
