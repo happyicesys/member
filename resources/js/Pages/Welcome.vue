@@ -4,7 +4,7 @@
 
         <!-- Hero Section -->
         <section class="text-white rounded my-2 px-2">
-            <Carousel v-bind="carouselConfig" :autoplay="2500" :transition="800" class="hidden md:block">
+            <Carousel v-bind="carouselConfig" :autoplay="4000" :transition="800" class="hidden md:block">
                 <Slide v-for="banner in banners" :key="banner">
                 <div class="carousel__item">
                     <img :src="banner.src" alt="DCVend Banner" class="w-full rounded " />
@@ -16,7 +16,7 @@
                 <Pagination />
                 </template>
             </Carousel>
-            <Carousel v-bind="carouselConfig" :autoplay="2500" :transition="800" class="md:hidden">
+            <Carousel v-bind="carouselConfig" :autoplay="4000" :transition="800" class="md:hidden">
                 <Slide v-for="banner in mobileBanners" :key="banner">
                 <div class="carousel__item">
                     <img :src="banner.src" alt="DCVend Banner" class="w-full rounded " />

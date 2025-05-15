@@ -33,7 +33,7 @@ class SendOneTimeMarketingExistingFreeMember extends Command
         //     ->oldest()
         //     ->get();
         $users = User::query()
-        ->where('phone_number', '82269545')
+        ->where('phone_number', '96977973')
         ->get();
 
         if ($users->isEmpty()) {
