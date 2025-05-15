@@ -38,8 +38,11 @@ class SendOneTimeMarketingSMSExistingFreeMember extends Command
         }
 
         foreach ($users as $index => $user) {
-            dispatch(new SendMarketingSmsExistingFreeMember($user))
-                ->delay(now()->addSeconds($index * 1)); // Send 1 every 5 seconds
+            // dispatch(new SendMarketingSmsExistingFreeMember($user))
+            //     ->delay(now()->addSeconds($index * 1)); // Send 1 every 5 seconds
+            dispatch(new \App\Jobs\SendMarketingSmsExistingFreeMember($user))
+                ->delay(now()->addSeconds($index * 2));
+
         }
     }
 }
