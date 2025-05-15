@@ -23,6 +23,7 @@ class SendOneTimeMarketingSMSExistingFreeMember extends Command
         //     ->whereHas('planItemUser', function ($query) use ($freePlan) {
         //         $query->where('plan_id', $freePlan->id);
         //     })
+        //     ->where('phone_country_id', 8)
         //     ->oldest()
         //     ->get();
 
