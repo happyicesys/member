@@ -101,7 +101,7 @@
                     <div class="bg-slate-200 rounded-md shadow-md p-6 text-center">
                         <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4">FREE Member</h3>
                         <ul class="text-gray-600 mb-4 space-y-2">
-                            <li><strong>1 time: </strong> 30% discount on all products</li>
+                            <li><strong>1 time: </strong> 15% discount on all products</li>
                         </ul>
                         <p class="text-xl font-bold text-gray-600">FREE/ month</p>
                     </div>

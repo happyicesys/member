@@ -25,16 +25,16 @@ class SendOneTimeMarketingExistingFreeMember extends Command
     {
         $freePlan = $this->planService->getDefaultFreePlan();
 
-        // $users = User::query()
-        //     ->with('planItemUser')
-        //     ->whereHas('planItemUser', function ($query) use ($freePlan) {
-        //         $query->where('plan_id', $freePlan->id);
-        //     })
-        //     ->oldest()
-        //     ->get();
         $users = User::query()
-        ->where('phone_number', '96977973')
-        ->get();
+            ->with('planItemUser')
+            ->whereHas('planItemUser', function ($query) use ($freePlan) {
+                $query->where('plan_id', $freePlan->id);
+            })
+            ->oldest()
+            ->get();
+        // $users = User::query()
+        // ->where('phone_number', '96977973')
+        // ->get();
 
         if ($users->isEmpty()) {
             $this->info('No free members found.');
