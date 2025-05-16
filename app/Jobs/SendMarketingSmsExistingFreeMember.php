@@ -34,4 +34,3 @@ class SendMarketingSmsExistingFreeMember implements ShouldQueue
         $smsService->sendSms([preg_replace('/[^0-9]/', '', $this->user->phoneCountry->phone_code.$this->user->phone_number)], $message);
     }
 }
-
