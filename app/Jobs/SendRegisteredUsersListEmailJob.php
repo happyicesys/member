@@ -24,6 +24,8 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $timeout = 300;
+
     protected string $remotePath;
     protected $smsService;
     protected $planService;
