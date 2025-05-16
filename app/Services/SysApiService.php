@@ -15,7 +15,7 @@ class SysApiService
     /**
      * The bearer token for authentication.
      */
-    protected string $bearerToken;
+    protected ?string $bearerToken;
 
     /**
      * Create a new SysApiService instance.
@@ -23,7 +23,7 @@ class SysApiService
     public function __construct()
     {
         $this->baseUrl = rtrim(env('SYS_API_BASE_URL', 'https://sys.happyice.com.sg'), '/');
-        $this->bearerToken = env('SYS_API_BEARER_TOKEN');
+        $this->bearerToken = env('SYS_API_BEARER_TOKEN', '');
     }
 
     /**
