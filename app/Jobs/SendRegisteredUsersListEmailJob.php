@@ -38,62 +38,66 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
 
         // Step 1: Run raw SQL for fast data
         $rawUsers = collect(DB::select("
-            SELECT
-                users.id,
-                users.name,
-                users.email,
-                users.converted_at,
-                users.dob,
-                users.phone_number,
-                users.ref_id,
-                users.is_converted,
-                users.is_one_time_voucher_used,
-                users.created_at AS created_at,
-                countries.phone_code AS country_code,
-                plans.name AS plan_name,
-                plan_item_users.datetime_to AS plan_expiry,
-                plan_items.max_count AS plan_max_count,
-                plan_item_users.used_count AS used_count,
-                COALESCE(vt.total_transactions, 0) AS transaction_count,
-                COALESCE(vt.total_qty, 0) AS total_qty,
-                COALESCE(vt30.total_transactions_l30d, 0) AS transaction_count_l30d,
-                COALESCE(vt30.total_qty_l30d, 0) AS total_qty_l30d,
-                vtl.latest_purchase_date,
-                vtf.first_purchase_date,
-                vtf.vend_code AS first_vend_code
-            FROM users
-            LEFT JOIN countries ON countries.id = users.phone_country_id
-            LEFT JOIN plan_item_users ON users.id = plan_item_users.user_id AND plan_item_users.is_active = 1
-            LEFT JOIN plans ON plans.id = plan_item_users.plan_id
-            LEFT JOIN plan_items ON plans.id = plan_items.plan_id
-            LEFT JOIN (
-                SELECT user_id, COUNT(*) AS total_transactions, SUM(total_qty) AS total_qty
-                FROM vend_transactions
-                GROUP BY user_id
-            ) AS vt ON users.id = vt.user_id
-            LEFT JOIN (
-                SELECT user_id, COUNT(*) AS total_transactions_l30d, SUM(total_qty) AS total_qty_l30d
-                FROM vend_transactions
-                WHERE created_at >= NOW() - INTERVAL 30 DAY
-                GROUP BY user_id
-            ) AS vt30 ON users.id = vt30.user_id
-            LEFT JOIN (
-                SELECT user_id, MAX(created_at) AS latest_purchase_date
-                FROM vend_transactions
-                GROUP BY user_id
-            ) AS vtl ON users.id = vtl.user_id
-            LEFT JOIN (
-                SELECT user_id, vend_code, created_at AS first_purchase_date
-                FROM (
-                    SELECT user_id, vend_code, created_at,
-                           ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at ASC) AS rn
-                    FROM vend_transactions
-                ) AS ranked
-                WHERE rn = 1
-            ) AS vtf ON users.id = vtf.user_id
-            ORDER BY users.created_at ASC
-        "));
-
+        WITH vt AS (
+            SELECT user_id, COUNT(*) AS total_transactions, SUM(total_qty) AS total_qty
+            FROM vend_transactions
+            GROUP BY user_id
+        ),
+        vt30 AS (
+            SELECT user_id, COUNT(*) AS total_transactions_l30d, SUM(total_qty) AS total_qty_l30d
+            FROM vend_transactions
+            WHERE created_at >= NOW() - INTERVAL 30 DAY
+            GROUP BY user_id
+        ),
+        vtl AS (
+            SELECT user_id, MAX(created_at) AS latest_purchase_date
+            FROM vend_transactions
+            GROUP BY user_id
+        ),
+        vtf_first AS (
+            SELECT user_id, MIN(created_at) AS first_created
+            FROM vend_transactions
+            GROUP BY user_id
+        ),
+        vtf AS (
+            SELECT vt1.user_id, vt1.vend_code, vt1.created_at AS first_purchase_date
+            FROM vend_transactions vt1
+            JOIN vtf_first vt2 ON vt1.user_id = vt2.user_id AND vt1.created_at = vt2.first_created
+        )
+        SELECT
+            users.id,
+            users.name,
+            users.email,
+            users.converted_at,
+            users.dob,
+            users.phone_number,
+            users.ref_id,
+            users.is_converted,
+            users.is_one_time_voucher_used,
+            users.created_at AS created_at,
+            countries.phone_code AS country_code,
+            plans.name AS plan_name,
+            plan_item_users.datetime_to AS plan_expiry,
+            plan_items.max_count AS plan_max_count,
+            plan_item_users.used_count AS used_count,
+            COALESCE(vt.total_transactions, 0) AS transaction_count,
+            COALESCE(vt.total_qty, 0) AS total_qty,
+            COALESCE(vt30.total_transactions_l30d, 0) AS transaction_count_l30d,
+            COALESCE(vt30.total_qty_l30d, 0) AS total_qty_l30d,
+            vtl.latest_purchase_date,
+            vtf.first_purchase_date,
+            vtf.vend_code AS first_vend_code
+        FROM users
+        LEFT JOIN countries ON countries.id = users.phone_country_id
+        LEFT JOIN plan_item_users ON users.id = plan_item_users.user_id AND plan_item_users.is_active = 1
+        LEFT JOIN plans ON plans.id = plan_item_users.plan_id
+        LEFT JOIN plan_items ON plans.id = plan_items.plan_id
+        LEFT JOIN vt ON users.id = vt.user_id
+        LEFT JOIN vt30 ON users.id = vt30.user_id
+        LEFT JOIN vtl ON users.id = vtl.user_id
+        LEFT JOIN vtf ON users.id = vtf.user_id
+        ORDER BY users.created_at ASC
+    "));
 
         // 2. Stat totals
         $totals = [
