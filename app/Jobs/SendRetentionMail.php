@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\PlanItemUser;
 use App\Models\User;
 use App\Mail\UserRetention;
+use App\Services\PlanService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -14,6 +15,7 @@ class SendRetentionMail implements ShouldQueue
 {
     use Queueable;
 
+    protected $planService;
     protected $user;
     protected $users;
     /**
@@ -21,6 +23,7 @@ class SendRetentionMail implements ShouldQueue
      */
     public function __construct()
     {
+        $this->planService = new PlanService();
         // $this->user = User::with('planItemUser')->where('id', 1)->oldest()->first();
         $this->users = User::query()
             ->with('planItemUser')
@@ -28,7 +31,8 @@ class SendRetentionMail implements ShouldQueue
                 $query->where('is_required_email_retention', true)
                     ->where('is_email_retention_sent', false)
                     ->where('is_active', true)
-                    ->whereDate('datetime_to', '<=', Carbon::today()->addDays(PlanItemUser::NOTIFICATION_EMAIL_DAYS));
+                    ->where('plan_id', $this->planService->getDefaultFreePlan()?->id)
+                    ->whereDate('datetime_from', '=', Carbon::today());
             })
             ->oldest()
             ->get();

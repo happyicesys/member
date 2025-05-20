@@ -106,12 +106,14 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
             'yesterday' => User::whereDate('created_at', now()->subDay())->count(),
             'last_2_days' => User::whereDate('created_at', now()->subDays(2))->count(),
             'last_3_days' => User::whereDate('created_at', now()->subDays(3))->count(),
+            'total_active_users' => User::query()->count(),
             'new_paid_gold_users' => User::where('is_converted', true)
                 ->whereDate('converted_at', Carbon::yesterday())
                 ->count(),
             'total_paid_gold_users' => User::where('is_converted', true)->whereHas('planItemUser', function($query) {
                 $query->where('plan_id', $this->planService->getGoldPlan()->id);
             })->count(),
+            'free_cornetto_claimed' => User::where('is_one_time_voucher_used', true)->count()
         ];
 
         // 3. SMS stats
@@ -152,7 +154,7 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
                 'Latest Purchase Date' => $user->latest_purchase_date,
                 'Is Converted' => $user->is_converted ? 'Yes' : 'No',
                 'Converted At' => $user->is_converted ? Carbon::parse($user->converted_at)->format('Y-m-d H:i:s') : '',
-                'Is Claim Free Ice Cream' => $user->is_one_time_voucher_used ? 'Yes' : 'No',
+                'Is Claim Free Cornetto' => $user->is_one_time_voucher_used ? 'Yes' : 'No',
             ];
         });
 

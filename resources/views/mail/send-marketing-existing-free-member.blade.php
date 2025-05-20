@@ -21,7 +21,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 20px 0px 30px 0px 0; font-size: 16px; color: #555;">
+                        <td style="padding: 20px 0px 30px 0px; font-size: 16px; color: #555;">
                             Your DCVend free membership has expired. <br>
                             Upgrade to the Gold Plan for just $2.90/month and receive a free Magnum ice cream (worth S$4.70), redeemable at any vending machine.
                         </td>

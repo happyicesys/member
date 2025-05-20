@@ -9,8 +9,10 @@
     <p>Please find the list of registered users attached as an Excel file. <br> </p>
     <p>
         Yesterday registered users: {{ $data['totals']['yesterday'] }}<br>
-        Last 2 days registered users: {{ $data['totals']['last_2_days'] }}<br>
-        Last 3 days registered users: {{ $data['totals']['last_3_days'] }}<br>
+        2 days ago registered users: {{ $data['totals']['last_2_days'] }}<br>
+        3 days ago registered users: {{ $data['totals']['last_3_days'] }}<br>
+        Total active users: {{ $data['totals']['total_active_users'] }}<br>
+        Total Cornetto Redeemed: {{ $data['totals']['free_cornetto_claimed'] }} <br>
     </p>
     <p>
         Yesterday New Paid Gold Members: {{ $data['totals']['new_paid_gold_users'] }}<br>

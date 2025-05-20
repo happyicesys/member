@@ -26,14 +26,14 @@ class UserRetention extends Mailable
         return new Envelope(
             from: new Address('system@dcvend.com', 'DCVend System'),
             to: [new Address($this->user->email, $this->user->name)],
-            subject: "{$this->user->name}, your membership is expiring soon",
+            subject: "{$this->user->name}, your DCVend free membership has expired",
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'mail.user-retention',
+            view: 'mail.send-marketing-existing-free-member',
             with: ['user' => $this->user], // pass data to view if needed
         );
     }
