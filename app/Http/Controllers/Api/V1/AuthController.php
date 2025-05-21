@@ -8,6 +8,7 @@ use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,6 +25,12 @@ class AuthController extends Controller
         }
 
         $user = User::with(['phoneCountry', 'planItemUser.plan'])->where('phone_number', $request->phone_number)->first();
+
+        if(!$user->is_active) {
+            Auth::guard('web')->logout();
+
+            return $this->error('Your account is inactive. Please contact support.', json_decode('{}'), 401);
+        }
 
         $user->update([
             'login_count' => $user->login_count + 1
