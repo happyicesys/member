@@ -36,7 +36,7 @@
         <section class="bg-white py-8 px-4">
             <div class="text-center text-red-600 text-3xl font-semibold tracking-wide">
                 <div class="md:w-1/2 mx-auto">
-                    Buy 1 ice cream also get 30% discount with a DCVend membership
+                    Buy 1 ice cream also get 30% discount with a DCVend Gold membership
                 </div>
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-4 md:gap-8 md:w-2/5 text-center mx-auto">
