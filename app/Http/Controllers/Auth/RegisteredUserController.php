@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Resources\CountryResource;
 use App\Http\Controllers\Controller;
+use App\Jobs\SyncSysVouchersToLocal;
 use App\Models\Country;
 use App\Models\User;
 use App\Rules\Recaptcha;
@@ -135,6 +136,8 @@ class RegisteredUserController extends Controller
 
         // Sync user plan
         $this->planService->syncUserPlan($user);
+
+        SyncSysVouchersToLocal::dispatch($user, true);
 
         $this->userService->validateIsActiveCountry($request->country_id);
 

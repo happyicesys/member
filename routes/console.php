@@ -9,3 +9,4 @@ Schedule::command('plans:sync')->daily();
 Schedule::command('sync:daily-stats')->daily();
 Schedule::command('send:retention-email')->daily();
 Schedule::command('send:registered-users-list-email')->dailyAt('00:02');
+Schedule::command('sync:renewable-vouchers-daily')->daily();

@@ -111,6 +111,22 @@ class SysApiService
         return false;
     }
 
+    public function getVouchersDetails(array $voucherCodesArray, $vendCode = null, $userID = null)
+    {
+        $vouchersEndpoint = "/api/vouchers/details";
+
+        // dd($voucherCodesArray, $vendCode, $userID);
+        $response = Http::withToken($this->bearerToken)
+            ->withHeaders(['Accept' => 'application/json'])
+            ->post($this->baseUrl . $vouchersEndpoint, [
+                'codes' => $voucherCodesArray,
+                'vend_code' => $vendCode,
+                'dcvend_user_id' => $userID,
+            ]);
+
+        return $response->json();
+    }
+
     /**
      * Perform a PUT request to the external system.
      *

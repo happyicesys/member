@@ -6,6 +6,7 @@ use App\Models\PlanItem;
 use App\Models\VendTransaction;
 use App\Models\VendTransactionItem;
 use App\Models\User;
+use App\Models\UserVoucher;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\VendTransactionResource;
 use App\Services\SettingService;
@@ -98,6 +99,29 @@ class VendTransactionController extends Controller
             if($voucher['code'] == 'NEWCONVERTMAGNUM') {
                 $user->is_converted_voucher_used = true;
                 $user->save();
+            }
+
+            $userVoucher = UserVoucher::where('user_id', $user->id)
+                ->where('ref_voucher_code', $voucher['code'])
+                ->where('status', UserVoucher::STATUS_ACTIVE)
+                ->whereDate('date_from', '<=', now())
+                ->whereDate('date_to', '>=', now())
+                ->first();
+
+            if ($userVoucher) {
+                $newUsedCount = $userVoucher->used_count + 1;
+
+                $userVoucher->update([
+                    'used_count' => $newUsedCount,
+                ]);
+
+                if ($userVoucher->qty == $newUsedCount) {
+                    $userVoucher->update([
+                        'is_redeemed' => true,
+                        'redeemed_at' => now(),
+                        'status' => UserVoucher::STATUS_REDEEMED,
+                    ]);
+                }
             }
         }
 

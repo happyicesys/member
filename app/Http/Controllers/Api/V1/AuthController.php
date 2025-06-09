@@ -32,15 +32,17 @@ class AuthController extends Controller
             return $this->error('Your account is inactive. Please contact support.', json_decode('{}'), 401);
         }
 
-        $user->update([
-            'login_count' => $user->login_count + 1
-        ]);
+        $user->login_count += 1;
 
         if($user->login_count == 1 and $request->vend_code) {
-            $user->update([
-                'vend_code' => $request->vend_code
-            ]);
+            $user->vend_code = $request->vend_code;
         }
+
+        if($request->vend_code) {
+            $user->latest_login_vend_code = $request->vend_code;
+        }
+
+        $user->save();
 
         $user->tokens()->delete();
 
@@ -49,7 +51,9 @@ class AuthController extends Controller
             'Authenticated',
             [
                 'token' => $user->createToken($request->phone_number, ['*'], now()->addMinutes(30))->accessToken,
-                'user' => UserResource::make($user)
+                'user' => UserResource::make($user, [
+                    'vend_code' => $request->vend_code ?? null,
+                ])
             ],
             200);
     }

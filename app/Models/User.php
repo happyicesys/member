@@ -34,6 +34,7 @@ class User extends Authenticatable
         'is_one_time_voucher_used',
         'is_phone_number_validated',
         'is_unsubscribe_email',
+        'latest_login_vend_code',
         'login_count',
         'meta_json',
         'password',
@@ -94,6 +95,16 @@ class User extends Authenticatable
     public function referral()
     {
         return $this->hasOne(Referral::class);
+    }
+
+    public function userVouchers()
+    {
+        return $this->hasMany(UserVoucher::class);
+    }
+
+    public function userVouchersRedeemable()
+    {
+        return $this->hasMany(UserVoucher::class)->where('is_redeemable', true)->where('date_to', '>=', now());
     }
 
     public function vendTransactions()
