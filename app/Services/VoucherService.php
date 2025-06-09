@@ -72,57 +72,58 @@ class VoucherService
     {
         $vouchers = [];
 
-        if($user->phone_number != '69354741' && $user->phone_number != '82269545') {
-            if(Carbon::today()->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
-                return [];
+        // ========== NEWUSERVOUCHER logic ==========
+        $shouldShowNewUserVoucher = true;
+
+        if ($user->phone_number != '69354741' && $user->phone_number != '82269545') {
+            if (Carbon::today()->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
+                $shouldShowNewUserVoucher = false;
             }
 
-            if(self::HARDCODE_PROMO_END_DATE && Carbon::today()->gt(Carbon::parse(self::HARDCODE_PROMO_END_DATE))) {
-                return [];
+            if (self::HARDCODE_PROMO_END_DATE && Carbon::today()->gt(Carbon::parse(self::HARDCODE_PROMO_END_DATE))) {
+                $shouldShowNewUserVoucher = false;
             }
 
-            if(Carbon::parse($user->created_at)->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
-                return [];
+            if (Carbon::parse($user->created_at)->lt(Carbon::parse(self::HARDCODE_PROMO_START_DATE))) {
+                $shouldShowNewUserVoucher = false;
             }
         }
 
-        $dateTo = Carbon::parse($user->created_at)->addDays(self::HARDCODE_PROMO_DAYS)->format('Y-m-d');
-        $isExpired = Carbon::today()->gt(Carbon::parse($dateTo)) ? true : false;
+        if ($shouldShowNewUserVoucher) {
+            $dateTo = Carbon::parse($user->created_at)->addDays(self::HARDCODE_PROMO_DAYS)->format('Y-m-d');
+            $isExpired = Carbon::today()->gt(Carbon::parse($dateTo));
 
+            $status = self::STATUS_ACTIVE;
+            if ($isExpired) {
+                $status = self::STATUS_EXPIRED;
+            }
+            if ($user->is_one_time_voucher_used && $user->phone_number != '81300257') {
+                $status = self::STATUS_REDEEMED;
+            }
 
-        $status = self::STATUS_ACTIVE;
-
-        if($isExpired) {
-            $status = self::STATUS_EXPIRED;
+            $vouchers[] = [
+                'id' => self::HARDCODE_PROMO_VOUCHER_ID,
+                'code' => self::HARDCODE_PROMO_VOUCHER,
+                'type' => self::HARDCODE_PROMO_TYPE,
+                'channels' => ['14', '22', '15', '16'],
+                'date_from' => Carbon::parse($user->created_at)->format('Y-m-d'),
+                'date_to' => $dateTo,
+                'name' => 'Free 1 Cornetto for New Sign-up',
+                'desc' => '',
+                'status' => $status,
+                'min_value' => null,
+                'max_promo_value' => null,
+                'qty' => 1,
+                'value' => null,
+                'matrix' => [],
+            ];
         }
 
-        if($user->is_one_time_voucher_used and $user->phone_number != '81300257') {
-            $status = self::STATUS_REDEEMED;
-        }
-
-        $vouchers[] = [
-            'id' => self::HARDCODE_PROMO_VOUCHER_ID,
-            'code' => self::HARDCODE_PROMO_VOUCHER,
-            'type' => self::HARDCODE_PROMO_TYPE,
-            'channels' => ['14', '22', '15', '16'],
-            'date_from' => Carbon::parse($user->created_at)->format('Y-m-d'),
-            'date_to' => $dateTo,
-            'name' => 'Free 1 Cornetto for New Sign-up',
-            'desc' => '',
-            'status' => $status,
-            'min_value' => null,
-            'max_promo_value' => null,
-            'qty' => 1,
-            // 'used_count' => $status == self::STATUS_REDEEMED ? 1 : 0,
-            'value' => null,
-            'matrix' => []
-        ];
-
-        // give free magnum to converted user
-        if($user->is_converted) {
+        // ========== NEWCONVERTMAGNUM logic ==========
+        if ($user->is_converted) {
             $convertedStatus = self::STATUS_ACTIVE;
 
-            if($user->is_converted_voucher_used == true) {
+            if ($user->is_converted_voucher_used) {
                 $convertedStatus = self::STATUS_REDEEMED;
             }
 
@@ -132,21 +133,21 @@ class VoucherService
                 'type' => self::TYPE_ITEM,
                 'channels' => ['19', '20', '21'],
                 'date_from' => $user->converted_at->format('Y-m-d'),
-                'date_to' => $user->converted_at->addDays(100)->format('Y-m-d'),
+                'date_to' => $user->converted_at->copy()->addDays(100)->format('Y-m-d'),
                 'name' => 'Free Magnum For Paid Gold Plan',
                 'desc' => '',
                 'status' => $convertedStatus,
                 'min_value' => null,
                 'max_promo_value' => null,
                 'qty' => 1,
-                // 'used_count' => $convertedStatus == self::STATUS_REDEEMED ? 1 : 0,
                 'value' => null,
-                'matrix' => []
+                'matrix' => [],
             ];
         }
 
         return $vouchers;
     }
+
 
     public function getSysVouchers($user, $userVouchers)
     {
