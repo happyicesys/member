@@ -79,15 +79,6 @@
                     <li>
                         <strong>Free membership:</strong> Start saving today! Upgrade membership for more benefits.
                     </li>
-                    <li>
-                        <strong>Exclusive Perks:</strong> Unlock special products and offers from our partners.
-                    </li>
-                    <li>
-                        <strong>Instant Delivery:</strong> Order via Grab and get 8% cashback.
-                    </li>
-                    <li>
-                        <strong>Crazy After-Meal Deals:</strong> Incredible savings on a rotating selection of flavours.
-                    </li>
                 </ul>
             </div>
         </section>
@@ -96,51 +87,21 @@
         <section class="py-6 md:py-12 bg-gray-50 rounded px-6">
             <div class="container mx-auto max-w-6xl text-center">
                 <h2 class="text-3xl font-bold text-red-600 mb-8">Membership Plans</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Free Member -->
-                    <div class="bg-slate-200 rounded-md shadow-md p-6 text-center">
-                        <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4">FREE Member</h3>
-                        <ul class="text-gray-600 mb-4 space-y-2">
-                            <li><strong>1 time: </strong> 15% discount on all products</li>
-                        </ul>
-                        <p class="text-xl font-bold text-gray-600">FREE/ month</p>
-                    </div>
-
-                    <!-- VIP Member -->
-                    <div class="bg-slate-200 rounded-md shadow-md p-6 text-center">
-                        <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4">Gold Member</h3>
-                        <ul class="text-gray-600 mb-4 space-y-2">
-                            <li><strong>4 times:</strong> 30% discount on all products</li>
-                        </ul>
-                        <p class="text-xl font-bold text-gray-600">S$ 2.90/ month</p>
-                    </div>
-
-                    <!-- SuperVIP Member -->
-                    <div class="bg-slate-300 rounded-md shadow-md p-6 text-center">
-                        <h3 class="text-4xl font-bold text-gray-600 font-extrabold mb-4 flex flex-col">
-                            <span>
-                                Platinum Member
-                            </span>
-                            <small class="text-sm text-red-600">(Coming soon)</small>
-                        </h3>
-                        <ul class="text-gray-500 mb-4 space-y-2">
-                            <li><strong>Unlimited:</strong> 30% discount on all products</li>
-                            <li><strong>FREE:</strong> S$2 voucher</li>
-                            <li><strong>Unlimited:</strong> Crazy after-meal deals</li>
-                            <li><strong>Unlimited:</strong> 8% cashback on orders via Grab</li>
-                            <li><strong>Unlimited:</strong> 8% discount from affiliated vending machines</li>
-
-                        </ul>
-                        <p class="text-xl font-bold text-gray-600">S$ 4.80/ month</p>
+                <div class="flex justify-center">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-200 rounded-md shadow-md p-6 text-center w-96" v-for="voucher in vouchers">
+                            <img :src="voucher.src" :alt="voucher.alt">
+                        </div>
                     </div>
                 </div>
+                <p class="pt-3 text-gray-700">*Limited to 1 voucher per checkout with min spending of $5</p>
             </div>
         </section>
 
         <!-- Call to Action Section -->
-        <section class="bg-white py-8 px-6">
-            <div class="text-center text-gray-600 text-2xl font-semibold tracking-wide md:w-3/5 mx-auto">
-                <strong>New Sign-up:</strong> Free 1-month of Gold Member Plan, with 4 times of 30% discount on all products monthly.
+        <section class="bg-white py-6 px-6">
+            <div class="text-center text-gray-600 text-xl font-semibold tracking-wide md:w-3/5 mx-auto">
+                <strong>New Sign-up:</strong> Free Gold Member Package, with 30% discount on all products for a month.
             </div>
             <div class="flex flex-col md:flex-row w-full md:w-fit justify-self-center mt-6 gap-8 md:w-2/5 text-center mx-auto">
                 <Link :href="route('register', { refID: 'web' })" class="bg-yellow-300 py-8 px-16 rounded-lg shadow-md border-2 border-red-600 text-red-600 font-extrabold text-5xl hover:bg-yellow-400">
@@ -269,7 +230,7 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
 const banners = [
   {
-    src: '/images/banner_7.jpg',
+    src: '/images/banner_8.jpg',
     alt: 'DCVend Banner',
   },
   {
@@ -280,12 +241,23 @@ const banners = [
 
 const mobileBanners = [
   {
-    src: '/images/banner_mobile_7.jpg',
+    src: '/images/banner_mobile_8.jpg',
     alt: 'DCVend Banner Mobile',
   },
   {
     src: '/images/converted_banner_mobile.jpg',
     alt: 'Converted User Banner',
+  },
+];
+
+const vouchers = [
+  {
+    src: '/images/free_member_voucher.png',
+    alt: 'Free Member',
+  },
+  {
+    src: '/images/gold_member_voucher.png',
+    alt: 'Gold Member',
   },
 ];
 
