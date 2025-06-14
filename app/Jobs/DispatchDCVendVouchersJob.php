@@ -34,14 +34,19 @@ class DispatchDCVendVouchersJob implements ShouldQueue
 
     public function handle(): void
     {
-        $dateFrom = now();
-        $dateTo = $this->validUnit === 'day'
-            ? $dateFrom->copy()->addDays($this->validDuration)
-            : $dateFrom->copy()->addMonths($this->validDuration);
+        $dateFrom = null;
+        $dateTo = null;
+
+        if($this->validUnit != 'plan') {
+            $dateFrom = now();
+            $dateTo = $this->validUnit === 'day'
+                ? $dateFrom->copy()->addDays($this->validDuration)
+                : $dateFrom->copy()->addMonths($this->validDuration);
+        }
 
         $today = now()->startOfDay();
 
-        User::whereIn('id', $this->userIDs)->chunk(100, function ($users) use ($dateFrom, $dateTo, $today) {
+        User::with('planItemUser')->whereIn('id', $this->userIDs)->chunk(100, function ($users) use ($dateFrom, $dateTo, $today) {
             foreach ($users as $user) {
                 if ($this->action === 'create') {
                     $existing = UserVoucher::where('user_id', $user->id)
@@ -57,8 +62,8 @@ class DispatchDCVendVouchersJob implements ShouldQueue
                             'user_id' => $user->id,
                             'ref_voucher_id' => $this->voucher['id'],
                             'ref_voucher_code' => $this->voucher['code'],
-                            'date_from' => $dateFrom,
-                            'date_to' => $dateTo,
+                            'date_from' => $this->validUnit == 'plan' ? $user->planItemUser->datetime_from : $dateFrom,
+                            'date_to' => $this->validUnit == 'plan' ? $user->planItemUser->datetime_to : $dateTo,
                             'is_redeemable' => true,
                             'is_redeemed' => false,
                             'qty' => $this->qty,

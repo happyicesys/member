@@ -31,7 +31,7 @@ class SendMarketingExistingFreeMember extends Mailable
         return new Envelope(
             from: new Address('system@dcvend.com', 'DCVend System'),
             to: [new Address($this->user->email, $this->user->name)],
-            subject: "{$this->user->name}, your DCVend free membership has expired",
+            subject: "DCVend - Double Your Coupons & Save 30% with GOLD Membership!",
         );
     }
 
