@@ -37,8 +37,8 @@
                         <td style="font-size: 16px; color: #333; padding-bottom: 10px;">
                             <strong>First Updates</strong> – Unlimited Discount Times
                             <ul style="margin-top: 10px;">
-                                <li><strong>Free member</strong>: <u>Unlimited</u> times of 15% discount</li>
-                                <li><strong>Gold member</strong>: <u>Unlimited</u> times of 30% discount</li>
+                                <li><strong>Free member</strong>: Unlimited times of 15% discount</li>
+                                <li><strong>Gold member</strong>: Unlimited times of 30% discount</li>
                             </ul>
                         </td>
                     </tr>
@@ -74,7 +74,7 @@
                         <td style="font-size: 14px; color: #333;">
                             <strong>How It Works:</strong>
                             <ol style="margin-top: 10px; padding-left: 20px;">
-                                <li><strong>Automatic Delivery:</strong> Log into <a href="https://dcvend.com" style="color:#dc2626;">DCVend</a> account at our vending machine to view the vouchers</li>
+                                <li><strong>Automatic Delivery: Log into DCVend account at our vending machine to view the vouchers</li>
                                 <li><strong>Easy Redemption:</strong> Apply them at checkout to save instantly</li>
                                 <li><strong>Auto Replenish:</strong> Vouchers will be auto replenished every 30-days</li>
                             </ol>
