@@ -186,11 +186,11 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         ];
 
         Mail::to([
-            // 'sean_lee@foodleague.com.sg',
-            // 'daniel.ma@happyice.com.sg',
-            // 'kent@happyice.com.sg',
-            // 'brianlee@happyice.com.my',
-            'leehongjie91@gmail.com',
+            'sean_lee@foodleague.com.sg',
+            'daniel.ma@happyice.com.sg',
+            'kent@happyice.com.sg',
+            'brianlee@happyice.com.my',
+            // 'leehongjie91@gmail.com',
         ])->send(new RegisteredUsers($this->remotePath, $data));
     }
 
