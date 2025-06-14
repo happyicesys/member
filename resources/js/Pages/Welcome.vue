@@ -230,23 +230,23 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
 const banners = [
   {
-    src: '/images/banner_8.jpg',
+    src: '/images/banner_7.jpg',
     alt: 'DCVend Banner',
   },
   {
-    src: '/images/converted_banner.jpg',
-    alt: 'Converted User Banner',
+    src: '/images/banner_8.jpg',
+    alt: 'Plan Benefits Banner',
   },
 ];
 
 const mobileBanners = [
   {
-    src: '/images/banner_mobile_8.jpg',
+    src: '/images/banner_mobile_7.jpg',
     alt: 'DCVend Banner Mobile',
   },
   {
-    src: '/images/converted_banner_mobile.jpg',
-    alt: 'Converted User Banner',
+    src: '/images/banner_mobile_8.jpg',
+    alt: 'Plan Benefits Banner',
   },
 ];
 
