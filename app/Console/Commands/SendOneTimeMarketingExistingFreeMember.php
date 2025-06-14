@@ -32,6 +32,7 @@ class SendOneTimeMarketingExistingFreeMember extends Command
             })
             ->oldest()
             ->get();
+
         // $users = User::query()
         // ->where('email', 'leehongjie91@gmail.com')
         // ->get();
