@@ -31,7 +31,7 @@ class SendMarketingExistingFreeMember extends Mailable
         return new Envelope(
             from: new Address('system@dcvend.com', 'DCVend System'),
             to: [new Address($this->user->email, $this->user->name)],
-            subject: "DCVend - Double Your Coupons & Save 30% with GOLD Membership!",
+            subject: "DCVEND Your Monthly $1 Vouchers Are Here!",
         );
     }
 
