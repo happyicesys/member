@@ -24,6 +24,19 @@
     <p>
         Yesterday - Avg SMS Credit per Sign Up: {{ $data['avg_credit_per_user'] }}<br>
     </p>
+    <p>
+        Landing page visits:<br>
+        Yesterday: {{ $data['totals']['landing_page_visit_yesterday'] }}<br>
+        2 days ago: {{ $data['totals']['landing_page_visit_2_days_ago'] }}<br>
+        3 days ago: {{ $data['totals']['landing_page_visit_3_days_ago'] }}<br>
+        Accumulated: {{ $data['totals']['accumulated_landing_page_visit'] }}
+    </p>
+    <p>
+        Sign up rate (registered user/ landing page visit):<br>
+        Yesterday: {{ $data['totals']['sign_up_rate_yesterday'] }}%<br>
+        2 days ago: {{ $data['totals']['sign_up_rate_2_days_ago'] }}%<br>
+        3 days ago: {{ $data['totals']['sign_up_rate_3_days_ago'] }}%<br>
+    </p>
 
     <p>Regards,<br>DCVend System</p>
 </body>

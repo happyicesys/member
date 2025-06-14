@@ -101,6 +101,10 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         ORDER BY users.created_at ASC
     "));
 
+        $twoDaysAgoStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', Carbon::yesterday()->subDay())->first();
+        $yesterdayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', '<', Carbon::today())->latest()->first();
+        $todayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', Carbon::today())->first();
+
         // 2. Stat totals
         $totals = [
             'yesterday' => User::whereDate('created_at', now()->subDay())->count(),
@@ -113,7 +117,14 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
             'total_paid_gold_users' => User::where('is_converted', true)->whereHas('planItemUser', function($query) {
                 $query->where('plan_id', $this->planService->getGoldPlan()->id);
             })->count(),
-            'free_cornetto_claimed' => User::where('is_one_time_voucher_used', true)->count()
+            'free_cornetto_claimed' => User::where('is_one_time_voucher_used', true)->count(),
+            'landing_page_visit_yesterday' => $todayStat ? $todayStat->landing_page_visit_count : 0,
+            'landing_page_visit_2_days_ago' => $yesterdayStat ? $yesterdayStat->landing_page_visit_count : 0,
+            'landing_page_visit_3_days_ago' => $twoDaysAgoStat ? $twoDaysAgoStat->landing_page_visit_count : 0,
+            'accumulated_landing_page_visit' => $todayStat ? $todayStat->cumulative_landing_page_visit_count : 0,
+            'sign_up_rate_yesterday' => $todayStat ? round(($todayStat->new_user_count / $todayStat->landing_page_visit_count) * 100, 2) : 0,
+            'sign_up_rate_2_days_ago' => $yesterdayStat ? round(($yesterdayStat->new_user_count / $yesterdayStat->landing_page_visit_count) * 100, 2) : 0,
+            'sign_up_rate_3_days_ago' => $twoDaysAgoStat ? round(($twoDaysAgoStat->new_user_count / $twoDaysAgoStat->landing_page_visit_count) * 100, 2) : 0,
         ];
 
         // 3. SMS stats
@@ -121,8 +132,6 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         $creditBalance = $this->smsService->getCreditBalance();
         $avgCreditPerUser = 0;
 
-        $yesterdayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', '<', Carbon::today())->latest()->first();
-        $todayStat = Stat::where('type', Stat::TYPE_DAILY)->whereDate('created_at', Carbon::today())->first();
 
         if ($yesterdayStat && $todayStat) {
             $usedSmsCreditBalance = $todayStat->latest_sms_credit_balance - $yesterdayStat->latest_sms_credit_balance;
@@ -177,11 +186,11 @@ class SendRegisteredUsersListEmailJob implements ShouldQueue
         ];
 
         Mail::to([
-            'sean_lee@foodleague.com.sg',
-            'daniel.ma@happyice.com.sg',
-            'kent@happyice.com.sg',
-            'brianlee@happyice.com.my',
-            // 'leehongjie91@gmail.com',
+            // 'sean_lee@foodleague.com.sg',
+            // 'daniel.ma@happyice.com.sg',
+            // 'kent@happyice.com.sg',
+            // 'brianlee@happyice.com.my',
+            'leehongjie91@gmail.com',
         ])->send(new RegisteredUsers($this->remotePath, $data));
     }
 
