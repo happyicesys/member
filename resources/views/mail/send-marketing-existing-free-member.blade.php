@@ -53,10 +53,12 @@
                         </td>
                     </tr>
 
-                    <!-- Promo Image -->
+                    <!-- CTA Button -->
                     <tr>
-                        <td align='center' style="padding: 20px 0;">
-                            <img src="{{asset('/images/components/send_marketing_existing_free_member_promo.png')}}" alt="Promo Image" style="max-width:100%;">
+                        <td align='center' style="padding: 30px 0;">
+                            <a href="{{ route('plan.index') }}" target="_blank">
+                                <img src="{{ asset('/images/components/send_marketing_existing_free_member_cta_2.png') }}" alt="Sign Up Now" style="max-width:300px;">
+                            </a>
                         </td>
                     </tr>
 
@@ -76,15 +78,6 @@
                                 <li><strong>Easy Redemption:</strong> Apply them at checkout to save instantly</li>
                                 <li><strong>Auto Replenish:</strong> Vouchers will be auto replenished every 30-days</li>
                             </ol>
-                        </td>
-                    </tr>
-
-                    <!-- CTA Button -->
-                    <tr>
-                        <td align='center' style="padding: 30px 0;">
-                            <a href="{{ route('plan.index') }}" target="_blank">
-                                <img src="{{ asset('/images/components/send_marketing_existing_free_member_cta_2.png') }}" alt="Sign Up Now" style="max-width:300px;">
-                            </a>
                         </td>
                     </tr>
 
