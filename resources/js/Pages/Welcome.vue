@@ -252,11 +252,11 @@ const mobileBanners = [
 
 const vouchers = [
   {
-    src: '/images/free_member_voucher.png',
+    src: '/images/free_member_voucher_2.png',
     alt: 'Free Member',
   },
   {
-    src: '/images/gold_member_voucher.png',
+    src: '/images/gold_member_voucher_2.png',
     alt: 'Gold Member',
   },
 ];
