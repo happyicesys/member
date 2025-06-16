@@ -28,10 +28,11 @@ class SyncSysVouchersToLocal implements ShouldQueue
     public function handle(): void
     {
         $response = Http::get(env('SYS_API_BASE_URL') . '/api/vouchers/dcvend');
+        // dd($response->status(), $response->body());
 
         if (!$response->ok()) return;
 
-        $vouchers = $response->json();
+        $vouchers = $response->json('data');
         $users = $this->singleUser
             ? collect([$this->singleUser])
             : User::where('is_active', true)->get();
