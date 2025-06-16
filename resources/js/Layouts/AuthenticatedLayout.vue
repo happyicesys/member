@@ -251,7 +251,7 @@ function toggleMenu() {
             </section>
 
             <p class="text-sm text-gray-500">&copy; 2024 DCVIC PTE. LTD. All rights reserved.</p>
-            <div class="flex justify-center space-x-5">
+            <div class="flex justify-center space-x-5 pt-3">
                 <Link href="/terms-and-conditions" class="text-sm text-gray-500 hover:text-blue-600">Terms and Conditions</Link>
                 <Link href="/privacy-policy" class="text-sm text-gray-500 hover:text-blue-600">Privacy Policy</Link>
             </div>
