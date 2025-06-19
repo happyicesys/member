@@ -25,6 +25,10 @@ class VendTransaction extends Model
         'vend_id',
         'vend_prefix_id',
         'vend_prefix_name',
+        'voucher_code',
+        'voucher_type',
+        'voucher_name',
+        'voucher_value',
     ];
 
     protected $casts = [

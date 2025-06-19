@@ -91,6 +91,13 @@ class VendTransactionController extends Controller
         if($request->vouchers) {
             $voucher = $request->vouchers[0];
 
+            $vendTransaction->update([
+                'voucher_code' => $voucher['code'] ?? null,
+                'voucher_type' => $voucher['type'] ?? null,
+                'voucher_name' => $voucher['name'] ?? null,
+                'voucher_value' => $voucher['value'] ?? null,
+            ]);
+
             if($voucher['code'] == 'NEWUSERVOUCHER') {
                 $user->is_one_time_voucher_used = true;
                 $user->save();
