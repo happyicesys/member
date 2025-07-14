@@ -230,7 +230,7 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
 const banners = [
   {
-    src: '/images/banner_7.jpg',
+    src: '/images/banner_9.jpg',
     alt: 'DCVend Banner',
   },
   {
@@ -241,7 +241,7 @@ const banners = [
 
 const mobileBanners = [
   {
-    src: '/images/banner_mobile_7.jpg',
+    src: '/images/banner_mobile_9.jpg',
     alt: 'DCVend Banner Mobile',
   },
   {
